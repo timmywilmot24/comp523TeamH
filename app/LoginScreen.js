@@ -13,29 +13,36 @@ import {
 
 import LoginForm from "./LoginForm.js";
 
-function HomeScreen(props) {
-  return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <ImageBackground
-        style={styles.background}
-        source={require("./assets/backgroundHome.jpg")}
-      >
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <SafeAreaView>
-            <Text style={styles.slogan}>Tunnel Vision on Your Mission!</Text>
-            <Image
-              style={styles.logo}
-              resizeMode="contain"
-              source={require("./assets/logo.png")}
-            ></Image>
-            <LoginForm props={props}></LoginForm>
-            <Text>Forgot Password</Text>
-            <Text>No account? Sign up here!</Text>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </ImageBackground>
-    </TouchableWithoutFeedback>
-  );
+export default class LoginScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  }
+  render() {
+    return (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ImageBackground
+          style={styles.background}
+          source={require("./assets/backgroundHome.jpg")}
+        >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <SafeAreaView>
+              <Text style={styles.slogan}>Tunnel Vision on Your Mission!</Text>
+              <Image
+                style={styles.logo}
+                resizeMode="contain"
+                source={require("./assets/logo.png")}
+              ></Image>
+              <LoginForm props={props}></LoginForm>
+              <Text>Forgot Password</Text>
+              <Text>No account? Sign up here!</Text>
+            </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </ImageBackground>
+      </TouchableWithoutFeedback>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -56,5 +63,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-export default HomeScreen;
