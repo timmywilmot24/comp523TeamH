@@ -9,7 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
-
+// this is a comment from caleb
 export default function App() {
   return (
     <NavigationContainer>
