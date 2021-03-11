@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View } from "react-native";
 
-export default class CreateScreen extends Component {
+export default class QuizScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -10,7 +10,7 @@ export default class CreateScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: "white" }}>
-        <Text>Create Profile</Text>
+        <Text>Look at Quiz</Text>
       </View>
     );
   }

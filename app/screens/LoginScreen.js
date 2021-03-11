@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Image,
   SafeAreaView,
@@ -11,7 +11,7 @@ import {
   Keyboard,
 } from "react-native";
 
-import LoginForm from "./LoginForm.js";
+import LoginForm from "../components/LoginForm.js";
 
 export default class LoginScreen extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ export default class LoginScreen extends Component {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <ImageBackground
           style={styles.background}
-          source={require("./assets/backgroundHome.jpg")}
+          source={require("../assets/backgroundHome.jpg")}
         >
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <SafeAreaView>
@@ -32,9 +32,10 @@ export default class LoginScreen extends Component {
               <Image
                 style={styles.logo}
                 resizeMode="contain"
-                source={require("./assets/logo.png")}
+                source={require("../assets/logo.png")}
               ></Image>
-              <LoginForm props={props}></LoginForm>
+              <LoginForm props={this.props}></LoginForm>
+
               <Text>Forgot Password</Text>
               <Text>No account? Sign up here!</Text>
             </SafeAreaView>

@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import LoginScreen from "./app/LoginScreen.js";
-import HomeScreen from "./app/HomeScreen.js";
-import CreateScreen from "./app/CreateScreen.js";
+import LoginScreen from "./app/screens/LoginScreen.js";
+import HomeScreen from "./app/screens/HomeScreen.js";
+import CreateScreen from "./app/screens/RegisterScreen.js";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
