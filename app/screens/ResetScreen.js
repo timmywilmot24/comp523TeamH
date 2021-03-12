@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Text, View, SafeAreaView, StyleSheet } from "react-native";
+import { Text, View, SafeAreaView } from "react-native";
 
-export default class RegisterScreen extends Component {
+export default class ResetScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -10,7 +10,7 @@ export default class RegisterScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-        <Text>Create Profile</Text>
+        <Text>Reset Password</Text>
       </SafeAreaView>
     );
   }

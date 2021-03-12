@@ -58,7 +58,7 @@ export default class LoginForm extends Component {
             password: "",
           });
           console.log(this.props.props.navigation);
-          this.props.props.navigation.navigate("Home");
+          this.props.props.navigation.navigate("Main");
         })
         .catch((error) => {
           switch (error.toString()) {
