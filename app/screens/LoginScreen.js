@@ -19,6 +19,11 @@ export default class LoginScreen extends Component {
 
     this.state = {};
   }
+  // Renders a login screen with the following features:
+  // Allows user to click outside keyboard to close it
+  // Puts background in ImageBackground
+  // Calls LoginForm Component that lets them login
+  // Has options to "forgot password?" and "create account"
   render() {
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -34,7 +39,10 @@ export default class LoginScreen extends Component {
                 resizeMode="contain"
                 source={require("../assets/logo.png")}
               ></Image>
-              <LoginForm props={this.props}></LoginForm>
+              <LoginForm
+                firebase={this.props.route.params.firebase}
+                props={this.props}
+              ></LoginForm>
 
               <Text
                 style={styles.forgot}

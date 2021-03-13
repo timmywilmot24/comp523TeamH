@@ -7,6 +7,7 @@ export default class HomeScreen extends Component {
 
     this.state = {};
   }
+  // Renders the home screen with 5 buttons to navigate to other pages.
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>

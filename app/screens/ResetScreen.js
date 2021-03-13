@@ -7,6 +7,7 @@ export default class ResetScreen extends Component {
 
     this.state = {};
   }
+  // Does nothing so far. Add functionality to go back to login page
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>

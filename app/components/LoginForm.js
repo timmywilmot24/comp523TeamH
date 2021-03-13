@@ -12,20 +12,6 @@ import {
   TouchableHighlight,
 } from "react-native";
 
-import * as firebase from "firebase";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAf1fhK4UkxkVvpL9--RX6azwgPlrkXprI",
-  authDomain: "mission-scholarship.firebaseapp.com",
-  projectId: "mission-scholarship",
-  storageBucket: "mission-scholarship.appspot.com",
-  messagingSenderId: "646256727876",
-  appId: "1:646256727876:web:f6dbc91e1d6c8971202911",
-  measurementId: "G-T5B1DFVWQW",
-};
-
-const db = firebase.initializeApp(firebaseConfig);
-
 export default class LoginForm extends Component {
   constructor(props) {
     super(props);
@@ -37,8 +23,11 @@ export default class LoginForm extends Component {
     };
   }
 
+  // Creates function that handles an attempt to login
   onLogin() {
     const { email, password } = this.state;
+
+    // If email or password is empty, send alert to prompt user
     if (email === "") {
       Alert.alert("Enter email to login");
     } else if (password === "") {
@@ -47,7 +36,12 @@ export default class LoginForm extends Component {
       this.setState({
         isLoading: true,
       });
-      firebase
+
+      // Makes firebase call to authorize email and password
+      // If successful, log that the user logged in (delete later, for debugging purposes)
+      // and navigate to main (Add functionality to send user to Main);
+      // If unsuccessful, prompt user with corresponding error message
+      this.props.firebase
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then(() => {
@@ -57,7 +51,6 @@ export default class LoginForm extends Component {
             email: "",
             password: "",
           });
-          console.log(this.props.props.navigation);
           this.props.props.navigation.navigate("Main");
         })
         .catch((error) => {
@@ -77,6 +70,8 @@ export default class LoginForm extends Component {
 
   render() {
     return (
+      // Renders with two placeholders for user to type info into email and password
+      // Login text calls onLogin() when it's pressed
       <View style={styles.container}>
         <View style={styles.email}>
           <TextInput

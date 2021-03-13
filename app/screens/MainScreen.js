@@ -18,6 +18,8 @@ export default class MainScreen extends Component {
 
     this.state = {};
   }
+  // Creates a Stack Navigator to navigate among 5 tabs
+  // Can use this structure with NavBar feature
   render() {
     return (
       <NavigationContainer independent={true}>
