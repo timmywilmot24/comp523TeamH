@@ -1,41 +1,41 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
-  Text,
-  Alert,
-  Button,
-  View,
-  StyleSheet,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  TouchableHighlight,
-} from "react-native";
+	Text,
+	Alert,
+	Button,
+	View,
+	StyleSheet,
+	TextInput,
+	Keyboard,
+	TouchableWithoutFeedback,
+	TouchableOpacity,
+	TouchableHighlight,
+} from 'react-native';
 
 export default class LoginForm extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    this.state = {
-      isLoading: false,
-      email: "",
-      password: "",
-    };
-  }
+		this.state = {
+			isLoading: false,
+			email: '',
+			password: '',
+		};
+	}
 
-  // Creates function that handles an attempt to login
-  onLogin() {
-    const { email, password } = this.state;
+	// Creates function that handles an attempt to login
+	onLogin() {
+		const { email, password } = this.state;
 
-    // If email or password is empty, send alert to prompt user
-    if (email === "") {
-      Alert.alert("Enter email to login");
-    } else if (password === "") {
-      Alert.alert("Enter password to login");
-    } else {
-      this.setState({
-        isLoading: true,
-      });
+		// If email or password is empty, send alert to prompt user
+		if (email === '') {
+			Alert.alert('Enter email to login');
+		} else if (password === '') {
+			Alert.alert('Enter password to login');
+		} else {
+			this.setState({
+				isLoading: true,
+			});
 
       // Makes firebase call to authorize email and password
       // If successful, log that the user logged in (delete later, for debugging purposes)
