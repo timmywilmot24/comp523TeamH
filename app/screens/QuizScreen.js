@@ -82,6 +82,12 @@ export const styles = StyleSheet.create({
 	header: {
 		height: '13%',
 		backgroundColor: '#B71914',
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	headerText: {
 		marginLeft: 5,
@@ -96,6 +102,7 @@ export const styles = StyleSheet.create({
 		textShadowRadius: 4,
 	},
 	main: {
+		marginTop: 10,
 		flex: 1,
 		backgroundColor: '#F6931D',
 	},
@@ -103,6 +110,12 @@ export const styles = StyleSheet.create({
 		height: '10%',
 		backgroundColor: 'white',
 		flexDirection: 'row',
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: -2,
+		},
+		shadowOpacity: 0.25,
 	},
 	navButton: {
 		marginTop: 5,
@@ -111,5 +124,8 @@ export const styles = StyleSheet.create({
 	},
 	navText: {
 		color: 'black',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
 	},
 });
