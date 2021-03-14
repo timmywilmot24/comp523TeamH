@@ -23,7 +23,6 @@ const db = firebase.initializeApp({
   appId: "1:646256727876:web:f6dbc91e1d6c8971202911",
   measurementId: "G-T5B1DFVWQW",
 });
-
 // Uses a Stack Navigator to offer navigation
 // between the login page, register page, reset password page, and main page
 export default function App() {

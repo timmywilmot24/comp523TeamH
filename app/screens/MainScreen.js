@@ -21,6 +21,16 @@ export default class MainScreen extends Component {
   // Creates a Stack Navigator to navigate among 5 tabs
   // Can use this structure with NavBar feature
   render() {
+    /* This is how we would get information
+    let userID = this.props.route.params.uid;
+    let db = this.props.route.params.firebase;
+    db.database()
+      .ref("users/" + userID)
+      .get()
+      .then((data) => {
+        console.log(data);
+      });
+    */
     return (
       <NavigationContainer independent={true}>
         <HomeStack.Navigator

@@ -44,14 +44,16 @@ export default class LoginForm extends Component {
       this.props.firebase
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(() => {
+        .then((auth) => {
           console.log("User logged in successfully!");
           this.setState({
             isLoading: false,
             email: "",
             password: "",
           });
-          this.props.props.navigation.navigate("Main");
+          this.props.props.navigation.navigate("Main", {
+            uid: auth.user.uid,
+          });
         })
         .catch((error) => {
           switch (error.toString()) {
@@ -73,7 +75,7 @@ export default class LoginForm extends Component {
       // Renders with two placeholders for user to type info into email and password
       // Login text calls onLogin() when it's pressed
       <View style={styles.container}>
-        <View style={styles.email}>
+        <View style={styles.inputCont}>
           <TextInput
             placeholder="Email"
             placeholderTextColor="#c0c0c0"
@@ -84,7 +86,7 @@ export default class LoginForm extends Component {
             style={styles.input}
           />
         </View>
-        <View style={styles.email}>
+        <View style={styles.inputCont}>
           <TextInput
             placeholder="Password"
             placeholderTextColor="#c0c0c0"
@@ -109,10 +111,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  email: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
   input: {
     width: 250,
     height: 32,
@@ -122,6 +120,10 @@ const styles = StyleSheet.create({
     color: "white",
     borderRadius: 4,
     marginBottom: 18,
+  },
+  inputCont: {
+    flexDirection: "row",
+    justifyContent: "center",
   },
   login: {
     color: "orange",
