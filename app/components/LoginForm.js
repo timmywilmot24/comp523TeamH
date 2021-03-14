@@ -72,30 +72,38 @@ export default class LoginForm extends Component {
 		return (
 			// Renders with two placeholders for user to type info into email and password
 			// Login text calls onLogin() when it's pressed
-			<View style={styles.container}>
-				<View style={styles.email}>
+			<View style={styles.formInput}>
+				<View>
 					<TextInput
+						style={styles.inputs}
 						placeholder="Email"
-						placeholderTextColor="#c0c0c0"
 						autoCompleteType="email"
 						value={this.state.email}
 						onChangeText={(email) => this.setState({ email })}
 						label="Email"
-						style={styles.input}
 					/>
 				</View>
-				<View style={styles.email}>
+				<View>
 					<TextInput
+						style={styles.inputs}
 						placeholder="Password"
-						placeholderTextColor="#c0c0c0"
 						value={this.state.password}
 						onChangeText={(password) => this.setState({ password })}
 						label="Password"
 						secureTextEntry={true}
-						style={styles.input}
 					/>
+					<Text
+						style={styles.forgot}
+						onPress={() => this.props.props.navigation.navigate('Reset')}
+					>
+						Forgot Password?
+					</Text>
 				</View>
-				<TouchableOpacity title="Login" onPress={() => this.onLogin()}>
+				<TouchableOpacity
+					style={styles.loginButton}
+					title="Login"
+					onPress={() => this.onLogin()}
+				>
 					<Text style={styles.login}>Login</Text>
 				</TouchableOpacity>
 			</View>
@@ -104,27 +112,53 @@ export default class LoginForm extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		top: -80,
-		flex: 1,
-		alignItems: 'center',
+	formInput: {
+		width: '80%',
+		marginLeft: '10%',
+		marginRight: '10%',
 	},
-	email: {
-		flexDirection: 'row',
-		justifyContent: 'center',
+	inputs: {
+		backgroundColor: 'white',
+		marginTop: 20,
+		fontSize: 32,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		borderRadius: 5,
+		padding: 5,
 	},
-	input: {
-		width: 250,
-		height: 32,
-		paddingLeft: 6,
-		borderWidth: 1,
-		borderColor: 'white',
+	forgot: {
 		color: 'white',
-		borderRadius: 4,
-		marginBottom: 18,
+		fontSize: 24,
+		fontWeight: '300',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
+	},
+	loginButton: {
+		backgroundColor: '#F6931D',
+		width: '60%',
+		marginTop: '10%',
+		marginLeft: '20%',
+		marginRight: '20%',
+		alignItems: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	login: {
-		color: 'orange',
-		fontSize: 28,
+		fontSize: 36,
+		color: 'white',
+		fontWeight: 'bold',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
 	},
 });
