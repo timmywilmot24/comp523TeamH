@@ -44,14 +44,16 @@ export default class LoginForm extends Component {
 			this.props.firebase
 				.auth()
 				.signInWithEmailAndPassword(this.state.email, this.state.password)
-				.then(() => {
+				.then((auth) => {
 					console.log('User logged in successfully!');
 					this.setState({
 						isLoading: false,
 						email: '',
 						password: '',
 					});
-					this.props.props.navigation.navigate('Main');
+					this.props.props.navigation.navigate('Main', {
+						uid: auth.user.uid,
+					});
 				})
 				.catch((error) => {
 					switch (error.toString()) {
@@ -131,6 +133,7 @@ const styles = StyleSheet.create({
 		padding: 5,
 	},
 	forgot: {
+		marginTop: 5,
 		color: 'white',
 		fontSize: 24,
 		fontWeight: '300',
