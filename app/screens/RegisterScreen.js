@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   ImageBackground,
+  Keyboard,
 } from "react-native";
 
 import RegisterForm from "../components/RegisterForm.js";
@@ -20,27 +21,37 @@ export default class RegisterScreen extends Component {
   // Add registration stuff in this part
   render() {
     return (
-      <ImageBackground
-        style={styles.background}
-        source={require("../assets/backgroundHome.jpg")}
-      >
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <SafeAreaView>
-            <RegisterForm props={this.props}></RegisterForm>
-            <Text
-              style={styles.login}
-              onPress={() => this.props.navigation.navigate("Login")}
-            >
-              Have an account? Login here
-            </Text>
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
-      </ImageBackground>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <ImageBackground
+          style={styles.background}
+          source={require("../assets/backgroundHome.jpg")}
+        >
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <SafeAreaView>
+              <Text>Register below</Text>
+              <RegisterForm
+                props={this.props}
+                firebase={this.props.route.params.firebase}
+              ></RegisterForm>
+              <Text
+                style={styles.login}
+                onPress={() => this.props.navigation.navigate("Login")}
+              >
+                Have an account? Login here
+              </Text>
+            </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </ImageBackground>
+      </TouchableWithoutFeedback>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    alignItems: "center",
+  },
   login: {
     color: "#fff",
     flex: 1,
