@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import {
 	View,
-	Image,
 	SafeAreaView,
 	Text,
-	ImageBackground,
-	Button,
 	StyleSheet,
-	TextInput,
 	TouchableWithoutFeedback,
 	Keyboard,
+	KeyboardAvoidingView,
+	ScrollView,
 } from 'react-native';
 
 import LoginForm from '../components/LoginForm.js';
@@ -27,37 +25,45 @@ export default class LoginScreen extends Component {
 	// Has options to "forgot password?" and "create account"
 	render() {
 		return (
-			<View style={styles.body}>
-				<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-					<SafeAreaView>
-						<View style={styles.logo}>
-							<Text style={styles.logoText}>Mission: Scholarship</Text>
-						</View>
-
-						<View style={styles.form}>
-							<View style={styles.header}>
-								<Text style={styles.headerText}>Hey,</Text>
-								<Text style={styles.headerText}>Login Now</Text>
-								<Text
-									style={styles.headerTextBottom}
-									onPress={() => this.props.navigation.navigate('Register')}
-								>
-									No account? Register!
-								</Text>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+			>
+				<ScrollView style={styles.body}>
+					<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+						<SafeAreaView>
+							<View style={styles.logo}>
+								<Text style={styles.logoText}>Mission: Scholarship</Text>
 							</View>
-							<LoginForm
-								firebase={this.props.route.params.firebase}
-								props={this.props}
-							></LoginForm>
-						</View>
-					</SafeAreaView>
-				</TouchableWithoutFeedback>
-			</View>
+
+							<View style={styles.form}>
+								<View style={styles.header}>
+									<Text style={styles.headerText}>Hey,</Text>
+									<Text style={styles.headerText}>Login Now</Text>
+									<Text
+										style={styles.headerTextBottom}
+										onPress={() => this.props.navigation.navigate('Register')}
+									>
+										No account? Register!
+									</Text>
+								</View>
+								<LoginForm
+									firebase={this.props.route.params.firebase}
+									props={this.props}
+								></LoginForm>
+							</View>
+						</SafeAreaView>
+					</TouchableWithoutFeedback>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
 	body: {
 		flex: 1,
 		backgroundColor: '#F6931D',
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		marginTop: '10%',
-		marginBottom: '10%',
+		marginBottom: '5%',
 		marginLeft: '10%',
 	},
 	headerText: {
@@ -113,7 +119,7 @@ const styles = StyleSheet.create({
 	headerTextBottom: {
 		color: '#F6931D',
 		fontWeight: 'bold',
-		fontSize: 24,
+		fontSize: 20,
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',
 		textShadowOffset: { width: 0, height: 2 },
 		textShadowRadius: 4,

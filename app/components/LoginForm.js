@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import {
 	Text,
 	Alert,
-	Button,
 	View,
 	StyleSheet,
 	TextInput,
-	Keyboard,
-	TouchableWithoutFeedback,
 	TouchableOpacity,
-	TouchableHighlight,
 } from 'react-native';
 
 export default class LoginForm extends Component {
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
 	inputs: {
 		backgroundColor: 'white',
 		marginTop: 20,
-		fontSize: 32,
+		fontSize: 18,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
@@ -135,7 +131,7 @@ const styles = StyleSheet.create({
 	forgot: {
 		marginTop: 5,
 		color: 'white',
-		fontSize: 24,
+		fontSize: 18,
 		fontWeight: '300',
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',
 		textShadowOffset: { width: 0, height: 2 },
@@ -157,7 +153,7 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.25,
 	},
 	login: {
-		fontSize: 36,
+		fontSize: 24,
 		color: 'white',
 		fontWeight: 'bold',
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',

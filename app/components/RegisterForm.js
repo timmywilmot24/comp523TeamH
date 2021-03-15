@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
 	inputs: {
 		backgroundColor: 'white',
 		marginTop: 15,
-		fontSize: 24,
+		fontSize: 22,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.25,
 	},
 	register: {
-		fontSize: 36,
+		fontSize: 28,
 		color: 'white',
 		fontWeight: 'bold',
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',
