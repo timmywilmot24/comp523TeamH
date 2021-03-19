@@ -21,7 +21,7 @@ export default class MainScreen extends Component {
 	// Creates a Stack Navigator to navigate among 5 tabs
 	// Can use this structure with NavBar feature
 	render() {
-    /* This is how we would get information
+		/* This is how we would get information
     let userID = this.props.route.params.uid;
     let db = this.props.route.params.firebase;
     db.database()
@@ -31,35 +31,41 @@ export default class MainScreen extends Component {
         console.log(data);
       });
     */
+		let db = this.props.route.params.firebase;
 
-    return (
-      <NavigationContainer independent={true}>
-        <HomeStack.Navigator
-          initialRouteName="Home"
-          screenOptions={{ headerShown: false }}
-        >
-          <HomeStack.Screen
-            name="Home"
-            component={HomeScreen}
-          ></HomeStack.Screen>
-          <HomeStack.Screen
-            name="Resource"
-            component={ResourceScreen}
-          ></HomeStack.Screen>
-          <HomeStack.Screen
-            name="Quiz"
-            component={QuizScreen}
-          ></HomeStack.Screen>
-          <HomeStack.Screen
-            name="News"
-            component={NewsScreen}
-          ></HomeStack.Screen>
-          <HomeStack.Screen
-            name="Settings"
-            component={SettingsScreen}
-          ></HomeStack.Screen>
-        </HomeStack.Navigator>
-      </NavigationContainer>
-    );
-  }
+		return (
+			<NavigationContainer independent={true}>
+				<HomeStack.Navigator
+					initialRouteName="Home"
+					screenOptions={{ headerShown: false }}
+				>
+					<HomeStack.Screen
+						name="Home"
+						initialParams={{ firebase: db }}
+						component={HomeScreen}
+					></HomeStack.Screen>
+					<HomeStack.Screen
+						name="Resource"
+						initialParams={{ firebase: db }}
+						component={ResourceScreen}
+					></HomeStack.Screen>
+					<HomeStack.Screen
+						name="Quiz"
+						initialParams={{ firebase: db }}
+						component={QuizScreen}
+					></HomeStack.Screen>
+					<HomeStack.Screen
+						name="News"
+						initialParams={{ firebase: db }}
+						component={NewsScreen}
+					></HomeStack.Screen>
+					<HomeStack.Screen
+						name="Settings"
+						initialParams={{ firebase: db }}
+						component={SettingsScreen}
+					></HomeStack.Screen>
+				</HomeStack.Navigator>
+			</NavigationContainer>
+		);
+	}
 }
