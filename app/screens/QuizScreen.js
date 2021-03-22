@@ -16,25 +16,19 @@ export default class QuizScreen extends Component {
 		this.state = {};
 	}
 
+	getData() {
+		let db = this.props.route.params.firebase;
+		db.database()
+			.ref('quiz/categoryQuestions/0')
+			.get()
+			.then((quiz) => {
+				this.setState({
+					quiz,
+				});
+				console.log(this.state);
+			});
+	}
 	render() {
-		//let db = this.props.route.params.firebase;
-		// db.database()
-		// 	.ref('quiz/categoryQuestions/0/category')
-		// 	.get()
-		// 	.then((quiz) => {
-		// 		console.log(quiz);
-		// 	});
-
-		// db.database()
-		// 	.ref('quiz/categoryQuestions/7/responses/4/')
-		// 	.set({
-		// 		action: 'Write a report on shakespeare',
-		// 		subject: [1],
-		// 	})
-		// 	.then((result) => {
-		// 		console.log(result);
-		// 	});
-
 		return (
 			<View style={styles.body}>
 				{/*
@@ -56,12 +50,12 @@ export default class QuizScreen extends Component {
 						</View>
 						<View style={quizScreenStyles.buttonSec}>
 							<Image
-								source={require('../assets/grad.jpg')}
+								source={require('../assets/grad.png')}
 								style={quizScreenStyles.pic}
-							></Image>
+							/>
 							<Pressable
 								style={quizScreenStyles.takeQuizButton}
-								onPress={() => console.log('Take Quiz')}
+								onPress={() => this.getData()}
 							>
 								<Text style={quizScreenStyles.buttonText}>Take the Quiz!</Text>
 							</Pressable>
