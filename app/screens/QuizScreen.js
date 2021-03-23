@@ -8,26 +8,31 @@ import {
 	Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import QuizForm from '../components/QuizForm';
 
 export default class QuizScreen extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			quizView: false,
+		};
 	}
 
-	getData() {
-		let db = this.props.route.params.firebase;
-		db.database()
-			.ref('quiz/categoryQuestions/0')
-			.get()
-			.then((quiz) => {
-				this.setState({
-					quiz,
-				});
-				console.log(this.state);
-			});
-	}
+	//this method will be moved to quizForm component; this is just for testing
+	// getData() {
+	// 	let db = this.props.route.params.firebase;
+	// 	db.database()
+	// 		.ref('quiz/categoryQuestions/0')
+	// 		.get()
+	// 		.then((quiz) => {
+	// 			this.setState({
+	// 				quiz,
+	// 			});
+	// 			console.log(this.state);
+	// 		});
+	// }
+
 	render() {
 		return (
 			<View style={styles.body}>
@@ -41,26 +46,39 @@ export default class QuizScreen extends Component {
 				{/*
          This view below is the main		*/}
 				<View style={styles.main}>
-					<View style={quizScreenStyles.card}>
-						<View style={quizScreenStyles.intro}>
-							<Text style={quizScreenStyles.introText}>
-								What should you do in high school to prepare for college based
-								on your interest? Take the quiz to find out.
-							</Text>
+					{this.state.quizView ? (
+						<QuizForm
+							question={0}
+							firebase={this.props.route.params.firebase}
+						/>
+					) : (
+						<View style={quizScreenStyles.card}>
+							<View style={quizScreenStyles.intro}>
+								<Text style={quizScreenStyles.introText}>
+									What should you do in high school to prepare for college based
+									on your interest? Take the quiz to find out.
+								</Text>
+							</View>
+							<View style={quizScreenStyles.buttonSec}>
+								<Image
+									source={require('../assets/grad.png')}
+									style={quizScreenStyles.pic}
+								/>
+								<Pressable
+									style={quizScreenStyles.takeQuizButton}
+									onPress={() =>
+										this.setState({
+											quizView: true,
+										})
+									}
+								>
+									<Text style={quizScreenStyles.buttonText}>
+										Take the Quiz!
+									</Text>
+								</Pressable>
+							</View>
 						</View>
-						<View style={quizScreenStyles.buttonSec}>
-							<Image
-								source={require('../assets/grad.png')}
-								style={quizScreenStyles.pic}
-							/>
-							<Pressable
-								style={quizScreenStyles.takeQuizButton}
-								onPress={() => this.getData()}
-							>
-								<Text style={quizScreenStyles.buttonText}>Take the Quiz!</Text>
-							</Pressable>
-						</View>
-					</View>
+					)}
 				</View>
 				{/*
          This view below is the navBar		*/}
