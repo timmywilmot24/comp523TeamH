@@ -1,41 +1,37 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
-	Text,
-	Alert,
-	Button,
-	View,
-	StyleSheet,
-	TextInput,
-	Keyboard,
-	TouchableWithoutFeedback,
-	TouchableOpacity,
-	TouchableHighlight,
-} from 'react-native';
+  Text,
+  Alert,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 
 export default class LoginForm extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			isLoading: false,
-			email: '',
-			password: '',
-		};
-	}
+    this.state = {
+      isLoading: false,
+      email: "",
+      password: "",
+    };
+  }
 
-	// Creates function that handles an attempt to login
-	onLogin() {
-		const { email, password } = this.state;
+  // Creates function that handles an attempt to login
+  onLogin() {
+    const { email, password } = this.state;
 
-		// If email or password is empty, send alert to prompt user
-		if (email === '') {
-			Alert.alert('Enter email to login');
-		} else if (password === '') {
-			Alert.alert('Enter password to login');
-		} else {
-			this.setState({
-				isLoading: true,
-			});
+    // If email or password is empty, send alert to prompt user
+    if (email === "") {
+      Alert.alert("Enter email to login");
+    } else if (password === "") {
+      Alert.alert("Enter password to login");
+    } else {
+      this.setState({
+        isLoading: true,
+      });
 
       // Makes firebase call to authorize email and password
       // If successful, log that the user logged in (delete later, for debugging purposes)
@@ -74,30 +70,38 @@ export default class LoginForm extends Component {
     return (
       // Renders with two placeholders for user to type info into email and password
       // Login text calls onLogin() when it's pressed
-      <View style={styles.container}>
-        <View style={styles.inputCont}>
+      <View style={styles.formInput}>
+        <View>
           <TextInput
+            style={styles.inputs}
             placeholder="Email"
-            placeholderTextColor="#c0c0c0"
             autoCompleteType="email"
             value={this.state.email}
             onChangeText={(email) => this.setState({ email })}
             label="Email"
-            style={styles.input}
           />
         </View>
-        <View style={styles.inputCont}>
+        <View>
           <TextInput
+            style={styles.inputs}
             placeholder="Password"
-            placeholderTextColor="#c0c0c0"
             value={this.state.password}
             onChangeText={(password) => this.setState({ password })}
             label="Password"
             secureTextEntry={true}
-            style={styles.input}
           />
+          <Text
+            style={styles.forgot}
+            onPress={() => this.props.props.navigation.navigate("Reset")}
+          >
+            Forgot Password?
+          </Text>
         </View>
-        <TouchableOpacity title="Login" onPress={() => this.onLogin()}>
+        <TouchableOpacity
+          style={styles.loginButton}
+          title="Login"
+          onPress={() => this.onLogin()}
+        >
           <Text style={styles.login}>Login</Text>
         </TouchableOpacity>
       </View>
@@ -105,28 +109,58 @@ export default class LoginForm extends Component {
   }
 }
 
+//ADD COMMENT HERE
+
 const styles = StyleSheet.create({
-  container: {
-    top: -80,
-    flex: 1,
-    alignItems: "center",
+  formInput: {
+    width: "80%",
+    marginLeft: "10%",
+    marginRight: "10%",
   },
-  input: {
-    width: 250,
-    height: 32,
-    paddingLeft: 6,
-    borderWidth: 1,
-    borderColor: "white",
+  inputs: {
+    backgroundColor: "white",
+    marginTop: 20,
+    fontSize: 18,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    borderRadius: 5,
+    padding: 8,
+  },
+  forgot: {
+    marginTop: 10,
+    paddingLeft: 8,
     color: "white",
-    borderRadius: 4,
-    marginBottom: 18,
+    fontSize: 18,
+    fontWeight: "300",
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
-  inputCont: {
-    flexDirection: "row",
-    justifyContent: "center",
+  loginButton: {
+    backgroundColor: "#F6931D",
+    width: "60%",
+    marginTop: "10%",
+    marginLeft: "20%",
+    marginRight: "20%",
+    alignItems: "center",
+    borderRadius: 5,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
   },
   login: {
-    color: "orange",
-    fontSize: 28,
+    fontSize: 24,
+    color: "white",
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
 });

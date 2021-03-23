@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import {
-	Image,
+	View,
 	SafeAreaView,
 	Text,
-	ImageBackground,
-	Button,
 	StyleSheet,
-	TextInput,
 	TouchableWithoutFeedback,
 	Keyboard,
+	KeyboardAvoidingView,
+	ScrollView,
 } from 'react-native';
 
 import LoginForm from '../components/LoginForm.js';
@@ -26,69 +25,103 @@ export default class LoginScreen extends Component {
 	// Has options to "forgot password?" and "create account"
 	render() {
 		return (
-			<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-				<ImageBackground
-					style={styles.background}
-					source={require('../assets/backgroundHome.jpg')}
-				>
+			<KeyboardAvoidingView
+				style={styles.container}
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+			>
+				<ScrollView style={styles.body}>
 					<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 						<SafeAreaView>
-							<Text style={styles.slogan}>Tunnel Vision on Your Mission!</Text>
-							<Image
-								style={styles.logo}
-								resizeMode="contain"
-								source={require('../assets/logo.png')}
-							></Image>
-							<LoginForm
-								firebase={this.props.route.params.firebase}
-								props={this.props}
-							></LoginForm>
+							<View style={styles.logo}>
+								<Text style={styles.logoText}>Mission: Scholarship</Text>
+							</View>
 
-							<Text
-								style={styles.forgot}
-								onPress={() => this.props.navigation.navigate('Reset')}
-							>
-								Forgot Password?
-							</Text>
-							<Text
-								style={styles.register}
-								onPress={() => this.props.navigation.navigate('Register')}
-							>
-								No account? Sign up here!
-							</Text>
+							<View style={styles.form}>
+								<View style={styles.header}>
+									<Text style={styles.headerText}>Hey,</Text>
+									<Text style={styles.headerText}>Login Now</Text>
+									<Text
+										style={styles.headerTextBottom}
+										onPress={() => this.props.navigation.navigate('Register')}
+									>
+										No account? Register!
+									</Text>
+								</View>
+								<LoginForm
+									firebase={this.props.route.params.firebase}
+									props={this.props}
+								></LoginForm>
+							</View>
 						</SafeAreaView>
 					</TouchableWithoutFeedback>
-				</ImageBackground>
-			</TouchableWithoutFeedback>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	background: {
+	container: {
 		flex: 1,
-		alignItems: 'center',
 	},
-	forgot: {
-		fontSize: 20,
+	body: {
 		flex: 1,
-		color: '#fff',
+		backgroundColor: '#F6931D',
 	},
 	logo: {
-		width: 300,
-		borderRadius: 300 / 2,
+		marginTop: '15%',
+		alignSelf: 'center',
+		width: '80%',
+		borderRadius: 20,
+		borderWidth: 5,
+		borderColor: 'white',
+		backgroundColor: 'white',
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
 	},
-	register: {
-		fontSize: 20,
-		flex: 1,
-		color: '#fff',
-	},
-	slogan: {
-		color: '#fff',
+	logoText: {
+		fontSize: 34,
 		textAlign: 'center',
-		top: 100,
-		fontSize: 20,
-		fontStyle: 'italic',
 		fontWeight: 'bold',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
+	},
+	form: {
+		marginTop: '15%',
+		backgroundColor: '#B71914',
+		borderTopLeftRadius: 40,
+		height: '100%',
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: -2,
+		},
+		shadowOpacity: 0.25,
+	},
+	header: {
+		marginTop: '10%',
+		marginBottom: '5%',
+		marginLeft: '10%',
+	},
+	headerText: {
+		color: 'white',
+		fontSize: 36,
+		fontWeight: '700',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
+	},
+	headerTextBottom: {
+		color: '#F6931D',
+		fontWeight: 'bold',
+		fontSize: 20,
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
 	},
 });

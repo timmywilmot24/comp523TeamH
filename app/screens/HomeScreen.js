@@ -3,7 +3,7 @@ import {
 	Text,
 	View,
 	StyleSheet,
-	Image,
+	ScrollView,
 	Pressable,
 	SafeAreaView,
 } from 'react-native';
@@ -28,7 +28,20 @@ export default class HomeScreen extends Component {
 				</View>
 				{/*
          This view below is the main		*/}
-				<View style={styles.main}></View>
+				<ScrollView style={styles.main}>
+					<View style={homeStyles.profileCard}>
+						<Text>Profile</Text>
+					</View>
+					<View style={homeStyles.classCard}>
+						<Text>Class</Text>
+					</View>
+					<View style={homeStyles.extraCard}>
+						<Text>Extracurricular</Text>
+					</View>
+					<View style={homeStyles.tipsCard}>
+						<Text>Tips</Text>
+					</View>
+				</ScrollView>
 				{/*
          This view below is the navBar		*/}
 				<View style={styles.navBar}>
@@ -97,12 +110,12 @@ export const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 30,
 		textAlign: 'left',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowColor: 'rgba(0, 0, 0, 0.75)',
 		textShadowOffset: { width: 0, height: 4 },
 		textShadowRadius: 4,
 	},
 	main: {
-		marginTop: 10,
+		marginTop: 20,
 		flex: 1,
 		backgroundColor: '#F6931D',
 	},
@@ -127,5 +140,23 @@ export const styles = StyleSheet.create({
 		textShadowColor: 'rgba(0, 0, 0, 0.25)',
 		textShadowOffset: { width: 0, height: 2 },
 		textShadowRadius: 4,
+	},
+});
+
+const homeStyles = StyleSheet.create({
+	profileCard: {
+		backgroundColor: 'white',
+	},
+	classCard: {
+		marginTop: 5,
+		backgroundColor: 'white',
+	},
+	extraCard: {
+		marginTop: 5,
+		backgroundColor: 'white',
+	},
+	tipsCard: {
+		marginTop: 5,
+		backgroundColor: 'white',
 	},
 });
