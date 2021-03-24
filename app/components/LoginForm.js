@@ -14,8 +14,8 @@ export default class LoginForm extends Component {
 
     this.state = {
       isLoading: false,
-      email: "",
-      password: "",
+      email: "twilmot@live.unc.edu",
+      password: "TimmyW24!",
     };
   }
 
@@ -41,7 +41,6 @@ export default class LoginForm extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((auth) => {
-          console.log("User logged in successfully!");
           this.setState({
             isLoading: false,
             email: "",
