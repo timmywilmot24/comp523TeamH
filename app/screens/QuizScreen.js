@@ -18,21 +18,6 @@ export default class QuizScreen extends Component {
 			quizView: false,
 		};
 	}
-
-	//this method will be moved to quizForm component; this is just for testing
-	// getData() {
-	// 	let db = this.props.route.params.firebase;
-	// 	db.database()
-	// 		.ref('quiz/categoryQuestions/0')
-	// 		.get()
-	// 		.then((quiz) => {
-	// 			this.setState({
-	// 				quiz,
-	// 			});
-	// 			console.log(this.state);
-	// 		});
-	// }
-
 	render() {
 		return (
 			<View style={styles.body}>
@@ -47,10 +32,7 @@ export default class QuizScreen extends Component {
          This view below is the main		*/}
 				<View style={styles.main}>
 					{this.state.quizView ? (
-						<QuizForm
-							question={0}
-							firebase={this.props.route.params.firebase}
-						/>
+						<QuizForm question={0} firebase={this.props.route.params.db} />
 					) : (
 						<View style={quizScreenStyles.card}>
 							<View style={quizScreenStyles.intro}>
