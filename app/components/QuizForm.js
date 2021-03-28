@@ -14,6 +14,7 @@ export default class QuizForm extends Component {
 		super(props);
 
 		this.state = {
+			userID: this.props.userID,
 			finishedQuiz: false,
 			question: this.props.question,
 			dataGrabbed: false,
@@ -36,11 +37,7 @@ export default class QuizForm extends Component {
 	nextQuestion(subject) {
 		let sResults = this.state.subjectResult;
 		if (this.state.question + 1 == this.state.numQuestion.val()) {
-			//finsihedQuiz to be true; when the quiz is done
-			//should put result in users' firebase
-			this.setState({
-				finishedQuiz: true,
-			});
+			this.updateData();
 		} else {
 			//go on to the next set of question
 			if (subject.length > 1) {
@@ -58,6 +55,19 @@ export default class QuizForm extends Component {
 				length: 0,
 			});
 		}
+	}
+
+	updateData() {
+		let db = this.props.firebase;
+		db.database()
+			.ref('users/' + this.state.userID)
+			.update({
+				hasTakenQuiz: true,
+				quizResult: this.state.subjectResult,
+			});
+		this.setState({
+			finishedQuiz: true,
+		});
 	}
 
 	getData() {
@@ -103,63 +113,44 @@ export default class QuizForm extends Component {
 		if (!this.state.dataGrabbed) {
 			this.getData();
 		} else {
-			if (this.state.finishedQuiz) {
-				//view result
-				console.log(this.state.subjectResult);
-				quizHead = (
-					<View key={'quizHead'} style={styles.quizHeadViewAfter}>
-						<Text>Results</Text>
+			for (let i = 0; i < this.state.length; i++) {
+				responsesRender.push(
+					<View key={i} style={styles.responseView}>
+						<Pressable
+							onPress={() => this.nextQuestion(this.state.responses[i].subject)}
+						>
+							<Image
+								style={{ width: 250, height: 250 }}
+								source={{
+									uri: this.state.responses[i].pic,
+								}}
+							/>
+							<Text>{this.state.responses[i].action}</Text>
+						</Pressable>
 					</View>
 				);
-				responsesRender = (
-					<View key={'result'} style={styles.resultView}>
-						<Text>Business: {this.state.subjectResult.Business}</Text>
-						<Text>Humanities: {this.state.subjectResult.Humanities}</Text>
-						<Text>Journalism: {this.state.subjectResult.Journalism}</Text>
-						<Text>Law/Politics: {this.state.subjectResult.LawPolitics}</Text>
-						<Text>Medicine: {this.state.subjectResult.Medicine}</Text>
-						<Text>
-							Natural Science: {this.state.subjectResult.NaturalScience}
-						</Text>
-						<Text>Technology: {this.state.subjectResult.Technology}</Text>
-						<Text>Theatre: {this.state.subjectResult.Theatre}</Text>
-					</View>
-				);
-			} else {
-				for (let i = 0; i < this.state.length; i++) {
-					responsesRender.push(
-						<View key={i} style={styles.responseView}>
-							<Pressable
-								onPress={() =>
-									this.nextQuestion(this.state.responses[i].subject)
-								}
-							>
-								<Image
-									style={{ width: 250, height: 250 }}
-									source={{
-										uri: this.state.responses[i].pic,
-									}}
-								/>
-								<Text>{this.state.responses[i].action}</Text>
-							</Pressable>
-						</View>
-					);
-				}
 			}
 		}
 		return (
-			<View style={styles.body}>
-				{this.state.dataGrabbed ? (
-					// This is when the data is received
-					<ScrollView style={styles.main}>
-						<View>
-							{quizHead}
-							{responsesRender}
-						</View>
-					</ScrollView>
+			<View>
+				{this.state.finishedQuiz ? (
+					//this is a problem after trying to take it a second time bc firebase is not passed on to quiz screen
+					<QuizScreen takenQuiz={true} />
 				) : (
-					// This is before we get the data
-					<View style={styles.main}></View>
+					<View style={styles.body}>
+						{this.state.dataGrabbed ? (
+							// This is when the data is received
+							<ScrollView style={styles.main}>
+								<View>
+									{quizHead}
+									{responsesRender}
+								</View>
+							</ScrollView>
+						) : (
+							// This is before we get the data
+							<View style={styles.main}></View>
+						)}
+					</View>
 				)}
 			</View>
 		);

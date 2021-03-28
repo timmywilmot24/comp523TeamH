@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-	Text,
-	View,
-	StyleSheet,
-	Pressable,
-	SafeAreaView,
-	Image,
-} from 'react-native';
+import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
 import Header from '../components/Header.js';
 import QuizForm from '../components/QuizForm';
 import { styles } from '../screens/MainScreen.js';
@@ -17,7 +10,10 @@ export default class QuizScreen extends Component {
 
 		this.state = {
 			quizView: false,
-			takenQuiz: this.props.takenQuiz,
+			//so takenQuiz will be determined by the users' firebase takenQuiz data, which will be false at first
+			//then after the user take the quiz, it will have takenQuiz as true. So that that user should see the result everytime they login.
+			//something like this takenQuiz: this.props.route.params.db.userID.hasTakenQuiz
+			takenQuiz: false,
 		};
 	}
 	render() {
@@ -28,7 +24,11 @@ export default class QuizScreen extends Component {
          This view below is the main		*/}
 				<View style={styles.main}>
 					{this.state.quizView ? (
-						<QuizForm question={0} firebase={this.props.route.params.db} />
+						<QuizForm
+							question={0}
+							firebase={this.props.route.params.db}
+							userID={this.props.route.params.userID}
+						/>
 					) : (
 						<View style={quizScreenStyles.card}>
 							<View style={quizScreenStyles.intro}>
