@@ -7,8 +7,9 @@ import {
 	SafeAreaView,
 	Image,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Header from '../components/Header.js';
 import QuizForm from '../components/QuizForm';
+import { styles } from '../screens/MainScreen.js';
 
 export default class QuizScreen extends Component {
 	constructor(props) {
@@ -16,18 +17,13 @@ export default class QuizScreen extends Component {
 
 		this.state = {
 			quizView: false,
+			takenQuiz: this.props.takenQuiz,
 		};
 	}
 	render() {
 		return (
 			<View style={styles.body}>
-				{/*
-         This view below is the header		*/}
-				<View style={styles.header}>
-					<SafeAreaView>
-						<Text style={styles.headerText}>Quiz</Text>
-					</SafeAreaView>
-				</View>
+				<Header title={'Quiz'} />
 				{/*
          This view below is the main		*/}
 				<View style={styles.main}>
@@ -38,7 +34,7 @@ export default class QuizScreen extends Component {
 							<View style={quizScreenStyles.intro}>
 								<Text style={quizScreenStyles.introText}>
 									What should you do in high school to prepare for college based
-									on your interest? Take the quiz to find out.
+									on your interests? Take the quiz to find out.
 								</Text>
 							</View>
 							<View style={quizScreenStyles.buttonSec}>
@@ -61,46 +57,6 @@ export default class QuizScreen extends Component {
 							</View>
 						</View>
 					)}
-				</View>
-				{/*
-         This view below is the navBar		*/}
-				<View style={styles.navBar}>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Home')}
-					>
-						<Icon name="home" size={50} color="black" />
-						<Text style={styles.navText}>Home</Text>
-					</Pressable>
-
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Resource')}
-					>
-						<Icon name="briefcase" size={50} color="black" />
-						<Text style={styles.navText}>Resources</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Quiz')}
-					>
-						<Icon name="check-square" size={50} color="black" />
-						<Text style={styles.navText}>Quiz</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('News')}
-					>
-						<Icon name="rss-square" size={50} color="black" />
-						<Text style={styles.navText}>News</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Settings')}
-					>
-						<Icon name="cog" size={50} color="black" />
-						<Text style={styles.navText}>Settings</Text>
-					</Pressable>
 				</View>
 			</View>
 		);
@@ -184,61 +140,5 @@ const quizScreenStyles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: '8%',
 		fontWeight: 'bold',
-	},
-});
-
-export const styles = StyleSheet.create({
-	body: {
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	header: {
-		height: '13%',
-		backgroundColor: '#B71914',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
-	},
-	headerText: {
-		marginLeft: 5,
-		marginTop: 15,
-		color: '#FFFFFF',
-		fontStyle: 'normal',
-		fontWeight: 'bold',
-		fontSize: 30,
-		textAlign: 'left',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 4 },
-		textShadowRadius: 4,
-	},
-	main: {
-		marginTop: 10,
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	navBar: {
-		height: '10%',
-		backgroundColor: 'white',
-		flexDirection: 'row',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: -2,
-		},
-		shadowOpacity: 0.25,
-	},
-	navButton: {
-		marginTop: 5,
-		alignItems: 'center',
-		flex: 1,
-	},
-	navText: {
-		color: 'black',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 2 },
-		textShadowRadius: 4,
 	},
 });

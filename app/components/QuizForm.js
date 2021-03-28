@@ -7,13 +7,14 @@ import {
 	Image,
 	ScrollView,
 } from 'react-native';
+import QuizScreen from '../screens/QuizScreen';
 
 export default class QuizForm extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			takenQuiz: false,
+			finishedQuiz: false,
 			question: this.props.question,
 			dataGrabbed: false,
 			numQuestion: 0,
@@ -35,11 +36,13 @@ export default class QuizForm extends Component {
 	nextQuestion(subject) {
 		let sResults = this.state.subjectResult;
 		if (this.state.question + 1 == this.state.numQuestion.val()) {
-			//if taken set quiz to be taken
+			//finsihedQuiz to be true; when the quiz is done
+			//should put result in users' firebase
 			this.setState({
-				takenQuiz: true,
+				finishedQuiz: true,
 			});
 		} else {
+			//go on to the next set of question
 			if (subject.length > 1) {
 				for (let i = 0; i < subject.length; i++) {
 					sResults[subject[i]] = 1 + sResults[subject[i]];
@@ -100,7 +103,7 @@ export default class QuizForm extends Component {
 		if (!this.state.dataGrabbed) {
 			this.getData();
 		} else {
-			if (this.state.takenQuiz) {
+			if (this.state.finishedQuiz) {
 				//view result
 				console.log(this.state.subjectResult);
 				quizHead = (
@@ -149,8 +152,10 @@ export default class QuizForm extends Component {
 				{this.state.dataGrabbed ? (
 					// This is when the data is received
 					<ScrollView style={styles.main}>
-						{quizHead}
-						{responsesRender}
+						<View>
+							{quizHead}
+							{responsesRender}
+						</View>
 					</ScrollView>
 				) : (
 					// This is before we get the data
