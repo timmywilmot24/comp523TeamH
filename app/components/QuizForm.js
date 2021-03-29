@@ -15,7 +15,6 @@ export default class QuizForm extends Component {
 
 		this.state = {
 			userID: this.props.userID,
-			finishedQuiz: false,
 			question: this.props.question,
 			dataGrabbed: false,
 			numQuestion: 0,
@@ -64,10 +63,10 @@ export default class QuizForm extends Component {
 			.update({
 				hasTakenQuiz: true,
 				quizResult: this.state.subjectResult,
+			})
+			.then(() => {
+				this.props.setState(true);
 			});
-		this.setState({
-			finishedQuiz: true,
-		});
 	}
 
 	getData() {
@@ -133,25 +132,20 @@ export default class QuizForm extends Component {
 		}
 		return (
 			<View>
-				{this.state.finishedQuiz ? (
-					//this is a problem after trying to take it a second time bc firebase is not passed on to quiz screen
-					<QuizScreen takenQuiz={true} />
-				) : (
-					<View style={styles.body}>
-						{this.state.dataGrabbed ? (
-							// This is when the data is received
-							<ScrollView style={styles.main}>
-								<View>
-									{quizHead}
-									{responsesRender}
-								</View>
-							</ScrollView>
-						) : (
-							// This is before we get the data
-							<View style={styles.main}></View>
-						)}
-					</View>
-				)}
+				<View style={styles.body}>
+					{this.state.dataGrabbed ? (
+						// This is when the data is received
+						<ScrollView style={styles.main}>
+							<View>
+								{quizHead}
+								{responsesRender}
+							</View>
+						</ScrollView>
+					) : (
+						// This is before we get the data
+						<View style={styles.main}></View>
+					)}
+				</View>
 			</View>
 		);
 	}

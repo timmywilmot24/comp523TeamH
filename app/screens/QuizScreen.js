@@ -10,54 +10,71 @@ export default class QuizScreen extends Component {
 
 		this.state = {
 			quizView: false,
-			//so takenQuiz will be determined by the users' firebase takenQuiz data, which will be false at first
-			//then after the user take the quiz, it will have takenQuiz as true. So that that user should see the result everytime they login.
-			//something like this takenQuiz: this.props.route.params.db.userID.hasTakenQuiz
 			takenQuiz: false,
 		};
 	}
+
 	render() {
+		// let db = this.props.route.params.db;
+		// db.database()
+		// 	.ref('users/' + this.props.route.params.userID + '/')
+		// 	.get()
+		// 	.then((taken) => {
+		// 		this.setState({
+		// 			takenQuiz: taken,
+		// 		});
+		// 	});
 		return (
 			<View style={styles.body}>
 				<Header title={'Quiz'} />
 				{/*
          This view below is the main		*/}
-				<View style={styles.main}>
-					{this.state.quizView ? (
-						<QuizForm
-							question={0}
-							firebase={this.props.route.params.db}
-							userID={this.props.route.params.userID}
-						/>
-					) : (
-						<View style={quizScreenStyles.card}>
-							<View style={quizScreenStyles.intro}>
-								<Text style={quizScreenStyles.introText}>
-									What should you do in high school to prepare for college based
-									on your interests? Take the quiz to find out.
-								</Text>
-							</View>
-							<View style={quizScreenStyles.buttonSec}>
-								<Image
-									source={require('../assets/grad.png')}
-									style={quizScreenStyles.pic}
-								/>
-								<Pressable
-									style={quizScreenStyles.takeQuizButton}
-									onPress={() =>
-										this.setState({
-											quizView: true,
-										})
-									}
-								>
-									<Text style={quizScreenStyles.buttonText}>
-										Take the Quiz!
+				{this.state.takenQuiz ? (
+					//show results here
+					<View>
+						<Text>Taken Quiz</Text>
+					</View>
+				) : (
+					<View style={styles.main}>
+						{this.state.quizView ? (
+							<QuizForm
+								question={0}
+								firebase={this.props.route.params.db}
+								userID={this.props.route.params.userID}
+								setState={(takenQuiz) => {
+									this.setState({ takenQuiz: takenQuiz });
+								}}
+							/>
+						) : (
+							<View style={quizScreenStyles.card}>
+								<View style={quizScreenStyles.intro}>
+									<Text style={quizScreenStyles.introText}>
+										What should you do in high school to prepare for college
+										based on your interests? Take the quiz to find out.
 									</Text>
-								</Pressable>
+								</View>
+								<View style={quizScreenStyles.buttonSec}>
+									<Image
+										source={require('../assets/grad.png')}
+										style={quizScreenStyles.pic}
+									/>
+									<Pressable
+										style={quizScreenStyles.takeQuizButton}
+										onPress={() =>
+											this.setState({
+												quizView: true,
+											})
+										}
+									>
+										<Text style={quizScreenStyles.buttonText}>
+											Take the Quiz!
+										</Text>
+									</Pressable>
+								</View>
 							</View>
-						</View>
-					)}
-				</View>
+						)}
+					</View>
+				)}
 			</View>
 		);
 	}
