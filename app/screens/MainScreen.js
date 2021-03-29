@@ -23,15 +23,15 @@ export default class MainScreen extends Component {
 	// Can use this structure with NavBar feature
 	render() {
 		/* This is how we would get information
-    let userID = this.props.route.params.uid;
-    let db = this.props.route.params.firebase;
-    db.database()
-      .ref("users/" + userID)
-      .get()
-      .then((data) => {
-        console.log(data);
-      });
-    */
+		let userID = this.props.route.params.uid;
+		let db = this.props.route.params.firebase;
+		db.database()
+		  .ref("users/" + userID)
+		  .get()
+		  .then((data) => {
+		    console.log(data);
+		  });
+		*/
 		let params = {
 			db: this.props.route.params.firebase,
 			userID: this.props.route.params.uid,

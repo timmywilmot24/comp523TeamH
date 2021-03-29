@@ -7,7 +7,6 @@ import {
 	Image,
 	ScrollView,
 } from 'react-native';
-import QuizScreen from '../screens/QuizScreen';
 
 export default class QuizForm extends Component {
 	constructor(props) {

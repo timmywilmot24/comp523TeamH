@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
+import {
+	Text,
+	ScrollView,
+	View,
+	StyleSheet,
+	Pressable,
+	Image,
+} from 'react-native';
 import Header from '../components/Header.js';
 import QuizForm from '../components/QuizForm';
 import { styles } from '../screens/MainScreen.js';
@@ -11,19 +18,39 @@ export default class QuizScreen extends Component {
 		this.state = {
 			quizView: false,
 			takenQuiz: false,
+			Business: 0,
+			Humanities: 0,
+			Journalism: 0,
+			LawPolitics: 0,
+			Medicine: 0,
+			NaturalScience: 0,
+			Technology: 0,
+			Theatre: 0,
 		};
 	}
-
+	getQuizResult() {
+		let db = this.props.route.params.db;
+		db.database()
+			.ref('users/' + this.props.route.params.userID + '/quizResult')
+			.get()
+			.then((result) => {
+				if (result.val() !== 0) {
+					this.setState({
+						takenQuiz: true,
+						Business: result.val().Business,
+						Humanities: result.val().Humanities,
+						Journalism: result.val().Journalism,
+						LawPolitics: result.val().LawPolitics,
+						Medicine: result.val().Medicine,
+						NaturalScience: result.val().NaturalScience,
+						Technology: result.val().Technology,
+						Theatre: result.val().Theatre,
+					});
+				}
+			});
+	}
 	render() {
-		// let db = this.props.route.params.db;
-		// db.database()
-		// 	.ref('users/' + this.props.route.params.userID + '/')
-		// 	.get()
-		// 	.then((taken) => {
-		// 		this.setState({
-		// 			takenQuiz: taken,
-		// 		});
-		// 	});
+		this.getQuizResult();
 		return (
 			<View style={styles.body}>
 				<Header title={'Quiz'} />
@@ -31,9 +58,19 @@ export default class QuizScreen extends Component {
          This view below is the main		*/}
 				{this.state.takenQuiz ? (
 					//show results here
-					<View>
-						<Text>Taken Quiz</Text>
-					</View>
+					<ScrollView>
+						<Text>Result</Text>
+						<View>
+							<Text>{this.state.Business}</Text>
+							<Text>{this.state.Humanities}</Text>
+							<Text>{this.state.Journalism}</Text>
+							<Text>{this.state.LawPolitics}</Text>
+							<Text>{this.state.Medicine}</Text>
+							<Text>{this.state.NaturalScience}</Text>
+							<Text>{this.state.Technology}</Text>
+							<Text>{this.state.Theatre}</Text>
+						</View>
+					</ScrollView>
 				) : (
 					<View style={styles.main}>
 						{this.state.quizView ? (
