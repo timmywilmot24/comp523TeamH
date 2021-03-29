@@ -1,107 +1,117 @@
 import React, { Component } from 'react';
 import {
 	Text,
+	ScrollView,
 	View,
 	StyleSheet,
 	Pressable,
-	SafeAreaView,
 	Image,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Header from '../components/Header.js';
+import QuizForm from '../components/QuizForm';
+import { styles } from '../screens/MainScreen.js';
 
 export default class QuizScreen extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			quizView: false,
+			takenQuiz: false,
+			Business: 0,
+			Humanities: 0,
+			Journalism: 0,
+			LawPolitics: 0,
+			Medicine: 0,
+			NaturalScience: 0,
+			Technology: 0,
+			Theatre: 0,
+		};
 	}
-
-	getData() {
-		let db = this.props.route.params.firebase;
+	getQuizResult() {
+		let db = this.props.route.params.db;
 		db.database()
-			.ref('quiz/categoryQuestions/0')
+			.ref('users/' + this.props.route.params.userID + '/quizResult')
 			.get()
-			.then((quiz) => {
-				this.setState({
-					quiz,
-				});
-				console.log(this.state);
+			.then((result) => {
+				if (result.val() !== 0) {
+					this.setState({
+						takenQuiz: true,
+						Business: result.val().Business,
+						Humanities: result.val().Humanities,
+						Journalism: result.val().Journalism,
+						LawPolitics: result.val().LawPolitics,
+						Medicine: result.val().Medicine,
+						NaturalScience: result.val().NaturalScience,
+						Technology: result.val().Technology,
+						Theatre: result.val().Theatre,
+					});
+				}
 			});
 	}
 	render() {
+		this.getQuizResult();
 		return (
 			<View style={styles.body}>
-				{/*
-         This view below is the header		*/}
-				<View style={styles.header}>
-					<SafeAreaView>
-						<Text style={styles.headerText}>Quiz</Text>
-					</SafeAreaView>
-				</View>
+				<Header title={'Quiz'} />
 				{/*
          This view below is the main		*/}
-				<View style={styles.main}>
-					<View style={quizScreenStyles.card}>
-						<View style={quizScreenStyles.intro}>
-							<Text style={quizScreenStyles.introText}>
-								What should you do in high school to prepare for college based
-								on your interest? Take the quiz to find out.
-							</Text>
+				{this.state.takenQuiz ? (
+					//show results here
+					<ScrollView>
+						<Text>Result</Text>
+						<View>
+							<Text>{this.state.Business}</Text>
+							<Text>{this.state.Humanities}</Text>
+							<Text>{this.state.Journalism}</Text>
+							<Text>{this.state.LawPolitics}</Text>
+							<Text>{this.state.Medicine}</Text>
+							<Text>{this.state.NaturalScience}</Text>
+							<Text>{this.state.Technology}</Text>
+							<Text>{this.state.Theatre}</Text>
 						</View>
-						<View style={quizScreenStyles.buttonSec}>
-							<Image
-								source={require('../assets/grad.png')}
-								style={quizScreenStyles.pic}
+					</ScrollView>
+				) : (
+					<View style={styles.main}>
+						{this.state.quizView ? (
+							<QuizForm
+								question={0}
+								firebase={this.props.route.params.db}
+								userID={this.props.route.params.userID}
+								setState={(takenQuiz) => {
+									this.setState({ takenQuiz: takenQuiz });
+								}}
 							/>
-							<Pressable
-								style={quizScreenStyles.takeQuizButton}
-								onPress={() => this.getData()}
-							>
-								<Text style={quizScreenStyles.buttonText}>Take the Quiz!</Text>
-							</Pressable>
-						</View>
+						) : (
+							<View style={quizScreenStyles.card}>
+								<View style={quizScreenStyles.intro}>
+									<Text style={quizScreenStyles.introText}>
+										What should you do in high school to prepare for college
+										based on your interests? Take the quiz to find out.
+									</Text>
+								</View>
+								<View style={quizScreenStyles.buttonSec}>
+									<Image
+										source={require('../assets/grad.png')}
+										style={quizScreenStyles.pic}
+									/>
+									<Pressable
+										style={quizScreenStyles.takeQuizButton}
+										onPress={() =>
+											this.setState({
+												quizView: true,
+											})
+										}
+									>
+										<Text style={quizScreenStyles.buttonText}>
+											Take the Quiz!
+										</Text>
+									</Pressable>
+								</View>
+							</View>
+						)}
 					</View>
-				</View>
-				{/*
-         This view below is the navBar		*/}
-				<View style={styles.navBar}>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Home')}
-					>
-						<Icon name="home" size={50} color="black" />
-						<Text style={styles.navText}>Home</Text>
-					</Pressable>
-
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Resource')}
-					>
-						<Icon name="briefcase" size={50} color="black" />
-						<Text style={styles.navText}>Resources</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Quiz')}
-					>
-						<Icon name="check-square" size={50} color="black" />
-						<Text style={styles.navText}>Quiz</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('News')}
-					>
-						<Icon name="rss-square" size={50} color="black" />
-						<Text style={styles.navText}>News</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Settings')}
-					>
-						<Icon name="cog" size={50} color="black" />
-						<Text style={styles.navText}>Settings</Text>
-					</Pressable>
-				</View>
+				)}
 			</View>
 		);
 	}
@@ -184,61 +194,5 @@ const quizScreenStyles = StyleSheet.create({
 		textAlign: 'center',
 		marginTop: '8%',
 		fontWeight: 'bold',
-	},
-});
-
-export const styles = StyleSheet.create({
-	body: {
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	header: {
-		height: '13%',
-		backgroundColor: '#B71914',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
-	},
-	headerText: {
-		marginLeft: 5,
-		marginTop: 15,
-		color: '#FFFFFF',
-		fontStyle: 'normal',
-		fontWeight: 'bold',
-		fontSize: 30,
-		textAlign: 'left',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 4 },
-		textShadowRadius: 4,
-	},
-	main: {
-		marginTop: 10,
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	navBar: {
-		height: '10%',
-		backgroundColor: 'white',
-		flexDirection: 'row',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: -2,
-		},
-		shadowOpacity: 0.25,
-	},
-	navButton: {
-		marginTop: 5,
-		alignItems: 'center',
-		flex: 1,
-	},
-	navText: {
-		color: 'black',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 2 },
-		textShadowRadius: 4,
 	},
 });

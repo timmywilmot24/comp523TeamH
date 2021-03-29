@@ -63,6 +63,8 @@ export default class LoginForm extends Component {
 							lastName: lastName,
 							highSchool: highSchool,
 							grade: grade,
+							hasTakenQuiz: false,
+							quizResult: 0,
 						});
 					this.setState({
 						isLoading: false,
