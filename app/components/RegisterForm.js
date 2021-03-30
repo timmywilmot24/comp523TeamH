@@ -17,14 +17,13 @@ export default class LoginForm extends Component {
 
     this.state = {
       isLoading: false,
-      email: "davidcubrilla@gmail.com",
-      password: "qwery",
-      confirmPassword: "qwery",
-      firstName: "Timmy",
-      lastName: "Wilmot",
-      highSchool: "Gray Creek",
-      grade: "12",
-      error: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      highSchool: "",
+      grade: "",
     };
   }
 
@@ -37,23 +36,40 @@ export default class LoginForm extends Component {
       lastName,
       highSchool,
       grade,
-      error,
     } = this.state;
 
     // If email or password is empty, or password doesn't match, send alert to prompt user
     if (email === "") {
-      error = "Enter email to register";
+      this.setState({
+        errorText: "Enter email to register",
+        errorCode: 3,
+      });
     } else if (password === "") {
-      error = "Enter password to register";
+      this.setState({
+        errorText: "Enter password to register",
+        errorCode: 4,
+      });
     } else if (password !== confirmPassword) {
-      error = "Passwords do not match";
+      this.setState({
+        errorText: "Passwords do not match",
+        errorCode: 5,
+      });
       // If first and last name are not valid
     } else if (!firstName.match(/^[A-Z][a-z]+$/)) {
-      error = "First name is not valid";
+      this.setState({
+        errorText: "First name is not valid",
+        errorCode: 1,
+      });
     } else if (!lastName.match(/^[A-Z][a-z]+$/)) {
-      error = "Last name is not valid";
+      this.setState({
+        errorText: "Last name is not valid",
+        errorCode: 2,
+      });
     } else if (!(grade == 9 || grade == 10 || grade == 11 || grade == 12)) {
-      error = "Grade is not valid";
+      this.setState({
+        errorText: "Grade must be 9, 10, 11, or 12",
+        errorCode: 7,
+      });
     } else {
       this.setState({
         isLoading: true,
@@ -79,19 +95,33 @@ export default class LoginForm extends Component {
             isLoading: false,
             email: "",
             password: "",
+            confirmPassword: "",
+            firstName: "",
+            lastName: "",
+            highSchool: "",
+            grade: "",
           });
           this.props.props.navigation.navigate("Main", {
             uid: auth.user.uid,
           });
         })
         .catch((errorMessage) => {
-          switch (errorMessage.toString()) {
-            case "Error: Password should be at least 6 characters":
-              error = "Password is too short.";
-            case "Error: The email address is already in use by another account.":
-              error = "Email address already in use";
-            default:
-              error = errorMessage.toString();
+          if (
+            errorMessage.toString() ===
+            "Error: The email address is already in use by another account."
+          ) {
+            this.setState({
+              errorText: "Email address already in use",
+              errorCode: 3,
+            });
+          } else if (
+            errorMessage.toString() ===
+            "Error: Password should be at least 6 characters"
+          ) {
+            this.setState({
+              errorText: "Password is too short",
+              errorCode: 4,
+            });
           }
         });
     }
@@ -107,6 +137,11 @@ export default class LoginForm extends Component {
             onChangeText={(firstName) => this.setState({ firstName })}
             label="First name"
           />
+          {this.state.errorCode == 1 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -116,6 +151,11 @@ export default class LoginForm extends Component {
             onChangeText={(lastName) => this.setState({ lastName })}
             label="Last name"
           />
+          {this.state.errorCode == 2 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -125,6 +165,11 @@ export default class LoginForm extends Component {
             onChangeText={(email) => this.setState({ email })}
             label="Email"
           />
+          {this.state.errorCode == 3 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -133,7 +178,13 @@ export default class LoginForm extends Component {
             value={this.state.password}
             onChangeText={(password) => this.setState({ password })}
             label="Password"
+            secureTextEntry={true}
           />
+          {this.state.errorCode == 4 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -144,7 +195,13 @@ export default class LoginForm extends Component {
               this.setState({ confirmPassword })
             }
             label="Confirm Password"
+            secureTextEntry={true}
           />
+          {this.state.errorCode == 5 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -154,6 +211,11 @@ export default class LoginForm extends Component {
             onChangeText={(highSchool) => this.setState({ highSchool })}
             label="High school"
           />
+          {this.state.errorCode == 6 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
         <View>
           <TextInput
@@ -163,7 +225,17 @@ export default class LoginForm extends Component {
             onChangeText={(grade) => this.setState({ grade })}
             label="Grade"
           />
+          {this.state.errorCode == 7 ? (
+            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          ) : (
+            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          )}
         </View>
+        {this.state.errorCode == 8 ? (
+          <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+        ) : (
+          <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+        )}
         <TouchableOpacity
           style={styles.registerButton}
           title="Register"
@@ -171,7 +243,6 @@ export default class LoginForm extends Component {
         >
           <Text style={styles.register}>Register</Text>
         </TouchableOpacity>
-        <Text>{this.state.error}</Text>
       </View>
     );
   }
@@ -183,6 +254,7 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     marginLeft: "10%",
     marginRight: "10%",
+    paddingBottom: "10%",
   },
   inputs: {
     backgroundColor: "white",
