@@ -102,7 +102,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: '#F6931D',
 	},
 	main: {
-		marginTop: 10,
 		flex: 1,
 		backgroundColor: '#F6931D',
 	},

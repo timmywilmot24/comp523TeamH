@@ -1,19 +1,19 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
-  Text,
-  Alert,
-  Button,
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  TouchableHighlight,
-} from "react-native";
+	Text,
+	Alert,
+	Button,
+	View,
+	StyleSheet,
+	TextInput,
+	TouchableWithoutFeedback,
+	TouchableOpacity,
+	TouchableHighlight,
+} from 'react-native';
 
 export default class LoginForm extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
     this.state = {
       isLoading: false,
