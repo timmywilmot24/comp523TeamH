@@ -38,6 +38,7 @@ export default class ResetScreen extends Component {
         .auth()
         .sendPasswordResetEmail(email)
         .then(() => {
+          console.log(email);
           this.setState({
             isLoading: false,
             email: "",
