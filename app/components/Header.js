@@ -22,14 +22,8 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
 	header: {
-		height: '13%',
+		height: '14%',
 		backgroundColor: '#B71914',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
 	},
 	headerText: {
 		marginLeft: 5,
