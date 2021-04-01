@@ -5,8 +5,14 @@ import {
 	StyleSheet,
 	Pressable,
 	Image,
-	ScrollView,
+	Dimensions,
+	ImageBackground,
 } from 'react-native';
+import { FlatGrid } from 'react-native-super-grid';
+const screenWidth = Dimensions.get('window').width;
+// const windowWidth = useWindowDimensions().width;
+// const windowHeight = useWindowDimensions().height;
+// const windowFont = useWindowDimensions().fontScale;
 
 export default class QuizForm extends Component {
 	constructor(props) {
@@ -114,28 +120,11 @@ export default class QuizForm extends Component {
 			this.getData();
 		} else {
 			for (let i = 0; i < this.state.length; i++) {
-				responsesRender.push(
-					<View key={i} style={styles.responseView}>
-						<Pressable
-							style={styles.responseContainer}
-							onPress={() => this.nextQuestion(this.state.responses[i].subject)}
-						>
-							<View style={styles.responseImageContainer}>
-								<Image
-									style={styles.responseImage}
-									source={{
-										uri: this.state.responses[i].pic,
-									}}
-								/>
-							</View>
-							<View style={styles.actionContainer}>
-								<Text numberOfLines={2} style={styles.actionText}>
-									{this.state.responses[i].action}
-								</Text>
-							</View>
-						</Pressable>
-					</View>
-				);
+				responsesRender.push({
+					subject: this.state.responses[i].subject,
+					action: this.state.responses[i].action,
+					pic: this.state.responses[i].pic,
+				});
 			}
 		}
 		return (
@@ -143,10 +132,29 @@ export default class QuizForm extends Component {
 				<View>{quizHead}</View>
 				<View>
 					{this.state.dataGrabbed ? (
-						// This is when the data is received
-						<ScrollView style={styles.scrollForm}>
-							<View>{responsesRender}</View>
-						</ScrollView>
+						<FlatGrid
+							itemDimension={screenWidth * (1 / 3)}
+							data={responsesRender}
+							style={styles.gridView}
+							// staticDimension={300}
+							// fixed
+							//spacing={10}
+							renderItem={({ item }) => (
+								<View>
+									<Pressable onPress={() => this.nextQuestion(item.subject)}>
+										<ImageBackground
+											style={styles.responseImage}
+											imageStyle={styles.actualImage}
+											source={{
+												uri: item.pic,
+											}}
+										>
+											<Text style={styles.action}>{item.action}</Text>
+										</ImageBackground>
+									</Pressable>
+								</View>
+							)}
+						/>
 					) : (
 						// This is before we get the data show a loading bar
 						<View style={styles.main}></View>
@@ -167,49 +175,25 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		marginBottom: 5,
 	},
-	responseView: {
-		alignItems: 'center',
-		marginTop: '10%',
+	gridView: {
+		backgroundColor: '#F6931D',
+		width: screenWidth,
 	},
 	responseContainer: {
-		alignItems: 'center',
-		backgroundColor: '#B71914',
-		width: '90%',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
 		borderRadius: 5,
-	},
-	responseImageContainer: {
-		width: 250,
-		borderRadius: 5,
-		backgroundColor: 'white',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
-		marginBottom: '2.5%',
-		marginTop: '5%',
 	},
 	responseImage: {
-		width: 250,
-		height: 250,
+		width: screenWidth * (7 / 15),
+		height: screenWidth * (1 / 2),
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	actualImage: {
 		borderRadius: 5,
 	},
-	actionContainer: {
-		marginBottom: '5%',
-		flexDirection: 'row',
-		flex: 1,
-	},
-	actionText: {
-		width: '100%',
+	action: {
 		color: 'white',
-		fontSize: 18,
-		textAlign: 'center',
+		backgroundColor: 'rgba(0,0,0,0.5)',
+		width: '100%',
 	},
 });

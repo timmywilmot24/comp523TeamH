@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import {
 	Text,
-	ScrollView,
 	View,
 	StyleSheet,
 	Pressable,
 	Image,
+	Dimensions,
 } from 'react-native';
+import HorizontalBarGraph from '@chartiful/react-native-horizontal-bar-graph';
 import Header from '../components/Header.js';
 import QuizForm from '../components/QuizForm';
 import { styles } from '../screens/MainScreen.js';
-
+const screenWidth = Dimensions.get('window').width;
 export default class QuizScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -60,19 +61,51 @@ export default class QuizScreen extends Component {
          This view below is the main		*/}
 				{this.state.takenQuiz ? (
 					//show results here
-					<ScrollView>
+					<View style={quizResultStyles.main}>
 						<View style={quizResultStyles.resultContainer}>
 							<Text style={quizResultStyles.resultText}>Your Results</Text>
 						</View>
-						<View>
-							<Text>{this.state.Business}</Text>
-							<Text>{this.state.Humanities}</Text>
-							<Text>{this.state.Journalism}</Text>
-							<Text>{this.state.LawPolitics}</Text>
-							<Text>{this.state.Medicine}</Text>
-							<Text>{this.state.NaturalScience}</Text>
-							<Text>{this.state.Technology}</Text>
-							<Text>{this.state.Theatre}</Text>
+						<View style={quizResultStyles.barGraphContainer}>
+							<HorizontalBarGraph
+								style={quizResultStyles.barGraph}
+								data={[
+									this.state.Business,
+									this.state.Humanities,
+									this.state.Journalism,
+									this.state.LawPolitics,
+									this.state.Medicine,
+									this.state.NaturalScience,
+									this.state.Technology,
+									this.state.Theatre,
+								]}
+								labels={[
+									'Business',
+									'Humanities',
+									'Journalism',
+									'Politics',
+									'Medicine',
+									'Science',
+									'Technology',
+									'Theatre',
+								]}
+								barColor={'#B71914'}
+								width={screenWidth * (6 / 7)}
+								height={350}
+								baseConfig={{
+									hasYAxisBackgroundLines: false,
+									xAxisLabelStyle: {
+										fontSize: 12,
+										width: 70,
+										yOffset: 4,
+										xOffset: -20,
+									},
+									yAxisLabelStyle: {
+										fontSize: 12,
+										position: 'bottom',
+										decimals: 1,
+									},
+								}}
+							/>
 						</View>
 						<Pressable
 							style={quizResultStyles.retakeButton}
@@ -85,7 +118,7 @@ export default class QuizScreen extends Component {
 						>
 							<Text style={quizResultStyles.retakeButtonText}>Retake Quiz</Text>
 						</Pressable>
-					</ScrollView>
+					</View>
 				) : (
 					<View style={styles.main}>
 						{this.state.quizView ? (
@@ -213,8 +246,12 @@ const quizScreenStyles = StyleSheet.create({
 });
 
 const quizResultStyles = StyleSheet.create({
+	main: {
+		alignItems: 'center',
+	},
 	resultContainer: {
 		backgroundColor: 'white',
+		width: '100%',
 	},
 	resultText: {
 		fontSize: 18,
@@ -222,10 +259,36 @@ const quizResultStyles = StyleSheet.create({
 	},
 	retakeButton: {
 		backgroundColor: '#B71914',
+		width: screenWidth * (11 / 12),
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	retakeButtonText: {
 		color: 'white',
 		fontSize: 18,
 		textAlign: 'center',
+	},
+	barGraphContainer: {
+		width: screenWidth * (11 / 12),
+		backgroundColor: 'white',
+		borderRadius: 10,
+		alignItems: 'center',
+		marginTop: 20,
+		marginBottom: 20,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+	},
+	barGraph: {
+		backgroundColor: 'white',
+		marginTop: 7,
 	},
 });
