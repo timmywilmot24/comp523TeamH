@@ -100,7 +100,7 @@ export default class NewsScreen extends Component {
               {this.state.messages[i].date}
             </Text>
             <Text style={newsScreenStyles.message}>
-              {this.state.messages[i].message}
+              {this.state.messages[i].message}{" "}
             </Text>
           </View>
         );
