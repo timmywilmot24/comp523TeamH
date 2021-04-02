@@ -6,6 +6,7 @@ import {
 	Pressable,
 	Image,
 	Dimensions,
+	PixelRatio,
 } from 'react-native';
 import HorizontalBarGraph from '@chartiful/react-native-horizontal-bar-graph';
 import Header from '../components/Header.js';
@@ -57,8 +58,6 @@ export default class QuizScreen extends Component {
 		return (
 			<View style={styles.body}>
 				<Header title={'Quiz'} />
-				{/*
-         This view below is the main		*/}
 				{this.state.takenQuiz ? (
 					//show results here
 					<View style={quizResultStyles.main}>
@@ -67,6 +66,7 @@ export default class QuizScreen extends Component {
 						</View>
 						<View style={quizResultStyles.barGraphContainer}>
 							<HorizontalBarGraph
+								barWidthPercentage={0.4}
 								style={quizResultStyles.barGraph}
 								data={[
 									this.state.Business,
@@ -89,35 +89,36 @@ export default class QuizScreen extends Component {
 									'Theatre',
 								]}
 								barColor={'#B71914'}
-								width={screenWidth * (6 / 7)}
-								height={350}
+								width={screenWidth * (19 / 20)}
+								height={screenWidth * (19 / 20)}
 								baseConfig={{
 									hasYAxisBackgroundLines: false,
 									xAxisLabelStyle: {
-										fontSize: 12,
-										width: 70,
-										yOffset: 4,
-										xOffset: -20,
+										fontSize: 8,
+										yOffset: 4, //subject label up and down value
+										xOffset: screenWidth * -(1 / 30),
 									},
 									yAxisLabelStyle: {
-										fontSize: 12,
+										fontSize: 8,
 										position: 'bottom',
 										decimals: 1,
 									},
 								}}
 							/>
+							<Pressable
+								style={quizResultStyles.retakeButton}
+								onPress={() =>
+									this.setState({
+										quizView: true,
+										takenQuiz: false,
+									})
+								}
+							>
+								<Text style={quizResultStyles.retakeButtonText}>
+									Take the quiz again
+								</Text>
+							</Pressable>
 						</View>
-						<Pressable
-							style={quizResultStyles.retakeButton}
-							onPress={() =>
-								this.setState({
-									quizView: true,
-									takenQuiz: false,
-								})
-							}
-						>
-							<Text style={quizResultStyles.retakeButtonText}>Retake Quiz</Text>
-						</Pressable>
 					</View>
 				) : (
 					<View style={styles.main}>
@@ -250,36 +251,45 @@ const quizResultStyles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	resultContainer: {
-		backgroundColor: 'white',
+		backgroundColor: '#B71914',
 		width: '100%',
+		marginTop: screenWidth * (1 / 6),
 	},
 	resultText: {
 		fontSize: 18,
 		textAlign: 'center',
+		color: 'white',
 	},
 	retakeButton: {
 		backgroundColor: '#B71914',
 		width: screenWidth * (11 / 12),
-		borderRadius: 5,
+		height: screenWidth * (1 / 8),
+		borderRadius: 20,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
 			height: 4,
 		},
 		shadowOpacity: 0.25,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginBottom: screenWidth * (1 / 20),
 	},
 	retakeButtonText: {
 		color: 'white',
 		fontSize: 18,
+		fontWeight: 'bold',
 		textAlign: 'center',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 4 },
+		textShadowRadius: 4,
 	},
 	barGraphContainer: {
-		width: screenWidth * (11 / 12),
+		width: screenWidth,
 		backgroundColor: 'white',
-		borderRadius: 10,
 		alignItems: 'center',
-		marginTop: 20,
-		marginBottom: 20,
+		justifyContent: 'center',
+		marginBottom: screenWidth * (1 / 20),
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
@@ -289,6 +299,6 @@ const quizResultStyles = StyleSheet.create({
 	},
 	barGraph: {
 		backgroundColor: 'white',
-		marginTop: 7,
+		marginTop: screenWidth * (1 / 20),
 	},
 });

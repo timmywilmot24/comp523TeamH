@@ -4,16 +4,11 @@ import {
 	View,
 	StyleSheet,
 	Pressable,
-	Image,
 	Dimensions,
 	ImageBackground,
 } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 const screenWidth = Dimensions.get('window').width;
-// const windowWidth = useWindowDimensions().width;
-// const windowHeight = useWindowDimensions().height;
-// const windowFont = useWindowDimensions().fontScale;
-
 export default class QuizForm extends Component {
 	constructor(props) {
 		super(props);
@@ -133,12 +128,10 @@ export default class QuizForm extends Component {
 				<View>
 					{this.state.dataGrabbed ? (
 						<FlatGrid
+							onEndReachedThreshold={0.5}
 							itemDimension={screenWidth * (1 / 3)}
 							data={responsesRender}
 							style={styles.gridView}
-							// staticDimension={300}
-							// fixed
-							//spacing={10}
 							renderItem={({ item }) => (
 								<View>
 									<Pressable onPress={() => this.nextQuestion(item.subject)}>
@@ -178,6 +171,7 @@ const styles = StyleSheet.create({
 	gridView: {
 		backgroundColor: '#F6931D',
 		width: screenWidth,
+		marginBottom: screenWidth * (1 / 4),
 	},
 	responseContainer: {
 		borderRadius: 5,
@@ -186,10 +180,7 @@ const styles = StyleSheet.create({
 		width: screenWidth * (7 / 15),
 		height: screenWidth * (1 / 2),
 		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	actualImage: {
-		borderRadius: 5,
+		justifyContent: 'flex-end',
 	},
 	action: {
 		color: 'white',

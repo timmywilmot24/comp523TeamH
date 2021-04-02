@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, Dimensions } from 'react-native';
+const screenWidth = Dimensions.get('window').width;
 
 export default class Header extends Component {
 	constructor(props) {
@@ -22,12 +23,12 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
 	header: {
-		height: '14%',
+		height: '12%',
 		backgroundColor: '#B71914',
 	},
 	headerText: {
 		marginLeft: 5,
-		marginTop: 15,
+		//marginTop: screenWidth * (1 / ),
 		color: '#FFFFFF',
 		fontStyle: 'normal',
 		fontWeight: 'bold',
