@@ -7,6 +7,7 @@ import {
   Image,
   Pressable,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
@@ -24,6 +25,7 @@ export default class NewsScreen extends Component {
       isAdmin: false,
       addPost: false,
       post: "",
+      deletePrompt: [],
     };
   }
 
@@ -34,6 +36,7 @@ export default class NewsScreen extends Component {
       .get()
       .then((news) => {
         let messages = this.state.messages;
+        let deletePrompt = [];
         let length = 0;
         news.forEach((post) => {
           length += 1;
@@ -41,6 +44,7 @@ export default class NewsScreen extends Component {
             date: post.val().date,
             message: post.val().message,
           });
+          deletePrompt.push(false);
         });
         this.state.db
           .database()
@@ -52,6 +56,7 @@ export default class NewsScreen extends Component {
               length: length,
               dataGrabbed: true,
               isAdmin: data.val() === "admin",
+              deletePrompt: deletePrompt,
             });
           });
       });
@@ -82,6 +87,29 @@ export default class NewsScreen extends Component {
           dataGrabbed: false,
           messages: [],
           length: 0,
+          post: "",
+        });
+      });
+  }
+
+  handleDelete(removeEle) {
+    let messages = [];
+    let deletePrompt = [];
+    for (let i = 0; i < this.state.messages.length; i++) {
+      if (i !== removeEle) {
+        messages.push(this.state.messages[i]);
+        deletePrompt.push(false);
+      }
+    }
+    this.state.db
+      .database()
+      .ref("news")
+      .set(messages)
+      .then(() => {
+        this.setState({
+          messages: messages,
+          length: this.state.length - 1,
+          deletePrompt: deletePrompt,
         });
       });
   }
@@ -91,7 +119,6 @@ export default class NewsScreen extends Component {
     if (!this.state.dataGrabbed) {
       this.getData();
     } else {
-      //console.log(this.state.isAdmin);
       for (let i = this.state.length - 1; i > -1; i--) {
         feed.push(
           // Style these as the individual messages
@@ -102,6 +129,43 @@ export default class NewsScreen extends Component {
             <Text style={newsScreenStyles.message}>
               {this.state.messages[i].message}
             </Text>
+            {this.state.isAdmin && (
+              <View>
+                {this.state.deletePrompt[i] ? (
+                  <View>
+                    <Text>Are you sure you want to delete your message?</Text>
+                    <Pressable onPress={() => this.handleDelete(i)}>
+                      <Text>Yes</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => {
+                        let prompts = this.state.deletePrompt;
+                        prompts[i] = false;
+                        this.setState({
+                          deletePrompt: prompts,
+                        });
+                      }}
+                    >
+                      <Text>No</Text>
+                    </Pressable>
+                  </View>
+                ) : (
+                  <View>
+                    <Pressable
+                      onPress={() => {
+                        let prompts = this.state.deletePrompt;
+                        prompts[i] = true;
+                        this.setState({
+                          deletePrompt: prompts,
+                        });
+                      }}
+                    >
+                      <Text>Delete</Text>
+                    </Pressable>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         );
       }
