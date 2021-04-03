@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
-	Text,
-	Alert,
-	Button,
-	View,
-	StyleSheet,
-	TextInput,
-	TouchableWithoutFeedback,
-	TouchableOpacity,
-	TouchableHighlight,
-} from 'react-native';
+  Text,
+  Alert,
+  Button,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  TouchableHighlight,
+} from "react-native";
 
-export default class LoginForm extends Component {
-	constructor(props) {
-		super(props);
+export default class RegisterForm extends Component {
+  constructor(props) {
+    super(props);
 
     this.state = {
       isLoading: false,
@@ -24,6 +24,8 @@ export default class LoginForm extends Component {
       lastName: "",
       highSchool: "",
       grade: "",
+      errorText: "",
+      errorCode: 0,
     };
   }
 
@@ -133,63 +135,84 @@ export default class LoginForm extends Component {
           <TextInput
             style={styles.inputs}
             placeholder="First name"
+            placeholderTextColor="white"
             value={this.state.firstName}
             onChangeText={(firstName) => this.setState({ firstName })}
             label="First name"
           />
           {this.state.errorCode == 1 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Last name"
+            placeholderTextColor="white"
             value={this.state.lastName}
             onChangeText={(lastName) => this.setState({ lastName })}
             label="Last name"
           />
           {this.state.errorCode == 2 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Email"
+            placeholderTextColor="white"
             value={this.state.email}
             onChangeText={(email) => this.setState({ email })}
             label="Email"
           />
           {this.state.errorCode == 3 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Password"
+            placeholderTextColor="white"
             value={this.state.password}
             onChangeText={(password) => this.setState({ password })}
             label="Password"
             secureTextEntry={true}
           />
           {this.state.errorCode == 4 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Confirm Password"
+            placeholderTextColor="white"
             value={this.state.confirmPassword}
             onChangeText={(confirmPassword) =>
               this.setState({ confirmPassword })
@@ -198,43 +221,61 @@ export default class LoginForm extends Component {
             secureTextEntry={true}
           />
           {this.state.errorCode == 5 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="High School"
+            placeholderTextColor="white"
             value={this.state.highSchool}
             onChangeText={(highSchool) => this.setState({ highSchool })}
             label="High school"
           />
           {this.state.errorCode == 6 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Grade"
+            placeholderTextColor="white"
             value={this.state.grade}
             onChangeText={(grade) => this.setState({ grade })}
             label="Grade"
           />
           {this.state.errorCode == 7 ? (
-            <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           ) : (
-            <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
           )}
         </View>
         {this.state.errorCode == 8 ? (
-          <Text style={{ color: "white" }}>{this.state.errorText}</Text>
+          <Text style={{ color: "white", padding: 5 }}>
+            {this.state.errorText}
+          </Text>
         ) : (
-          <Text style={{ color: "#B71914" }}>{this.state.errorText}</Text>
+          <Text style={{ color: "#B71914", padding: 5 }}>
+            {this.state.errorText}
+          </Text>
         )}
         <TouchableOpacity
           style={styles.registerButton}
@@ -257,9 +298,9 @@ const styles = StyleSheet.create({
     paddingBottom: "10%",
   },
   inputs: {
-    backgroundColor: "white",
+    //backgroundColor: "white",
     marginTop: 15,
-    fontSize: 22,
+    fontSize: 20,
     shadowColor: "black",
     shadowOffset: {
       width: 0,
@@ -268,6 +309,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     borderRadius: 5,
     padding: 5,
+    // Added these three
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+    color: "white",
   },
   registerButton: {
     backgroundColor: "#F6931D",

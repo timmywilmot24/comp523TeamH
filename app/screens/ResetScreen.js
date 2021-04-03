@@ -83,7 +83,7 @@ export default class ResetScreen extends Component {
           />
         </View>
         <TouchableOpacity title="reset" onPress={() => this.onReset()}>
-          <Text>Reset Email</Text>
+          <Text>Reset Password</Text>
         </TouchableOpacity>
         <TouchableOpacity
           title="login"
