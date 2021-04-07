@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Component } from "react";
+import { LogBox } from "react-native";
 import LoginScreen from "./app/screens/LoginScreen.js";
 import MainScreen from "./app/screens/MainScreen.js";
 import RegisterScreen from "./app/screens/RegisterScreen.js";
@@ -24,39 +25,50 @@ const db = firebase.initializeApp({
 
 // Uses a Stack Navigator to offer navigation
 // between the login page, register page, reset password page, and main page
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        // Stack navigator with initial page as login and no header
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          // Login page that passes in our database reference
-          name="Login"
-          initialParams={{ firebase: db }}
-          component={LoginScreen}
-        ></Stack.Screen>
-        <Stack.Screen
-          // Reset password page that passes in our database reference
-          name="Reset"
-          initialParams={{ firebase: db }}
-          component={ResetScreen}
-        ></Stack.Screen>
-        <Stack.Screen
-          // Register page that passes in our database reference
-          name="Register"
-          initialParams={{ firebase: db }}
-          component={RegisterScreen}
-        ></Stack.Screen>
-        <Stack.Screen
-          // Main page that passes in our database reference
-          name="Main"
-          initialParams={{ firebase: db }}
-          component={MainScreen}
-        ></Stack.Screen>
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  componentDidMount() {
+    LogBox.ignoreLogs(["Require cycle"]);
+  }
+
+  render() {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          // Stack navigator with initial page as login and no header
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen
+            // Login page that passes in our database reference
+            name="Login"
+            initialParams={{ firebase: db }}
+            component={LoginScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            // Reset password page that passes in our database reference
+            name="Reset"
+            initialParams={{ firebase: db }}
+            component={ResetScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            // Register page that passes in our database reference
+            name="Register"
+            initialParams={{ firebase: db }}
+            component={RegisterScreen}
+          ></Stack.Screen>
+          <Stack.Screen
+            // Main page that passes in our database reference
+            name="Main"
+            initialParams={{ firebase: db }}
+            component={MainScreen}
+          ></Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }

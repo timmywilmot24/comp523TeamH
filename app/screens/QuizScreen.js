@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   PixelRatio,
+  LogBox,
 } from "react-native";
 import HorizontalBarGraph from "@chartiful/react-native-horizontal-bar-graph";
 import Header from "../components/Header.js";
@@ -59,6 +60,10 @@ export default class QuizScreen extends Component {
           });
         }
       });
+  }
+
+  componentDidMount() {
+    LogBox.ignoreLogs(["Failed prop type"]);
   }
   render() {
     if (!this.state.dataLoaded) {
