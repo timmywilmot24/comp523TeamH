@@ -6,6 +6,9 @@ import {
   Pressable,
   Dimensions,
   ImageBackground,
+  SafeAreaView,
+  ScrollView,
+  LogBox,
 } from "react-native";
 import { FlatGrid } from "react-native-super-grid";
 const screenWidth = Dimensions.get("window").width;
@@ -99,6 +102,10 @@ export default class QuizForm extends Component {
       });
   }
 
+  componentDidMount() {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }
+
   render() {
     let responsesRender = [];
     let quizHead = (
@@ -123,31 +130,33 @@ export default class QuizForm extends Component {
     return (
       <View>
         {quizHead}
-        <View>
-          {this.state.dataGrabbed && (
-            <FlatGrid
-              onEndReachedThreshold={0.5}
-              itemDimension={screenWidth * (1 / 3)}
-              data={responsesRender}
-              style={styles.gridView}
-              renderItem={({ item }) => (
-                <View>
-                  <Pressable onPress={() => this.nextQuestion(item.subject)}>
-                    <ImageBackground
-                      style={styles.responseImage}
-                      imageStyle={styles.actualImage}
-                      source={{
-                        uri: item.pic,
-                      }}
-                    >
-                      <Text style={styles.action}>{item.action}</Text>
-                    </ImageBackground>
-                  </Pressable>
-                </View>
-              )}
-            />
-          )}
-        </View>
+        <ScrollView>
+          <View style={{ height: screenWidth * 2.85 }}>
+            {this.state.dataGrabbed && (
+              <FlatGrid
+                onEndReachedThreshold={0.5}
+                itemDimension={screenWidth * (1 / 3)}
+                data={responsesRender}
+                style={styles.gridView}
+                renderItem={({ item }) => (
+                  <View>
+                    <Pressable onPress={() => this.nextQuestion(item.subject)}>
+                      <ImageBackground
+                        style={styles.responseImage}
+                        imageStyle={styles.actualImage}
+                        source={{
+                          uri: item.pic,
+                        }}
+                      >
+                        <Text style={styles.action}>{item.action}</Text>
+                      </ImageBackground>
+                    </Pressable>
+                  </View>
+                )}
+              />
+            )}
+          </View>
+        </ScrollView>
       </View>
     );
   }
