@@ -81,13 +81,11 @@ export default class QuizScreen extends Component {
 									<View style={quizResultStyles.main}>
 										{/* If they've taken the quiz, show their results via a bar graph */}
 										<View style={quizResultStyles.resultContainer}>
-											<Text style={quizResultStyles.resultText}>
-												Your Results
-											</Text>
+											<Text style={quizResultStyles.resultText}>Results</Text>
 										</View>
 										<View style={quizResultStyles.barGraphContainer}>
 											<HorizontalBarGraph
-												barWidthPercentage={0.4}
+												barWidthPercentage={0.6}
 												style={quizResultStyles.barGraph}
 												data={[
 													this.state.Business,
@@ -110,22 +108,29 @@ export default class QuizScreen extends Component {
 													'Theatre',
 												]}
 												barColor={'#B71914'}
-												width={screenWidth * (19 / 20)}
-												height={screenWidth * (19 / 20)}
+												barRadius={5}
+												width={screenWidth * (18 / 20)}
+												height={(screenWidth * 18) / 20}
 												baseConfig={{
 													hasYAxisBackgroundLines: false,
 													xAxisLabelStyle: {
 														fontSize: 8,
+														fontWeight: 'bold',
 														yOffset: 4, //subject label up and down value
-														xOffset: screenWidth * -(1 / 30),
+														xOffset: screenWidth * -(1.25 / 30),
+														color: 'white',
+														//rotation: 45,
 													},
 													yAxisLabelStyle: {
-														fontSize: 8,
+														fontSize: 14,
 														position: 'bottom',
 														decimals: 1,
+														color: 'white',
 													},
 												}}
 											/>
+										</View>
+										<View>
 											{/*Retake the quiz if you want to*/}
 											<Pressable
 												style={quizResultStyles.retakeButton}
@@ -288,14 +293,28 @@ const quizResultStyles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	resultContainer: {
-		backgroundColor: '#B71914',
-		width: '100%',
+		backgroundColor: '#DC8B89',
+		width: (screenWidth * 19) / 20,
 		marginTop: screenWidth * (1 / 6),
+		borderTopLeftRadius: 10,
+		borderTopRightRadius: 10,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	resultText: {
 		fontSize: 18,
 		textAlign: 'center',
 		color: 'white',
+		fontWeight: 'bold',
+		marginTop: (screenWidth * 1) / 30,
+		marginBottom: (screenWidth * 1) / 30,
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 4 },
+		textShadowRadius: 4,
 	},
 	retakeButton: {
 		backgroundColor: '#B71914',
@@ -322,11 +341,14 @@ const quizResultStyles = StyleSheet.create({
 		textShadowRadius: 4,
 	},
 	barGraphContainer: {
-		width: screenWidth,
-		backgroundColor: 'white',
-		alignItems: 'center',
 		justifyContent: 'center',
-		marginBottom: screenWidth * (1 / 20),
+		alignItems: 'center',
+		backgroundColor: '#DC8B89',
+		width: (screenWidth * 19) / 20,
+		height: (screenWidth * 19) / 20,
+		marginBottom: (screenWidth * 1) / 20,
+		borderBottomLeftRadius: 10,
+		borderBottomRightRadius: 10,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
@@ -335,7 +357,6 @@ const quizResultStyles = StyleSheet.create({
 		shadowOpacity: 0.25,
 	},
 	barGraph: {
-		backgroundColor: 'white',
-		marginTop: screenWidth * (1 / 20),
+		backgroundColor: '#DC8B89',
 	},
 });

@@ -125,6 +125,18 @@ export default class AdminQuiz extends Component {
 	}
 
 	uploadToDatabase(url, i) {
+		let subject = this.state.responses[i].subject;
+		for (let j = 0; j < this.state.responses[i].subject.length; j++) {
+			if (subject[j] === 'Law and Politics') {
+				subject[j] = 'LawPolitics';
+			}
+			if (subject[j] === 'Theatre and Film') {
+				subject[j] = 'Theatre';
+			}
+			if (subject[j] === 'Natural Sciences') {
+				subject[j] = 'NaturalScience';
+			}
+		}
 		this.props.db
 			.database()
 			.ref(
@@ -136,7 +148,7 @@ export default class AdminQuiz extends Component {
 			.update({
 				pic: url,
 				action: this.state.responses[i].action,
-				subject: this.state.responses[i].subject,
+				subject: subject,
 			});
 	}
 
