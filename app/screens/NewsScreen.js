@@ -8,6 +8,7 @@ import {
   Pressable,
   SafeAreaView,
   Alert,
+  Linking,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
@@ -25,6 +26,7 @@ export default class NewsScreen extends Component {
       isAdmin: false,
       addPost: false,
       post: "",
+      url: "",
       deletePrompt: [],
     };
   }
@@ -43,6 +45,7 @@ export default class NewsScreen extends Component {
           messages.push({
             date: post.val().date,
             message: post.val().message,
+            url: post.val().url,
           });
           deletePrompt.push(false);
         });
@@ -74,22 +77,41 @@ export default class NewsScreen extends Component {
     if (mm < 10) {
       mm = "0" + mm;
     }
-    this.state.db
-      .database()
-      .ref("news/" + this.state.length)
-      .set({
-        message: this.state.post,
-        date: mm + "/" + dd + "/" + yyyy,
-      })
-      .then(() => {
-        this.setState({
-          addPost: false,
-          dataGrabbed: false,
-          messages: [],
-          length: 0,
-          post: "",
-        });
+    if (this.state.post === "") {
+      this.setState({ errorMessage: "Message must not be empty." });
+    } else if (this.state.url !== "" && !this.state.post.includes("!URL")) {
+      this.setState({
+        errorMessage:
+          "URL given, but needs to be placed in message with !URL token",
       });
+    } else {
+      Linking.canOpenURL(this.state.url).then((supported) => {
+        if (supported) {
+          this.state.db
+            .database()
+            .ref("news/" + this.state.length)
+            .set({
+              message: this.state.post,
+              date: mm + "/" + dd + "/" + yyyy,
+              url: this.state.url,
+            })
+            .then(() => {
+              this.setState({
+                addPost: false,
+                dataGrabbed: false,
+                messages: [],
+                length: 0,
+                post: "",
+                url: "",
+              });
+            });
+        } else {
+          this.setState({
+            errorMessage: "Invalid URL, cannot go to " + this.state.url,
+          });
+        }
+      });
+    }
   }
 
   handleDelete(removeEle) {
@@ -119,7 +141,10 @@ export default class NewsScreen extends Component {
     if (!this.state.dataGrabbed) {
       this.getData();
     } else {
+      let message = "";
       for (let i = this.state.length - 1; i > -1; i--) {
+        message = this.state.messages[i].message;
+        messages = message.split("!URL");
         feed.push(
           // Style these as the individual messages
           <View key={i} style={newsScreenStyles.newsContainer}>
@@ -127,7 +152,19 @@ export default class NewsScreen extends Component {
               {this.state.messages[i].date}
             </Text>
             <Text style={newsScreenStyles.message}>
-              {this.state.messages[i].message}
+              {messages.length == 2 ? (
+                <Text>
+                  {messages[0]}
+                  <Text
+                    onPress={() => Linking.openURL(this.state.messages[i].url)}
+                  >
+                    {this.state.messages[i].url}
+                  </Text>
+                  {messages[1]}
+                </Text>
+              ) : (
+                <Text>{this.state.messages[i].message}</Text>
+              )}
             </Text>
             {this.state.isAdmin && (
               <View>
@@ -192,6 +229,12 @@ export default class NewsScreen extends Component {
                       onChangeText={(post) => this.setState({ post })}
                       label="newPost"
                     />
+                    <TextInput
+                      placeholder="Type URL here"
+                      value={this.state.url}
+                      onChangeText={(url) => this.setState({ url })}
+                      label="newURL"
+                    />
                     <Pressable
                       onPress={() => this.setState({ addPost: false })}
                     >
@@ -200,6 +243,7 @@ export default class NewsScreen extends Component {
                     <Pressable onPress={() => this.addMessage()}>
                       <Text>Send message</Text>
                     </Pressable>
+                    <Text>{this.state.errorMessage}</Text>
                   </View>
                 ) : (
                   <View>
