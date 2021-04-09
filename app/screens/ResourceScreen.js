@@ -42,11 +42,26 @@ export default class ResourceScreen extends Component {
     });
   }
 
+  handleDelete(id) {
+    this.props.route.params.db
+      .database()
+      .ref("resources/" + id)
+      .remove()
+      .then(() => {
+        this.setState({ dataLoaded: false });
+      });
+  }
+
   newResource(text, url, id) {
     return (
-      <Pressable key={id} onPress={() => this.goToURL(url)}>
-        <Text>{text}</Text>
-      </Pressable>
+      <View key={id}>
+        <Pressable onPress={() => this.goToURL(url)}>
+          <Text>{text}</Text>
+        </Pressable>
+        <Pressable onPress={() => this.handleDelete(id)}>
+          <Text>Delete Resource</Text>
+        </Pressable>
+      </View>
     );
   }
 
@@ -82,7 +97,7 @@ export default class ResourceScreen extends Component {
         if (supported) {
           this.props.route.params.db
             .database()
-            .ref("resources/" + this.state.length)
+            .ref("resources")
             .push({
               text: this.state.addText,
               url: this.state.addURL,

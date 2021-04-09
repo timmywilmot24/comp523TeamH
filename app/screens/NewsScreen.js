@@ -27,6 +27,7 @@ export default class NewsScreen extends Component {
       addPost: false,
       post: "",
       url: "",
+      errorMessage: "",
       deletePrompt: [],
     };
   }
@@ -103,6 +104,7 @@ export default class NewsScreen extends Component {
                 length: 0,
                 post: "",
                 url: "",
+                errorMessage: "",
               });
             });
         } else {
@@ -236,7 +238,13 @@ export default class NewsScreen extends Component {
                       label="newURL"
                     />
                     <Pressable
-                      onPress={() => this.setState({ addPost: false })}
+                      onPress={() =>
+                        this.setState({
+                          addPost: false,
+                          url: "",
+                          errorMessage: "",
+                        })
+                      }
                     >
                       <Text>Cancel</Text>
                     </Pressable>
