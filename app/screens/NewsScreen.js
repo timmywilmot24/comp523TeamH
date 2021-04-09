@@ -276,7 +276,9 @@ const newsScreenStyles = StyleSheet.create({
 	//put newScreen style here
 	newsContainer: {
 		backgroundColor: '#F4F5F7',
-		margin: 10,
+		marginLeft: 5,
+		marginRight: 5,
+		marginBottom: 10,
 		borderBottomColor: '#B71914',
 		borderBottomWidth: 4,
 	},
