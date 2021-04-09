@@ -280,7 +280,7 @@ const newsScreenStyles = StyleSheet.create({
 		marginRight: 5,
 		marginBottom: 10,
 		borderBottomColor: '#B71914',
-		borderBottomWidth: 4,
+		borderBottomWidth: 2,
 	},
 	date: {
 		backgroundColor: '#F4F5F7',
