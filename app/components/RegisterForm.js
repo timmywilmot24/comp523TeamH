@@ -67,6 +67,11 @@ export default class RegisterForm extends Component {
         errorText: "Last name is not valid",
         errorCode: 2,
       });
+    } else if (highSchool === "") {
+      this.setState({
+        errorText: "High school is blank",
+        errorCode: 6,
+      });
     } else if (!(grade == 9 || grade == 10 || grade == 11 || grade == 12)) {
       this.setState({
         errorText: "Grade must be 9, 10, 11, or 12",
@@ -85,11 +90,11 @@ export default class RegisterForm extends Component {
             .ref("users/" + auth.user.uid)
             .set({
               email: email,
-              password: password,
               firstName: firstName,
               lastName: lastName,
               highSchool: highSchool,
               grade: grade,
+              profilePic: "",
               hasTakenQuiz: false,
               quizResult: 0,
             });
