@@ -1,135 +1,224 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
-  Text,
-  Alert,
-  Button,
-  View,
-  StyleSheet,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  TouchableHighlight,
-} from "react-native";
-
-import * as firebase from "firebase";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAf1fhK4UkxkVvpL9--RX6azwgPlrkXprI",
-  authDomain: "mission-scholarship.firebaseapp.com",
-  projectId: "mission-scholarship",
-  storageBucket: "mission-scholarship.appspot.com",
-  messagingSenderId: "646256727876",
-  appId: "1:646256727876:web:f6dbc91e1d6c8971202911",
-  measurementId: "G-T5B1DFVWQW",
-};
-
-const db = firebase.initializeApp(firebaseConfig);
+	Text,
+	Alert,
+	View,
+	StyleSheet,
+	TextInput,
+	TouchableOpacity,
+} from 'react-native';
 
 export default class LoginForm extends Component {
-  constructor(props) {
-    super(props);
+	constructor(props) {
+		super(props);
 
-    this.state = {
-      isLoading: false,
-      email: "",
-      password: "",
-    };
-  }
+		this.state = {
+			isLoading: false,
+			email: 'davidcubrilla@gmail.com',
+			password: 'cubrillD98',
+			errorCode: 0,
+			errorText: '',
+		};
+	}
 
-  onLogin() {
-    const { email, password } = this.state;
-    if (email === "") {
-      Alert.alert("Enter email to login");
-    } else if (password === "") {
-      Alert.alert("Enter password to login");
-    } else {
-      this.setState({
-        isLoading: true,
-      });
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(() => {
-          console.log("User logged in successfully!");
-          this.setState({
-            isLoading: false,
-            email: "",
-            password: "",
-          });
-          console.log(this.props.props.navigation);
-          this.props.props.navigation.navigate("Home");
-        })
-        .catch((error) => {
-          switch (error.toString()) {
-            case "Error: The email address is badly formatted.":
-              Alert.alert("The email address is invalid.");
-            case "Error: There is no user record corresponding to this identifier. The user may have been deleted.":
-              Alert.alert(
-                "The email address is not associated with an account."
-              );
-            case "Error: The password is invalid or the user does not have a password.":
-              Alert.alert("The password with the email address is incorrect.");
-          }
-        });
-    }
-  }
+	// Creates function that handles an attempt to login
+	onLogin() {
+		const { email, password } = this.state;
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.email}>
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#c0c0c0"
-            autoCompleteType="email"
-            value={this.state.email}
-            onChangeText={(email) => this.setState({ email })}
-            label="Email"
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.email}>
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#c0c0c0"
-            value={this.state.password}
-            onChangeText={(password) => this.setState({ password })}
-            label="Password"
-            secureTextEntry={true}
-            style={styles.input}
-          />
-        </View>
-        <TouchableOpacity title="Login" onPress={() => this.onLogin()}>
-          <Text style={styles.login}>Login</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+		// If email or password is empty, send alert to prompt user
+		if (email === '') {
+			this.setState({
+				errorCode: 1,
+				errorText: 'Enter email to login',
+			});
+		} else if (password === '') {
+			this.setState({
+				errorCode: 2,
+				errorText: 'Enter password to login',
+			});
+		} else {
+			this.setState({
+				isLoading: true,
+			});
+
+			// Makes firebase call to authorize email and password
+			// If successful, log that the user logged in (delete later, for debugging purposes)
+			// and navigate to main (Add functionality to send user to Main);
+			// If unsuccessful, prompt user with corresponding error message
+			this.props.firebase
+				.auth()
+				.signInWithEmailAndPassword(this.state.email, this.state.password)
+				.then((auth) => {
+					this.setState({
+						isLoading: false,
+						email: '',
+						password: '',
+					});
+					this.props.props.navigation.navigate('Main', {
+						uid: auth.user.uid,
+					});
+				})
+				.catch((error) => {
+					let message = error.toString();
+					if (message === 'Error: The email address is badly formatted.') {
+						this.setState({
+							errorCode: 1,
+							errorText: 'The email address you entered is invalid',
+						});
+					} else if (
+						message ===
+						'Error: There is no user record corresponding to this identifier. The user may have been deleted.'
+					) {
+						this.setState({
+							errorCode: 1,
+							errorText: 'The email address is not associated with an account',
+						});
+					} else if (
+						message ===
+						'Error: The password is invalid or the user does not have a password.'
+					) {
+						this.setState({
+							errorCode: 2,
+							errorText: 'The password you entered is invalid',
+						});
+					} else {
+						this.setState({
+							errorCode: 3,
+							errorText: message,
+						});
+					}
+				});
+		}
+	}
+
+	render() {
+		return (
+			// Renders with two placeholders for user to type info into email and password
+			// Login text calls onLogin() when it's pressed
+			<View style={styles.formInput}>
+				<View>
+					<TextInput
+						style={styles.inputs}
+						placeholder="Email"
+						placeholderTextColor="white"
+						autoCompleteType="email"
+						value={this.state.email}
+						onChangeText={(email) => this.setState({ email })}
+						label="Email"
+					/>
+					{this.state.errorCode == 1 ? (
+						<Text style={{ color: 'white', padding: 5 }}>
+							{this.state.errorText}
+						</Text>
+					) : (
+						<Text style={{ color: '#B71914', padding: 5 }}>
+							{this.state.errorText}
+						</Text>
+					)}
+				</View>
+				<View>
+					<TextInput
+						style={styles.inputs}
+						placeholder="Password"
+						placeholderTextColor="white"
+						value={this.state.password}
+						onChangeText={(password) => this.setState({ password })}
+						label="Password"
+						secureTextEntry={true}
+					/>
+					{this.state.errorCode == 2 ? (
+						<Text style={{ color: 'white', padding: 5 }}>
+							{this.state.errorText}
+						</Text>
+					) : (
+						<Text style={{ color: '#B71914', padding: 5 }}>
+							{this.state.errorText}
+						</Text>
+					)}
+					<Text
+						style={styles.forgot}
+						onPress={() => this.props.props.navigation.navigate('Reset')}
+					>
+						Forgot Password?
+					</Text>
+				</View>
+				<TouchableOpacity
+					style={styles.loginButton}
+					title="Login"
+					onPress={() => this.onLogin()}
+				>
+					<Text style={styles.login}>Login</Text>
+				</TouchableOpacity>
+				{this.state.errorCode == 3 ? (
+					<Text style={{ color: 'white', padding: 5 }}>
+						{this.state.errorText}
+					</Text>
+				) : (
+					<Text style={{ color: '#B71914', padding: 5 }}>
+						{this.state.errorText}
+					</Text>
+				)}
+			</View>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    top: -80,
-    flex: 1,
-    alignItems: "center",
-  },
-  email: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  input: {
-    width: 250,
-    height: 32,
-    paddingLeft: 6,
-    borderWidth: 1,
-    borderColor: "white",
-    color: "white",
-    borderRadius: 4,
-    marginBottom: 18,
-  },
-  login: {
-    color: "orange",
-    fontSize: 28,
-  },
+	formInput: {
+		width: '80%',
+		marginLeft: '10%',
+		marginRight: '10%',
+	},
+	inputs: {
+		//backgroundColor: "white",
+		marginTop: 15,
+		fontSize: 20,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		borderRadius: 5,
+		padding: 5,
+		// Added these three
+		borderBottomWidth: 1,
+		borderBottomColor: 'white',
+		color: 'white',
+	},
+	forgot: {
+		marginTop: 10,
+		paddingLeft: 5,
+		color: 'white',
+		fontSize: 18,
+		fontWeight: '300',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
+	},
+	loginButton: {
+		backgroundColor: '#F6931D',
+		width: '60%',
+		marginTop: '10%',
+		marginLeft: '20%',
+		marginRight: '20%',
+		alignItems: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		paddingTop: '2%',
+		paddingBottom: '2%',
+	},
+	login: {
+		fontSize: 24,
+		color: 'white',
+		fontWeight: 'bold',
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 2 },
+		textShadowRadius: 4,
+	},
 });
