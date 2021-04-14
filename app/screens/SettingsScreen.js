@@ -13,6 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import { TextInput } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
 import { styles } from "../screens/MainScreen.js";
+import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
 
 export default class SettingsScreen extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ export default class SettingsScreen extends Component {
       errorCode: 0,
       edit: false,
       emailSent: false,
+      uploadLoading: false,
     };
   }
 
@@ -109,6 +111,9 @@ export default class SettingsScreen extends Component {
           });
         });
     } else {
+      this.setState({
+        uploadLoading: true,
+      });
       const response = await fetch(this.state.newProfilePic);
       const blob = await response.blob();
 
@@ -141,6 +146,8 @@ export default class SettingsScreen extends Component {
                     highSchool: this.state.newHighSchool,
                     profilePic: url,
                     edit: false,
+                    dataGrabbed: true,
+                    uploadLoading: false,
                   });
                 });
             });
@@ -177,169 +184,163 @@ export default class SettingsScreen extends Component {
         {this.state.dataGrabbed ? (
           // This is when the data is received
           <View>
-            {this.state.edit ? (
-              <View style={settingsScreenStyles.main}>
-                <Text>Edit Profile Picture:</Text>
-                {this.state.newProfilePic === "" ? (
-                  <Pressable onPress={() => this.addPicture()}>
-                    <View
-                      style={{
-                        width: 200,
-                        height: 200,
-                        backgroundColor: "gray",
-                      }}
-                    ></View>
-                  </Pressable>
-                ) : (
-                  <Pressable onPress={() => this.addPicture()}>
-                    <Image
-                      style={{ width: 200, height: 200 }}
-                      source={{ uri: this.state.newProfilePic }}
-                    ></Image>
-                  </Pressable>
-                )}
-
-                <Text>First Name: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.firstName}
-                  value={this.state.newFirstName}
-                  onChangeText={(newFirstName) =>
-                    this.setState({ newFirstName })
-                  }
-                  label="First Name"
-                />
-                {this.state.errorCode === 1 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>Last Name: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.lastName}
-                  value={this.state.newLastName}
-                  onChangeText={(newLastName) => this.setState({ newLastName })}
-                  label="Last Name"
-                />
-                {this.state.errorCode === 2 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>High School: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.highSchool}
-                  value={this.state.newHighSchool}
-                  onChangeText={(newHighSchool) =>
-                    this.setState({ newHighSchool })
-                  }
-                  label="High School"
-                />
-                {this.state.errorCode === 3 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>Grade: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.grade}
-                  value={this.state.newGrade}
-                  onChangeText={(newGrade) => this.setState({ newGrade })}
-                  label="Grade"
-                />
-                {this.state.errorCode === 4 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Pressable
-                  onPress={() =>
-                    this.setState({
-                      newFirstName: this.state.firstName,
-                      newLastName: this.state.lastName,
-                      newHighSchool: this.state.highSchool,
-                      newGrade: this.state.grade,
-                      newProfilePic: this.state.profilePic,
-                      edit: false,
-                    })
-                  }
-                >
-                  <Text>Cancel</Text>
-                </Pressable>
-                <Pressable onPress={() => this.handleSubmit()}>
-                  <Text>Submit</Text>
-                </Pressable>
-              </View>
+            {this.state.uploadLoading ? (
+              <LoadingAnimationScreen></LoadingAnimationScreen>
             ) : (
-              <View style={settingsScreenStyles.main}>
-                <View style={settingsScreenStyles.editible}>
-                  {this.state.profilePic === "" ? (
-                    <View
-                      style={{
-                        width: 200,
-                        height: 200,
-                        backgroundColor: "gray",
-                      }}
-                    ></View>
-                  ) : (
-                    <Image
-                      style={{ width: 200, height: 200 }}
-                      source={{ uri: this.state.profilePic }}
-                    ></Image>
-                  )}
+              <View>
+                {this.state.edit ? (
+                  <View style={settingsScreenStyles.main}>
+                    <Text>Edit Profile Picture:</Text>
+                    {this.state.newProfilePic === "" ? (
+                      <Pressable onPress={() => this.addPicture()}>
+                        <View
+                          style={{
+                            width: 200,
+                            height: 200,
+                            backgroundColor: "gray",
+                          }}
+                        ></View>
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={() => this.addPicture()}>
+                        <Image
+                          style={{ width: 200, height: 200 }}
+                          source={{ uri: this.state.newProfilePic }}
+                        ></Image>
+                      </Pressable>
+                    )}
 
-                  <Text>First Name: {this.state.firstName}</Text>
-                  <Text>Last Name: {this.state.lastName}</Text>
-                  <Text>Grade: {this.state.grade}</Text>
-                  <Text>High School: {this.state.highSchool}</Text>
-                  <Pressable onPress={() => this.setState({ edit: true })}>
-                    <Text>Edit</Text>
-                  </Pressable>
-                </View>
-                <View>
-                  {/* <Pressable
-                    onPress={() =>
-                      this.props.route.params.db
-                        .auth()
-                        .sendPasswordResetEmail(this.state.email)
-                        .then(() => {
-                          this.setState({
-                            emailSent: true,
-                          });
+                    <Text>First Name: </Text>
+                    <TextInput
+                      style={settingsScreenStyles.inputs}
+                      placeholder={this.state.firstName}
+                      value={this.state.newFirstName}
+                      onChangeText={(newFirstName) =>
+                        this.setState({ newFirstName })
+                      }
+                      label="First Name"
+                    />
+                    {this.state.errorCode === 1 ? (
+                      <Text>{this.state.errorText}</Text>
+                    ) : (
+                      <Text></Text>
+                    )}
+                    <Text>Last Name: </Text>
+                    <TextInput
+                      style={settingsScreenStyles.inputs}
+                      placeholder={this.state.lastName}
+                      value={this.state.newLastName}
+                      onChangeText={(newLastName) =>
+                        this.setState({ newLastName })
+                      }
+                      label="Last Name"
+                    />
+                    {this.state.errorCode === 2 ? (
+                      <Text>{this.state.errorText}</Text>
+                    ) : (
+                      <Text></Text>
+                    )}
+                    <Text>High School: </Text>
+                    <TextInput
+                      style={settingsScreenStyles.inputs}
+                      placeholder={this.state.highSchool}
+                      value={this.state.newHighSchool}
+                      onChangeText={(newHighSchool) =>
+                        this.setState({ newHighSchool })
+                      }
+                      label="High School"
+                    />
+                    {this.state.errorCode === 3 ? (
+                      <Text>{this.state.errorText}</Text>
+                    ) : (
+                      <Text></Text>
+                    )}
+                    <Text>Grade: </Text>
+                    <TextInput
+                      style={settingsScreenStyles.inputs}
+                      placeholder={this.state.grade}
+                      value={this.state.newGrade}
+                      onChangeText={(newGrade) => this.setState({ newGrade })}
+                      label="Grade"
+                    />
+                    {this.state.errorCode === 4 ? (
+                      <Text>{this.state.errorText}</Text>
+                    ) : (
+                      <Text></Text>
+                    )}
+                    <Pressable
+                      onPress={() =>
+                        this.setState({
+                          newFirstName: this.state.firstName,
+                          newLastName: this.state.lastName,
+                          newHighSchool: this.state.highSchool,
+                          newGrade: this.state.grade,
+                          newProfilePic: this.state.profilePic,
+                          edit: false,
                         })
-                    }
-                  >
-                    <Text>Reset Password</Text>
-                  </Pressable> */}
-                  {this.state.emailSent ? (
-                    <View>
-                      <Text style={{ color: "#F6931D" }}>
-                        Email has been sent to {this.state.email}
-                      </Text>
+                      }
+                    >
+                      <Text>Cancel</Text>
+                    </Pressable>
+                    <Pressable onPress={() => this.handleSubmit()}>
+                      <Text>Submit</Text>
+                    </Pressable>
+                  </View>
+                ) : (
+                  <View style={settingsScreenStyles.main}>
+                    <View style={settingsScreenStyles.editible}>
+                      {this.state.profilePic === "" ? (
+                        <View
+                          style={{
+                            width: 200,
+                            height: 200,
+                            backgroundColor: "gray",
+                          }}
+                        ></View>
+                      ) : (
+                        <Image
+                          style={{ width: 200, height: 200 }}
+                          source={{ uri: this.state.profilePic }}
+                        ></Image>
+                      )}
+
+                      <Text>First Name: {this.state.firstName}</Text>
+                      <Text>Last Name: {this.state.lastName}</Text>
+                      <Text>Grade: {this.state.grade}</Text>
+                      <Text>High School: {this.state.highSchool}</Text>
+                      <Pressable onPress={() => this.setState({ edit: true })}>
+                        <Text>Edit</Text>
+                      </Pressable>
                     </View>
-                  ) : (
                     <View>
-                      <Text style={{ color: "white" }}>
-                        Email has been sent to {this.state.email}
-                      </Text>
+                      {this.state.emailSent ? (
+                        <View>
+                          <Text style={{ color: "#F6931D" }}>
+                            Email has been sent to {this.state.email}
+                          </Text>
+                        </View>
+                      ) : (
+                        <View>
+                          <Text style={{ color: "white" }}>
+                            Email has been sent to {this.state.email}
+                          </Text>
+                        </View>
+                      )}
+                      <Pressable
+                        onPress={() =>
+                          this.props.route.params.db
+                            .auth()
+                            .signOut()
+                            .then(() => {
+                              DevSettings.reload();
+                            })
+                        }
+                      >
+                        <Text>Sign out</Text>
+                      </Pressable>
                     </View>
-                  )}
-                  <Pressable
-                    onPress={() =>
-                      this.props.route.params.db
-                        .auth()
-                        .signOut()
-                        .then(() => {
-                          DevSettings.reload();
-                        })
-                    }
-                  >
-                    <Text>Sign out</Text>
-                  </Pressable>
-                </View>
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -355,6 +356,7 @@ export default class SettingsScreen extends Component {
 const settingsScreenStyles = StyleSheet.create({
   main: {
     backgroundColor: "white",
+    minHeight: 1000,
   },
   editible: {},
   inputs: {
