@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import {
   Image,
   SafeAreaView,
@@ -34,7 +34,7 @@ export default class LoginScreen extends Component {
                 resizeMode="contain"
                 source={require("./assets/logo.png")}
               ></Image>
-              <LoginForm props={props}></LoginForm>
+              <LoginForm props={this.props}></LoginForm>
               <Text>Forgot Password</Text>
               <Text>No account? Sign up here!</Text>
             </SafeAreaView>
