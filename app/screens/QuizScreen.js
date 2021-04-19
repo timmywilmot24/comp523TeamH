@@ -8,6 +8,7 @@ import {
   Dimensions,
   PixelRatio,
   LogBox,
+  ScrollView,
 } from "react-native";
 import HorizontalBarGraph from "@chartiful/react-native-horizontal-bar-graph";
 import Header from "../components/Header.js";
@@ -85,7 +86,7 @@ export default class QuizScreen extends Component {
       <View style={styles.body}>
         <Header title={"Quiz"} />
         {this.state.dataLoaded && (
-          <View>
+          <ScrollView>
             {!this.state.isAdmin ? (
               // Regular view for non admins
               <View>
@@ -93,7 +94,9 @@ export default class QuizScreen extends Component {
                   <View style={quizResultStyles.main}>
                     {/* If they've taken the quiz, show their results via a bar graph */}
                     <View>
-                      <Text>Your Highest Interest: {this.state.track}</Text>
+                      <Text style={quizResultStyles.interest}>
+                        Your Highest Interest: {this.state.track}
+                      </Text>
                     </View>
                     <View style={quizResultStyles.resultContainer}>
                       <Text style={quizResultStyles.resultText}>Results</Text>
@@ -216,7 +219,7 @@ export default class QuizScreen extends Component {
               // This is what happens if the admin wants to look at/edit quiz
               <AdminQuiz db={this.props.route.params.db}></AdminQuiz>
             )}
-          </View>
+          </ScrollView>
         )}
       </View>
     );
@@ -310,7 +313,6 @@ const quizResultStyles = StyleSheet.create({
   resultContainer: {
     backgroundColor: "#DC8B89",
     width: (screenWidth * 19) / 20,
-    marginTop: screenWidth * (1 / 6),
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     shadowColor: "black",
@@ -373,5 +375,17 @@ const quizResultStyles = StyleSheet.create({
   },
   barGraph: {
     backgroundColor: "#DC8B89",
+  },
+  interest: {
+    color: "#B71914",
+    marginVertical: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
   },
 });
