@@ -10,11 +10,19 @@ export default class Tips extends Component {
 		};
 	}
 	render() {
+		let tipsRender = [];
+		for (let i = 0; i < this.state.tips.length; i++) {
+			tipsRender.push(<Text key={i}>{this.state.tips[i]}</Text>);
+		}
 		return (
 			<View>
 				<Pressable onPress={() => this.props.setState(false)}>
 					<Text>Back</Text>
 				</Pressable>
+				<ScrollView>
+					<Text>Tips</Text>
+					{tipsRender}
+				</ScrollView>
 			</View>
 		);
 	}

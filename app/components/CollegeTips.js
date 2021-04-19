@@ -10,11 +10,19 @@ export default class CollegeTips extends Component {
 		};
 	}
 	render() {
+		let collegeTipsRender = [];
+		for (let i = 0; i < this.state.college.length; i++) {
+			collegeTipsRender.push(<Text key={i}>{this.state.college[i]}</Text>);
+		}
 		return (
 			<View>
 				<Pressable onPress={() => this.props.setState(false)}>
 					<Text>Back</Text>
 				</Pressable>
+				<ScrollView>
+					<Text>College Tips</Text>
+					{collegeTipsRender}
+				</ScrollView>
 			</View>
 		);
 	}
