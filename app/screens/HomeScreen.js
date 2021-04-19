@@ -148,6 +148,7 @@ export default class HomeScreen extends Component {
 				screenRender = (
 					<Classes
 						classes={trackInfo.classes}
+						apCourses={trackInfo.apCourses}
 						setState={(classRender) => {
 							this.setState({
 								classRender: classRender,
@@ -169,7 +170,7 @@ export default class HomeScreen extends Component {
 			} else if (this.state.extraRender) {
 				screenRender = (
 					<Extra
-						activities={trackInfo.activities}
+						extra={trackInfo.activities}
 						setState={(extraRender) => {
 							this.setState({
 								extraRender: extraRender,
