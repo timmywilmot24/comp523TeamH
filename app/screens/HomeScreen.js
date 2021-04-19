@@ -143,91 +143,126 @@ export default class HomeScreen extends Component {
         {/* <View style={homeScreenStyles.profileCard}>
 					<Text>Profile</Text>
 				</View> */}
-				<Pressable
-					style={homeScreenStyles.classCard}
-					onPress={() => this.setState({ classRender: true })}
-				>
-					<Text>Class</Text>
-				</Pressable>
-				<Pressable
-					style={homeScreenStyles.extraCard}
-					onPress={() => this.setState({ extraRender: true })}
-				>
-					<Text>Extracurricular</Text>
-				</Pressable>
-				<Pressable
-					style={homeScreenStyles.tipsCard}
-					onPress={() => this.setState({ tipsRender: true })}
-				>
-					<Text>Tips</Text>
-				</Pressable>
-				<Pressable
-					style={homeScreenStyles.collegeCard}
-					onPress={() => this.setState({ collegeRender: true })}
-				>
-					<Text>College Tips</Text>
-				</Pressable>
-			</View>
-		);
-		if (!this.state.dataGrabbed) {
-			this.loadUserInfo();
-		} else {
-			let trackInfo = [];
-			for (let i = 0; i < 8; i++) {
-				if (this.state.track[i].name === this.state.usersTrack) {
-					trackInfo = this.state.track[i][this.state.grade];
-				}
-			}
-			if (this.state.classRender) {
-				screenRender = (
-					<Classes
-						classes={trackInfo.classes}
-						apCourses={trackInfo.apCourses}
-						setState={(classRender) => {
-							this.setState({
-								classRender: classRender,
-							});
-						}}
-					></Classes>
-				);
-			} else if (this.state.collegeRender) {
-				screenRender = (
-					<CollegeTips
-						college={trackInfo.college}
-						setState={(collegeRender) => {
-							this.setState({
-								collegeRender: collegeRender,
-							});
-						}}
-					></CollegeTips>
-				);
-			} else if (this.state.extraRender) {
-				screenRender = (
-					<Extra
-						extra={trackInfo.activities}
-						setState={(extraRender) => {
-							this.setState({
-								extraRender: extraRender,
-							});
-						}}
-					></Extra>
-				);
-			} else if (this.state.tipsRender) {
-				screenRender = (
-					<Tips
-						tips={trackInfo.tips}
-						setState={(tipsRender) => {
-							this.setState({
-								tipsRender: tipsRender,
-							});
-						}}
-					></Tips>
-				);
-			}
-		}
-		return (
-			<View style={styles.body}>
-				{/*
+        <Pressable
+          style={homeScreenStyles.classCard}
+          onPress={() => this.setState({ classRender: true })}
+        >
+          <Text>Class</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.extraCard}
+          onPress={() => this.setState({ extraRender: true })}
+        >
+          <Text>Extracurricular</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.tipsCard}
+          onPress={() => this.setState({ tipsRender: true })}
+        >
+          <Text>Tips</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.collegeCard}
+          onPress={() => this.setState({ collegeRender: true })}
+        >
+          <Text>College Tips</Text>
+        </Pressable>
+      </View>
+    );
+    if (!this.state.dataGrabbed) {
+      this.loadUserInfo();
+    } else if (!this.state.isAdmin) {
+      let trackInfo = [];
+      for (let i = 0; i < 8; i++) {
+        if (this.state.track[i].name === this.state.usersTrack) {
+          trackInfo = this.state.track[i][this.state.grade];
+        }
+      }
+      if (this.state.classRender) {
+        screenRender = (
+          <Classes
+            classes={trackInfo.classes}
+            apCourses={trackInfo.apCourses}
+            setState={(classRender) => {
+              this.setState({
+                classRender: classRender,
+              });
+            }}
+          ></Classes>
+        );
+      } else if (this.state.collegeRender) {
+        screenRender = (
+          <CollegeTips
+            college={trackInfo.college}
+            setState={(collegeRender) => {
+              this.setState({
+                collegeRender: collegeRender,
+              });
+            }}
+          ></CollegeTips>
+        );
+      } else if (this.state.extraRender) {
+        screenRender = (
+          <Extra
+            extra={trackInfo.activities}
+            setState={(extraRender) => {
+              this.setState({
+                extraRender: extraRender,
+              });
+            }}
+          ></Extra>
+        );
+      } else if (this.state.tipsRender) {
+        screenRender = (
+          <Tips
+            tips={trackInfo.tips}
+            setState={(tipsRender) => {
+              this.setState({
+                tipsRender: tipsRender,
+              });
+            }}
+          ></Tips>
+        );
+      }
+    } else {
+      let studentsArray = [];
+      for (let student in this.state.studentsObject) {
+        studentsArray.push(this.state.studentsObject[student]);
+      }
+      let result = studentsArray.filter((student) => {
+        let name = student.firstName + student.lastName + "";
+        return name.includes(this.state.adminInput);
+      });
+      if (this.state.adminGrade !== 0) {
+        result = result.filter((student) => {
+          let grade = student.grade + "";
+          let admin = this.state.adminGrade + "";
+          return grade === admin;
+        });
+      }
+      for (let i = 0; i < result.length; i++) {
+        studentView.push(
+          <View key={i}>
+            <Text>
+              Name: {result[i].firstName} {result[i].lastName}
+            </Text>
+            <Text>Grade: {result[i].grade}</Text>
+            <Text>High School: {result[i].highSchool}</Text>
+            <Text>Email: {result[i].email}</Text>
+            <Text>Track: {result[i].track}</Text>
+            <ImageBackground
+              style={{ width: 200, height: 200 }}
+              source={{
+                uri: result[i].profilePic,
+              }}
+            />
+          </View>
+        );
+      }
+    }
+    return (
+      <View style={styles.body}>
+        {/*
          This view below is the header		*/}
         <Header title={"Dashboard"} />
         {/*
@@ -266,7 +301,7 @@ export default class HomeScreen extends Component {
                 {studentView}
               </ScrollView>
             ) : (
-              <ScrollView style={styles.main}>{screenRender}</ScrollView>
+              <ScrollView>{screenRender}</ScrollView>
             )}
           </View>
         ) : (
