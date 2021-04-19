@@ -301,7 +301,7 @@ export default class HomeScreen extends Component {
                 {studentView}
               </ScrollView>
             ) : (
-              <ScrollView style={styles.main}>{screenRender}</ScrollView>
+              <ScrollView>{screenRender}</ScrollView>
             )}
           </View>
         ) : (
