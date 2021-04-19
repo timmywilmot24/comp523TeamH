@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { LogBox } from "react-native";
+import { LogBox, View, Text } from "react-native";
 import LoginScreen from "./app/screens/LoginScreen.js";
 import MainScreen from "./app/screens/MainScreen.js";
 import RegisterScreen from "./app/screens/RegisterScreen.js";
