@@ -1,162 +1,335 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
-	Text,
-	View,
-	StyleSheet,
-	ScrollView,
-	Pressable,
-	SafeAreaView,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Image,
+  ImageBackground,
+} from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import Header from "../components/Header.js";
+import { styles } from "../screens/MainScreen.js";
+import Classes from "../components/Classes.js";
+import CollegeTips from "../components/CollegeTips.js";
+import Extra from "../components/Extra.js";
+import Tips from "../components/Tips.js";
+import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
 
 export default class HomeScreen extends Component {
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {};
-	}
+    this.state = {
+      dataGrabbed: false,
+      db: this.props.route.params.db,
+      userID: this.props.route.params.userID,
+      usersTrack: "",
+      track: "",
+      studentsObject: "",
+      studentsArray: [],
+      grade: "",
+      classRender: false,
+      collegeRender: false,
+      extraRender: false,
+      tipsRender: false,
+      isAdmin: false,
+      adminInput: "",
+      adminGrade: 0,
+    };
+  }
 
-	render() {
-		return (
-			<View style={styles.body}>
-				{/*
+  loadUserInfo() {
+    this.state.db
+      .database()
+      .ref("users/" + this.state.userID)
+      .get()
+      .then((data) => {
+        this.setState({
+          usersTrack: data.val().track,
+          grade: data.val().grade,
+          isAdmin: data.val().account === "admin",
+        });
+        if (data.val().account === "admin") {
+          this.loadStudents();
+        } else {
+          this.loadTrack();
+        }
+      });
+  }
+
+  loadTrack() {
+    this.state.db
+      .database()
+      .ref("track/")
+      .get()
+      .then((data) => {
+        this.setState({
+          track: data.val(),
+          dataGrabbed: true,
+        });
+      });
+  }
+
+  loadStudents() {
+    this.state.db
+      .database()
+      .ref("users")
+      .get()
+      .then((data) => {
+        this.setState({
+          studentsObject: data.val(),
+          dataGrabbed: true,
+        });
+      });
+  }
+
+  render() {
+    let feed = [];
+    let studentView = [];
+    let items = [
+      {
+        label: "Business",
+        value: "Business",
+      },
+      {
+        label: "Law and Politics",
+        value: "LawPolitics",
+      },
+      {
+        label: "Theatre and Film",
+        value: "Theatre",
+      },
+      {
+        label: "Journalism",
+        value: "Journalism",
+      },
+      {
+        label: "Natural Sciences",
+        value: "NaturalScience",
+      },
+      {
+        label: "Humanities",
+        value: "Humanities",
+      },
+      {
+        label: "Technology",
+        value: "Technology",
+      },
+      {
+        label: "Medicine",
+        value: "Medicine",
+      },
+    ];
+    let screenRender = (
+      <View>
+        <DropDownPicker
+          items={items}
+          defaultValue={this.state.usersTrack}
+          containerStyle={{ height: 40 }}
+          style={{ backgroundColor: "#fafafa", width: "35%" }}
+          itemStyle={{
+            justifyContent: "flex-start",
+          }}
+          dropDownStyle={{ backgroundColor: "#fafafa" }}
+          onChangeItem={(item) => {
+            this.setState({
+              usersTrack: item.value,
+            });
+          }}
+        />
+        {/* <View style={homeScreenStyles.profileCard}>
+					<Text>Profile</Text>
+				</View> */}
+        <Pressable
+          style={homeScreenStyles.classCard}
+          onPress={() => this.setState({ classRender: true })}
+        >
+          <Text>Class</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.extraCard}
+          onPress={() => this.setState({ extraRender: true })}
+        >
+          <Text>Extracurricular</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.tipsCard}
+          onPress={() => this.setState({ tipsRender: true })}
+        >
+          <Text>Tips</Text>
+        </Pressable>
+        <Pressable
+          style={homeScreenStyles.collegeCard}
+          onPress={() => this.setState({ collegeRender: true })}
+        >
+          <Text>College Tips</Text>
+        </Pressable>
+      </View>
+    );
+    if (!this.state.dataGrabbed) {
+      this.loadUserInfo();
+    } else if (!this.state.isAdmin) {
+      let trackInfo = [];
+      for (let i = 0; i < 8; i++) {
+        if (this.state.track[i].name === this.state.usersTrack) {
+          trackInfo = this.state.track[i][this.state.grade];
+        }
+      }
+      if (this.state.classRender) {
+        screenRender = (
+          <Classes
+            classes={trackInfo.classes}
+            apCourses={trackInfo.apCourses}
+            setState={(classRender) => {
+              this.setState({
+                classRender: classRender,
+              });
+            }}
+          ></Classes>
+        );
+      } else if (this.state.collegeRender) {
+        screenRender = (
+          <CollegeTips
+            college={trackInfo.college}
+            setState={(collegeRender) => {
+              this.setState({
+                collegeRender: collegeRender,
+              });
+            }}
+          ></CollegeTips>
+        );
+      } else if (this.state.extraRender) {
+        screenRender = (
+          <Extra
+            extra={trackInfo.activities}
+            setState={(extraRender) => {
+              this.setState({
+                extraRender: extraRender,
+              });
+            }}
+          ></Extra>
+        );
+      } else if (this.state.tipsRender) {
+        screenRender = (
+          <Tips
+            tips={trackInfo.tips}
+            setState={(tipsRender) => {
+              this.setState({
+                tipsRender: tipsRender,
+              });
+            }}
+          ></Tips>
+        );
+      }
+    } else {
+      let studentsArray = [];
+      for (let student in this.state.studentsObject) {
+        studentsArray.push(this.state.studentsObject[student]);
+      }
+      let result = studentsArray.filter((student) => {
+        let name = student.firstName + student.lastName + "";
+        return name.includes(this.state.adminInput);
+      });
+      if (this.state.adminGrade !== 0) {
+        result = result.filter((student) => {
+          let grade = student.grade + "";
+          let admin = this.state.adminGrade + "";
+          return grade === admin;
+        });
+      }
+      for (let i = 0; i < result.length; i++) {
+        studentView.push(
+          <View key={i}>
+            <Text>
+              Name: {result[i].firstName} {result[i].lastName}
+            </Text>
+            <Text>Grade: {result[i].grade}</Text>
+            <Text>High School: {result[i].highSchool}</Text>
+            <Text>Email: {result[i].email}</Text>
+            <Text>Track: {result[i].track}</Text>
+            <ImageBackground
+              style={{ width: 200, height: 200 }}
+              source={{
+                uri: result[i].profilePic,
+              }}
+            />
+          </View>
+        );
+      }
+    }
+    return (
+      <View style={styles.body}>
+        {/*
          This view below is the header		*/}
-				<View style={styles.header}>
-					<SafeAreaView>
-						<Text style={styles.headerText}>Dashboard</Text>
-					</SafeAreaView>
-				</View>
-				{/*
+        <Header title={"Dashboard"} />
+        {/*
          This view below is the main		*/}
-				<ScrollView style={styles.main}>
-					<View style={homeStyles.profileCard}>
-						<Text>Profile</Text>
-					</View>
-					<View style={homeStyles.classCard}>
-						<Text>Class</Text>
-					</View>
-					<View style={homeStyles.extraCard}>
-						<Text>Extracurricular</Text>
-					</View>
-					<View style={homeStyles.tipsCard}>
-						<Text>Tips</Text>
-					</View>
-				</ScrollView>
-				{/*
-         This view below is the navBar		*/}
-				<View style={styles.navBar}>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Home')}
-					>
-						<Icon name="home" size={50} color="black" />
-						<Text style={styles.navText}>Home</Text>
-					</Pressable>
-
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Resource')}
-					>
-						<Icon name="briefcase" size={50} color="black" />
-						<Text style={styles.navText}>Resources</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Quiz')}
-					>
-						<Icon name="check-square" size={50} color="black" />
-						<Text style={styles.navText}>Quiz</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('News')}
-					>
-						<Icon name="rss-square" size={50} color="black" />
-						<Text style={styles.navText}>News</Text>
-					</Pressable>
-					<Pressable
-						style={styles.navButton}
-						onPress={() => this.props.navigation.navigate('Settings')}
-					>
-						<Icon name="cog" size={50} color="black" />
-						<Text style={styles.navText}>Settings</Text>
-					</Pressable>
-				</View>
-			</View>
-		);
-	}
+        {this.state.dataGrabbed ? (
+          <View>
+            {this.state.isAdmin ? (
+              <ScrollView>
+                <TextInput
+                  placeholder={"Search for students..."}
+                  value={this.state.adminInput}
+                  onChangeText={(adminInput) => this.setState({ adminInput })}
+                  label="Search"
+                ></TextInput>
+                <DropDownPicker
+                  items={[
+                    { value: 9, label: "9th grade" },
+                    { value: 10, label: "10th grade" },
+                    { value: 11, label: "11th grade" },
+                    { value: 12, label: "12th grade" },
+                    { value: 0, label: "All grades" },
+                  ]}
+                  defaultValue={this.state.adminGrade}
+                  containerStyle={{ height: 40 }}
+                  style={{ backgroundColor: "#fafafa", width: "35%" }}
+                  itemStyle={{
+                    justifyContent: "flex-start",
+                  }}
+                  dropDownStyle={{ backgroundColor: "#fafafa" }}
+                  onChangeItem={(item) => {
+                    this.setState({
+                      adminGrade: item.value,
+                    });
+                  }}
+                />
+                {studentView}
+              </ScrollView>
+            ) : (
+              <ScrollView style={styles.main}>{screenRender}</ScrollView>
+            )}
+          </View>
+        ) : (
+          <LoadingAnimationScreen></LoadingAnimationScreen>
+        )}
+      </View>
+    );
+  }
 }
 
-export const styles = StyleSheet.create({
-	body: {
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	header: {
-		height: '13%',
-		backgroundColor: '#B71914',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
-	},
-	headerText: {
-		marginLeft: 5,
-		marginTop: 15,
-		color: '#FFFFFF',
-		fontStyle: 'normal',
-		fontWeight: 'bold',
-		fontSize: 30,
-		textAlign: 'left',
-		textShadowColor: 'rgba(0, 0, 0, 0.75)',
-		textShadowOffset: { width: 0, height: 4 },
-		textShadowRadius: 4,
-	},
-	main: {
-		marginTop: 20,
-		flex: 1,
-		backgroundColor: '#F6931D',
-	},
-	navBar: {
-		height: '10%',
-		backgroundColor: 'white',
-		flexDirection: 'row',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: -2,
-		},
-		shadowOpacity: 0.25,
-	},
-	navButton: {
-		marginTop: 5,
-		alignItems: 'center',
-		flex: 1,
-	},
-	navText: {
-		color: 'black',
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 2 },
-		textShadowRadius: 4,
-	},
-});
-
-const homeStyles = StyleSheet.create({
-	profileCard: {
-		backgroundColor: 'white',
-	},
-	classCard: {
-		marginTop: 5,
-		backgroundColor: 'white',
-	},
-	extraCard: {
-		marginTop: 5,
-		backgroundColor: 'white',
-	},
-	tipsCard: {
-		marginTop: 5,
-		backgroundColor: 'white',
-	},
+const homeScreenStyles = StyleSheet.create({
+  profileCard: {
+    backgroundColor: "white",
+  },
+  classCard: {
+    marginTop: 5,
+    backgroundColor: "white",
+  },
+  extraCard: {
+    marginTop: 5,
+    backgroundColor: "white",
+  },
+  tipsCard: {
+    marginTop: 5,
+    backgroundColor: "white",
+  },
+  collegeCard: {
+    marginTop: 5,
+    backgroundColor: "white",
+  },
 });

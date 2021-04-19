@@ -14,8 +14,10 @@ export default class LoginForm extends Component {
 
     this.state = {
       isLoading: false,
-      email: "",
-      password: "",
+      email: "twilmot@live.unc.edu",
+      password: "TimmyW11!",
+      errorCode: 0,
+      errorText: "",
     };
   }
 
@@ -25,9 +27,15 @@ export default class LoginForm extends Component {
 
     // If email or password is empty, send alert to prompt user
     if (email === "") {
-      Alert.alert("Enter email to login");
+      this.setState({
+        errorCode: 1,
+        errorText: "Enter email to login",
+      });
     } else if (password === "") {
-      Alert.alert("Enter password to login");
+      this.setState({
+        errorCode: 2,
+        errorText: "Enter password to login",
+      });
     } else {
       this.setState({
         isLoading: true,
@@ -41,7 +49,6 @@ export default class LoginForm extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((auth) => {
-          console.log("User logged in successfully!");
           this.setState({
             isLoading: false,
             email: "",
@@ -52,15 +59,33 @@ export default class LoginForm extends Component {
           });
         })
         .catch((error) => {
-          switch (error.toString()) {
-            case "Error: The email address is badly formatted.":
-              Alert.alert("The email address is invalid.");
-            case "Error: There is no user record corresponding to this identifier. The user may have been deleted.":
-              Alert.alert(
-                "The email address is not associated with an account."
-              );
-            case "Error: The password is invalid or the user does not have a password.":
-              Alert.alert("The password with the email address is incorrect.");
+          let message = error.toString();
+          if (message === "Error: The email address is badly formatted.") {
+            this.setState({
+              errorCode: 1,
+              errorText: "The email address you entered is invalid",
+            });
+          } else if (
+            message ===
+            "Error: There is no user record corresponding to this identifier. The user may have been deleted."
+          ) {
+            this.setState({
+              errorCode: 1,
+              errorText: "The email address is not associated with an account",
+            });
+          } else if (
+            message ===
+            "Error: The password is invalid or the user does not have a password."
+          ) {
+            this.setState({
+              errorCode: 2,
+              errorText: "The password you entered is invalid",
+            });
+          } else {
+            this.setState({
+              errorCode: 3,
+              errorText: message,
+            });
           }
         });
     }
@@ -75,21 +100,41 @@ export default class LoginForm extends Component {
           <TextInput
             style={styles.inputs}
             placeholder="Email"
+            placeholderTextColor="white"
             autoCompleteType="email"
             value={this.state.email}
             onChangeText={(email) => this.setState({ email })}
             label="Email"
           />
+          {this.state.errorCode == 1 ? (
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
+          ) : (
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
+          )}
         </View>
         <View>
           <TextInput
             style={styles.inputs}
             placeholder="Password"
+            placeholderTextColor="white"
             value={this.state.password}
             onChangeText={(password) => this.setState({ password })}
             label="Password"
             secureTextEntry={true}
           />
+          {this.state.errorCode == 2 ? (
+            <Text style={{ color: "white", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
+          ) : (
+            <Text style={{ color: "#B71914", padding: 5 }}>
+              {this.state.errorText}
+            </Text>
+          )}
           <Text
             style={styles.forgot}
             onPress={() => this.props.props.navigation.navigate("Reset")}
@@ -104,12 +149,19 @@ export default class LoginForm extends Component {
         >
           <Text style={styles.login}>Login</Text>
         </TouchableOpacity>
+        {this.state.errorCode == 3 ? (
+          <Text style={{ color: "white", padding: 5 }}>
+            {this.state.errorText}
+          </Text>
+        ) : (
+          <Text style={{ color: "#B71914", padding: 5 }}>
+            {this.state.errorText}
+          </Text>
+        )}
       </View>
     );
   }
 }
-
-//ADD COMMENT HERE
 
 const styles = StyleSheet.create({
   formInput: {
@@ -118,9 +170,9 @@ const styles = StyleSheet.create({
     marginRight: "10%",
   },
   inputs: {
-    backgroundColor: "white",
-    marginTop: 20,
-    fontSize: 18,
+    //backgroundColor: "white",
+    marginTop: 15,
+    fontSize: 20,
     shadowColor: "black",
     shadowOffset: {
       width: 0,
@@ -128,11 +180,15 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     borderRadius: 5,
-    padding: 8,
+    padding: 5,
+    // Added these three
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+    color: "white",
   },
   forgot: {
     marginTop: 10,
-    paddingLeft: 8,
+    paddingLeft: 5,
     color: "white",
     fontSize: 18,
     fontWeight: "300",
@@ -154,6 +210,8 @@ const styles = StyleSheet.create({
       height: 4,
     },
     shadowOpacity: 0.25,
+    paddingTop: "2%",
+    paddingBottom: "2%",
   },
   login: {
     fontSize: 24,
