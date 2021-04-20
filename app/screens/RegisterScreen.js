@@ -16,6 +16,7 @@ export default class RegisterScreen extends Component {
   constructor(props) {
     super(props);
     // a commit here
+    // one more
 
     this.state = {};
   }
