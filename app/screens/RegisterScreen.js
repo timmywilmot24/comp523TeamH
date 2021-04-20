@@ -15,6 +15,7 @@ import RegisterForm from "../components/RegisterForm.js";
 export default class RegisterScreen extends Component {
   constructor(props) {
     super(props);
+    // a commit here
 
     this.state = {};
   }
