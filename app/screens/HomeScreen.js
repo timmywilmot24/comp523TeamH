@@ -23,11 +23,12 @@ export default class HomeScreen extends Component {
     super(props);
 
     this.state = {
+      userGrabbed: false,
       dataGrabbed: false,
       db: this.props.route.params.db,
       userID: this.props.route.params.userID,
       usersTrack: "",
-      track: "",
+      track: [],
       studentsObject: "",
       studentsArray: [],
       grade: "",
@@ -51,12 +52,8 @@ export default class HomeScreen extends Component {
           usersTrack: data.val().track,
           grade: data.val().grade,
           isAdmin: data.val().account === "admin",
+          userGrabbed: true,
         });
-        if (data.val().account === "admin") {
-          this.loadStudents();
-        } else {
-          this.loadTrack();
-        }
       });
   }
 
@@ -169,8 +166,14 @@ export default class HomeScreen extends Component {
         </Pressable>
       </View>
     );
-    if (!this.state.dataGrabbed) {
+    if (!this.state.userGrabbed) {
       this.loadUserInfo();
+    } else if (!this.state.dataGrabbed) {
+      if (this.state.account === "admin") {
+        this.loadStudents();
+      } else {
+        this.loadTrack();
+      }
     } else if (!this.state.isAdmin) {
       let trackInfo = [];
       for (let i = 0; i < 8; i++) {
@@ -267,7 +270,7 @@ export default class HomeScreen extends Component {
         <Header title={"Dashboard"} />
         {/*
          This view below is the main		*/}
-        {this.state.dataGrabbed ? (
+        {this.state.userGrabbed && this.state.dataGrabbed ? (
           <View>
             {this.state.isAdmin ? (
               <ScrollView>

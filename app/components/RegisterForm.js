@@ -17,19 +17,24 @@ export default class RegisterForm extends Component {
 
     this.state = {
       isLoading: false,
-      email: "",
-      password: "",
-      confirmPassword: "",
-      firstName: "",
-      lastName: "",
-      highSchool: "",
-      grade: "",
+      email: "davidcubrilla@gmail.com",
+      password: "cubrillD98",
+      confirmPassword: "cubrillD98",
+      firstName: "David",
+      lastName: "Cubrilla",
+      highSchool: "UNC",
+      grade: "12",
       errorText: "",
       errorCode: 0,
     };
   }
 
   onRegister() {
+    this.setState({
+      errorText: "",
+      errorCode: 0,
+    });
+
     const {
       email,
       password,
@@ -97,6 +102,7 @@ export default class RegisterForm extends Component {
               profilePic: "",
               hasTakenQuiz: false,
               quizResult: 0,
+              track: "Business",
             });
           this.setState({
             isLoading: false,
