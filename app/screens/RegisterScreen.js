@@ -17,7 +17,7 @@ export default class RegisterScreen extends Component {
     super(props);
     // a commit here
     // one more
-
+    // third
     this.state = {};
   }
   // Just has option to go back to login
