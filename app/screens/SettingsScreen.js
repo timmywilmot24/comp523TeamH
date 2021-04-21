@@ -501,7 +501,6 @@ const settingsScreenStyles = StyleSheet.create({
 		shadowOpacity: 0.25,
 		borderRadius: 5,
 		padding: 5,
-		// Added these three
 		borderBottomWidth: 1,
 		borderBottomColor: 'rgba(180,24,19,0.9)',
 		color: 'rgba(180,24,19,0.9)',
@@ -519,7 +518,6 @@ const settingsScreenStyles = StyleSheet.create({
 		shadowOpacity: 0.25,
 		borderRadius: 5,
 		padding: 5,
-		// Added these three
 		borderBottomWidth: 1,
 		borderBottomColor: 'rgba(180,24,19,0.9)',
 		color: 'rgba(180,24,19,0.9)',
