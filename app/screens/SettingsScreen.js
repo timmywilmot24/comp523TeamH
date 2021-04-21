@@ -6,7 +6,6 @@ import {
 	StyleSheet,
 	Image,
 	Pressable,
-	SafeAreaView,
 	DevSettings,
 	Dimensions,
 	Alert,
@@ -28,6 +27,7 @@ export default class SettingsScreen extends Component {
 			db: this.props.route.params.db,
 			userID: this.props.route.params.userID,
 			email: '',
+			account: '',
 			dataGrabbed: false,
 			firstName: '',
 			newFirstName: '',
@@ -54,6 +54,7 @@ export default class SettingsScreen extends Component {
 			.then((data) => {
 				data = data.val();
 				this.setState({
+					account: data.account,
 					email: data.email,
 					firstName: data.firstName,
 					lastName: data.lastName,
@@ -229,11 +230,23 @@ export default class SettingsScreen extends Component {
 												</View>
 											) : (
 												<View style={settingsScreenStyles.editable}>
-													<Pressable onPress={() => this.addPicture()}>
+													<View
+														style={settingsScreenStyles.topContainer}
+													></View>
+													<View
+														style={settingsScreenStyles.bottomContainer}
+													></View>
+													<Pressable
+														style={settingsScreenStyles.profilePicEditContainer}
+														onPress={() => this.addPicture()}
+													>
 														<Image
-															style={settingsScreenStyles.profilePic}
+															style={settingsScreenStyles.profilePicEdit}
 															source={{ uri: this.state.newProfilePic }}
 														></Image>
+														<Text style={settingsScreenStyles.editPicText}>
+															Edit
+														</Text>
 													</Pressable>
 												</View>
 											)}
@@ -362,10 +375,17 @@ export default class SettingsScreen extends Component {
 													></Image>
 												)}
 												<Text style={settingsScreenStyles.preEditInputs}>
+													{this.state.account.charAt(0).toUpperCase()}
+													{this.state.account.slice(1)}
+												</Text>
+												<Text style={settingsScreenStyles.preEditInputs}>
 													{this.state.firstName} {this.state.lastName}
 												</Text>
 												<Text style={settingsScreenStyles.preEditInputs}>
-													{this.state.highSchool} - {this.state.grade}th grade
+													{this.state.highSchool} | {this.state.grade}th grade
+												</Text>
+												<Text style={settingsScreenStyles.preEditInputs}>
+													{this.state.email}
 												</Text>
 												<Pressable
 													style={settingsScreenStyles.buttonMain}
