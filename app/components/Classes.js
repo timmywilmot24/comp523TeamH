@@ -165,7 +165,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>First Semester</Text>
 							</View>
@@ -179,7 +179,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Second Semester</Text>
 							</View>
@@ -192,7 +192,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Electives</Text>
 							</View>
@@ -208,7 +208,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Language</Text>
 							</View>
@@ -221,7 +221,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>English</Text>
 							</View>
@@ -237,7 +237,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Math</Text>
 							</View>
@@ -253,7 +253,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Science</Text>
 							</View>
@@ -269,7 +269,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>Social Studies</Text>
 							</View>
@@ -285,7 +285,7 @@ export default class Classes extends Component {
 									style={classScreenStyles.titlesIcons}
 									name="school"
 									color="#B71914"
-									size="35"
+									size={35}
 								></Ionicons>
 								<Text style={classScreenStyles.titles}>AP Courses</Text>
 							</View>

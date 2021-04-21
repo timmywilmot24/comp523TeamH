@@ -22,7 +22,19 @@ export default class Tips extends Component {
 	render() {
 		let tipsRender = [];
 		for (let i = 0; i < this.state.tips.length; i++) {
-			tipsRender.push(<Text key={i}>{this.state.tips[i]}</Text>);
+			tipsRender.push(
+				<View key={i + 'z'}>
+					{i === this.state.tips.length - 1 ? (
+						<View key={i + 'a'}>
+							<Text key={i + 'b'}>{this.state.tips[i]}</Text>
+						</View>
+					) : (
+						<View key={i + 'c'} style={tipsScreenStyles.regularTextContainer}>
+							<Text key={i + 'd'}>{this.state.tips[i]}</Text>
+						</View>
+					)}
+				</View>
+			);
 		}
 		return (
 			<View>
@@ -40,10 +52,18 @@ export default class Tips extends Component {
 					</Pressable>
 				</View>
 				<View>
-					<ScrollView>
-						<Text>Tips</Text>
+					<View style={tipsScreenStyles.tipsContainer}>
+						<View style={tipsScreenStyles.titleContainer}>
+							<Ionicons
+								style={tipsScreenStyles.titlesIcons}
+								name="bookmark"
+								color="#B71914"
+								size={35}
+							></Ionicons>
+							<Text style={tipsScreenStyles.title}>Tips</Text>
+						</View>
 						{tipsRender}
-					</ScrollView>
+					</View>
 				</View>
 			</View>
 		);
@@ -64,5 +84,43 @@ const tipsScreenStyles = StyleSheet.create({
 	},
 	backText: {
 		alignSelf: 'center',
+	},
+	tipsContainer: {
+		backgroundColor: 'white',
+		padding: screenWidth * (1 / 25),
+		width: screenWidth * (13 / 15),
+		alignSelf: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		marginTop: screenWidth * (1 / 9),
+	},
+	titleContainer: {
+		flexDirection: 'row',
+		paddingVertical: screenWidth * (1 / 70),
+		borderRadius: screenWidth * (1 / 70),
+		marginBottom: screenWidth * (1 / 25),
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+	},
+	title: {
+		color: '#B71914',
+		marginLeft: screenWidth * (1 / 70),
+		fontSize: 20,
+		alignSelf: 'center',
+	},
+	regularTextContainer: {
+		borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+		borderBottomWidth: 1,
+		marginBottom: screenWidth * (1 / 30),
+		paddingBottom: screenWidth * (1 / 30),
 	},
 });

@@ -26,7 +26,7 @@ export default class Extra extends Component {
 
 		for (let i = 0; i < options.length; i++) {
 			optionsRender.push(
-				<View style={extraScreenStyles.noteContainers}>
+				<View key={i + 'a'} style={extraScreenStyles.regularTextContainer}>
 					<Text key={i}>{options[i]}</Text>
 				</View>
 			);
@@ -54,22 +54,17 @@ export default class Extra extends Component {
 								style={extraScreenStyles.titlesIcons}
 								name="body"
 								color="#B71914"
-								size="35"
+								size={35}
 							></Ionicons>
 							<Text style={extraScreenStyles.title}>Extracurricular</Text>
 						</View>
-
-						<View style={extraScreenStyles.regularTextContainer}>
+						{optionsRender}
+						<View style={extraScreenStyles.noteContainers}>
 							<Text>{this.state.extra.notes}</Text>
 						</View>
 
-						<View style={extraScreenStyles.regularTextContainer}>
+						<View style={extraScreenStyles.noteContainers}>
 							<Text>{this.state.extra.notes2}</Text>
-						</View>
-
-						<View>
-							<Text style={extraScreenStyles.subtitle}>Options</Text>
-							{optionsRender}
 						</View>
 					</View>
 				</View>
