@@ -20,10 +20,7 @@ import Extra from '../components/Extra.js';
 import Tips from '../components/Tips.js';
 import LoadingAnimationScreen from '../components/LoadingAnimationScreen.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {
-	TouchableHighlight,
-	TouchableOpacity,
-} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 const screenWidth = Dimensions.get('window').width;
 
 export default class HomeScreen extends Component {
@@ -31,6 +28,7 @@ export default class HomeScreen extends Component {
 		super(props);
 
 		this.state = {
+			profilePic: '',
 			email: '',
 			userGrabbed: false,
 			dataGrabbed: false,
@@ -59,6 +57,7 @@ export default class HomeScreen extends Component {
 			.get()
 			.then((data) => {
 				this.setState({
+					profilePic: data.val().profilePic,
 					email: data.val().email,
 					usersTrack: data.val().track,
 					grade: data.val().grade,
@@ -208,46 +207,110 @@ export default class HomeScreen extends Component {
 		];
 		let screenRender = (
 			<View>
-				<DropDownPicker
-					items={items}
-					defaultValue={this.state.usersTrack}
-					containerStyle={{ height: 40 }}
-					style={{ backgroundColor: '#fafafa', width: '35%' }}
-					itemStyle={{
-						justifyContent: 'flex-start',
-					}}
-					dropDownStyle={{ backgroundColor: '#fafafa' }}
-					onChangeItem={(item) => {
-						this.setState({
-							usersTrack: item.value,
-						});
-					}}
-				/>
 				<ScrollView>
-					<Pressable
-						style={homeScreenStyles.classCard}
-						onPress={() => this.setState({ classRender: true })}
-					>
-						<Text>Class</Text>
-					</Pressable>
-					<Pressable
-						style={homeScreenStyles.extraCard}
-						onPress={() => this.setState({ extraRender: true })}
-					>
-						<Text>Extracurricular</Text>
-					</Pressable>
-					<Pressable
-						style={homeScreenStyles.tipsCard}
-						onPress={() => this.setState({ tipsRender: true })}
-					>
-						<Text>Tips</Text>
-					</Pressable>
-					<Pressable
-						style={homeScreenStyles.collegeCard}
-						onPress={() => this.setState({ collegeRender: true })}
-					>
-						<Text>College Tips</Text>
-					</Pressable>
+					<View style={{ marginBottom: screenWidth * (1 / 4) }}>
+						<View style={homeScreenStyles.profileCardUserSide}>
+							<View style={homeScreenStyles.profileCardImageContainer}>
+								{this.state.profilePic === '' ? (
+									<Image
+										imageStyle={{ borderRadius: 75 / 2 }}
+										style={homeScreenStyles.profilePic}
+										source={require('../assets/defaultProfile.png')}
+									/>
+								) : (
+									<Image
+										imageStyle={{ borderRadius: 75 / 2 }}
+										style={homeScreenStyles.profilePic}
+										source={{
+											uri: this.state.profilePic,
+										}}
+									/>
+								)}
+							</View>
+							<View style={homeScreenStyles.profileCardRightSide}>
+								<Text>{this.state.grade}</Text>
+								<DropDownPicker
+									items={items}
+									defaultValue={this.state.usersTrack}
+									containerStyle={{ height: 40 }}
+									style={{ backgroundColor: '#fafafa', width: '35%' }}
+									itemStyle={{
+										justifyContent: 'flex-start',
+									}}
+									dropDownStyle={{ backgroundColor: '#fafafa' }}
+									onChangeItem={(item) => {
+										this.setState({
+											usersTrack: item.value,
+										});
+									}}
+								/>
+							</View>
+						</View>
+
+						<Pressable
+							style={homeScreenStyles.classCard}
+							onPress={() => this.setState({ classRender: true })}
+						>
+							<View>
+								<Image
+									imageStyle={{ borderRadius: 75 / 2 }}
+									style={homeScreenStyles.cardImageButton}
+									source={require('../assets/dashboardPics/class.jpg')}
+								/>
+							</View>
+							<View style={homeScreenStyles.categoryButton}>
+								<Text style={homeScreenStyles.buttonText}>Classes</Text>
+							</View>
+						</Pressable>
+
+						<Pressable
+							style={homeScreenStyles.extraCard}
+							onPress={() => this.setState({ extraRender: true })}
+						>
+							<View>
+								<Image
+									imageStyle={{ borderRadius: 75 / 2 }}
+									style={homeScreenStyles.cardImageButton}
+									source={require('../assets/dashboardPics/extra.jpg')}
+								/>
+							</View>
+							<View style={homeScreenStyles.categoryButton}>
+								<Text style={homeScreenStyles.buttonText}>
+									Extracurriculars
+								</Text>
+							</View>
+						</Pressable>
+						<Pressable
+							style={homeScreenStyles.tipsCard}
+							onPress={() => this.setState({ tipsRender: true })}
+						>
+							<View>
+								<Image
+									imageStyle={{ borderRadius: 75 / 2 }}
+									style={homeScreenStyles.cardImageButton}
+									source={require('../assets/dashboardPics/tips.jpg')}
+								/>
+							</View>
+							<View style={homeScreenStyles.categoryButton}>
+								<Text style={homeScreenStyles.buttonText}>Tips</Text>
+							</View>
+						</Pressable>
+						<Pressable
+							style={homeScreenStyles.collegeCard}
+							onPress={() => this.setState({ collegeRender: true })}
+						>
+							<View>
+								<Image
+									imageStyle={{ borderRadius: 75 / 2 }}
+									style={homeScreenStyles.cardImageButton}
+									source={require('../assets/dashboardPics/college.jpg')}
+								/>
+							</View>
+							<View style={homeScreenStyles.categoryButton}>
+								<Text style={homeScreenStyles.buttonText}>College Tips</Text>
+							</View>
+						</Pressable>
+					</View>
 				</ScrollView>
 				{/* <View style={homeScreenStyles.profileCard}>
 					<Text>Profile</Text>
@@ -567,20 +630,65 @@ const homeScreenStyles = StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	classCard: {
-		marginTop: 5,
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginVertical: 10,
 		backgroundColor: 'white',
+		width: screenWidth * (13 / 15),
+		height: screenWidth * (7 / 15),
+		alignSelf: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	extraCard: {
-		marginTop: 5,
+		alignItems: 'center',
+		marginVertical: 10,
 		backgroundColor: 'white',
+		width: screenWidth * (13 / 15),
+		height: screenWidth * (7 / 15),
+		alignSelf: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	tipsCard: {
-		marginTop: 5,
+		alignItems: 'center',
+		marginVertical: 10,
 		backgroundColor: 'white',
+		width: screenWidth * (13 / 15),
+		height: screenWidth * (7 / 15),
+		alignSelf: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	collegeCard: {
-		marginTop: 5,
+		alignItems: 'center',
+		marginVertical: 10,
 		backgroundColor: 'white',
+		width: screenWidth * (13 / 15),
+		height: screenWidth * (7 / 15),
+		alignSelf: 'center',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	searchBar: {
 		fontSize: 16,
@@ -636,5 +744,64 @@ const homeScreenStyles = StyleSheet.create({
 	},
 	ionicon: {
 		marginVertical: 5,
+	},
+
+	/////
+	profileCardUserSide: {
+		marginVertical: 10,
+		flexDirection: 'row',
+		width: screenWidth * (13 / 15),
+		alignSelf: 'center',
+		backgroundColor: 'white',
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+	},
+	profileCardImageContainer: {
+		width: '40%',
+		alignItems: 'center',
+		backgroundColor: '#B71914',
+		borderTopLeftRadius: 5,
+		borderBottomLeftRadius: 5,
+	},
+	profileCardRightSide: {
+		width: '60%',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	cardImageButton: {
+		width: (screenWidth * 13) / 15,
+		height: screenWidth * (7 / 15),
+		borderRadius: 5,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+	},
+	categoryButton: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'rgba(183, 25, 20, 0.6)',
+		zIndex: 1,
+		position: 'absolute',
+		width: '60%',
+		height: screenWidth * (1 / 11),
+		borderRadius: 10,
+		marginTop: screenWidth * (1 / 6),
+	},
+	buttonText: {
+		color: 'white',
+		fontSize: 18,
+		textShadowColor: 'rgba(0, 0, 0, 0.25)',
+		textShadowOffset: { width: 0, height: 4 },
+		textShadowRadius: 4,
+		textAlign: 'center',
+		fontWeight: 'bold',
 	},
 });
