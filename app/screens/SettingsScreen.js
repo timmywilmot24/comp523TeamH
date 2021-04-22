@@ -339,7 +339,7 @@ export default class SettingsScreen extends Component {
                       <TextInput
                         style={settingsScreenStyles.inputs}
                         placeholder={"First name"}
-                        placeholderTextColor={"#B71914"}
+                        placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
                         value={this.state.newFirstName}
                         onChangeText={(newFirstName) =>
                           this.setState({ newFirstName })
@@ -356,7 +356,7 @@ export default class SettingsScreen extends Component {
                       <TextInput
                         style={settingsScreenStyles.inputs}
                         placeholder={"Last name"}
-                        placeholderTextColor={"#B71914"}
+                        placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
                         value={this.state.newLastName}
                         onChangeText={(newLastName) =>
                           this.setState({ newLastName })
@@ -373,7 +373,7 @@ export default class SettingsScreen extends Component {
                       <TextInput
                         style={settingsScreenStyles.inputs}
                         placeholder={"High School"}
-                        placeholderTextColor={"#B71914"}
+                        placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
                         value={this.state.newHighSchool}
                         onChangeText={(newHighSchool) =>
                           this.setState({ newHighSchool })
@@ -390,7 +390,7 @@ export default class SettingsScreen extends Component {
                       <TextInput
                         style={settingsScreenStyles.inputs}
                         placeholder={"Grade"}
-                        placeholderTextColor={"#B71914"}
+                        placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
                         value={this.state.newGrade}
                         onChangeText={(newGrade) => this.setState({ newGrade })}
                         label="Grade"
