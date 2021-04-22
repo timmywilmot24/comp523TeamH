@@ -24,7 +24,7 @@ export default class Classes extends Component {
 		let electivesRender = [];
 		for (let i = 0; i < electives.length; i++) {
 			electivesRender.push(
-				<View style={classScreenStyles.regularTextContainer}>
+				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 					<Text key={i}>{electives[i]}</Text>
 				</View>
 			);
@@ -34,7 +34,7 @@ export default class Classes extends Component {
 		let englishRender = [];
 		for (let i = 0; i < english.length; i++) {
 			englishRender.push(
-				<View style={classScreenStyles.regularTextContainer}>
+				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 					<Text key={i}>{english[i]}</Text>
 				</View>
 			);
@@ -49,12 +49,12 @@ export default class Classes extends Component {
 		} else {
 			for (let i = 0; i < language.length; i++) {
 				languageRender.push(
-					<View style={classScreenStyles.regularTextContainer}>
+					<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 						<Text key={i}>{language[i]}</Text>
 					</View>
 				);
 				languageNoteRender = (
-					<View style={classScreenStyles.noteContainers}>
+					<View key={i + 'a'} style={classScreenStyles.noteContainers}>
 						<Text key={'LanguageNote'}>{this.state.class.languageNotes}</Text>
 					</View>
 				);
@@ -66,7 +66,7 @@ export default class Classes extends Component {
 		let mathRender = [];
 		for (let i = 0; i < math.length; i++) {
 			mathRender.push(
-				<View style={classScreenStyles.regularTextContainer}>
+				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 					<Text key={i}>{math[i]}</Text>
 				</View>
 			);
@@ -76,7 +76,7 @@ export default class Classes extends Component {
 		let scienceRender = [];
 		for (let i = 0; i < science.length; i++) {
 			scienceRender.push(
-				<View style={classScreenStyles.regularTextContainer}>
+				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 					<Text key={i}>{science[i]}</Text>
 				</View>
 			);
@@ -86,7 +86,7 @@ export default class Classes extends Component {
 		let socialStudiesRender = [];
 		for (let i = 0; i < socialStudies.length; i++) {
 			socialStudiesRender.push(
-				<View style={classScreenStyles.regularTextContainer}>
+				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 					<Text key={i}>{socialStudies[i]}</Text>
 				</View>
 			);
@@ -95,13 +95,13 @@ export default class Classes extends Component {
 		let apCoursesRender = [];
 		for (let i = 0; i < this.state.apCourses.length; i++) {
 			apCoursesRender.push(
-				<View>
+				<View key={i + 'a'}>
 					{i === this.state.apCourses.length - 1 ? (
-						<View>
+						<View key={i + 'b'}>
 							<Text key={i}>{this.state.apCourses[i]}</Text>
 						</View>
 					) : (
-						<View style={classScreenStyles.regularTextContainer}>
+						<View key={i + 'b'} style={classScreenStyles.regularTextContainer}>
 							<Text key={i}>{this.state.apCourses[i]}</Text>
 						</View>
 					)}
@@ -112,13 +112,13 @@ export default class Classes extends Component {
 		let firstSemesterRender = [];
 		for (let i = 0; i < this.state.class.firstSemester.length; i++) {
 			firstSemesterRender.push(
-				<View>
+				<View key={i + 'a'}>
 					{i === this.state.class.firstSemester.length - 1 ? (
 						<View>
 							<Text key={i}>{this.state.class.firstSemester[i]}</Text>
 						</View>
 					) : (
-						<View style={classScreenStyles.regularTextContainer}>
+						<View key={i + 'b'} style={classScreenStyles.regularTextContainer}>
 							<Text key={i}>{this.state.class.firstSemester[i]}</Text>
 						</View>
 					)}
@@ -129,13 +129,13 @@ export default class Classes extends Component {
 		let secondSemesterRender = [];
 		for (let i = 0; i < this.state.class.secondSemester.length; i++) {
 			secondSemesterRender.push(
-				<View>
+				<View key={i + 'c'}>
 					{i === this.state.class.secondSemester.length - 1 ? (
-						<View>
+						<View key={i + 'b'}>
 							<Text key={i}>{this.state.class.secondSemester[i]}</Text>
 						</View>
 					) : (
-						<View style={classScreenStyles.regularTextContainer}>
+						<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
 							<Text key={i}>{this.state.class.secondSemester[i]}</Text>
 						</View>
 					)}
