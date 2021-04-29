@@ -11,6 +11,8 @@ import {
 	Dimensions,
 	Alert,
 } from 'react-native';
+import shorthash from 'shorthash';
+import CacheImage from '../components/CacheImage.js';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Header from '../components/Header.js';
 import { styles } from '../screens/MainScreen.js';
@@ -22,6 +24,7 @@ import LoadingAnimationScreen from '../components/LoadingAnimationScreen.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 const screenWidth = Dimensions.get('window').width;
+import * as FileSystem from 'expo-file-system';
 
 export default class HomeScreen extends Component {
 	constructor(props) {
@@ -70,18 +73,27 @@ export default class HomeScreen extends Component {
 			});
 	}
 
-	loadTrack() {
-		this.state.db
-			.database()
-			.ref('track/')
-			.get()
-			.then((data) => {
-				this.setState({
-					track: data.val(),
-					dataGrabbed: true,
+	loadTrack = async () => {
+		const path = `${FileSystem.cacheDirectory}track`;
+		let track = await FileSystem.getInfoAsync(path);
+		if (!track.exists) {
+			this.state.db
+				.database()
+				.ref('track/')
+				.get()
+				.then((data) => {
+					FileSystem.writeAsStringAsync(path, JSON.stringify(data));
+					this.setState({
+						track: data.val(),
+						dataGrabbed: true,
+					});
 				});
+		} else {
+			this.setState({
+				dataGrabbed: true,
 			});
-	}
+		}
+	};
 
 	loadStudents() {
 		this.state.db
@@ -169,84 +181,10 @@ export default class HomeScreen extends Component {
 	}
 
 	render() {
-		let feed = [];
-		let studentView = [];
-		let items = [
-			{
-				label: 'Business',
-				value: 'Business',
-			},
-			{
-				label: 'Law and Politics',
-				value: 'LawPolitics',
-			},
-			{
-				label: 'Theatre and Film',
-				value: 'Theatre',
-			},
-			{
-				label: 'Journalism',
-				value: 'Journalism',
-			},
-			{
-				label: 'Natural Sciences',
-				value: 'NaturalScience',
-			},
-			{
-				label: 'Humanities',
-				value: 'Humanities',
-			},
-			{
-				label: 'Technology',
-				value: 'Technology',
-			},
-			{
-				label: 'Medicine',
-				value: 'Medicine',
-			},
-		];
 		let screenRender = (
 			<View>
 				<ScrollView>
 					<View style={{ marginBottom: screenWidth * (1 / 4) }}>
-						<View style={homeScreenStyles.profileCardUserSide}>
-							<View style={homeScreenStyles.profileCardImageContainer}>
-								{this.state.profilePic === '' ? (
-									<Image
-										imageStyle={{ borderRadius: 75 / 2 }}
-										style={homeScreenStyles.profilePic}
-										source={require('../assets/defaultProfile.png')}
-									/>
-								) : (
-									<Image
-										imageStyle={{ borderRadius: 75 / 2 }}
-										style={homeScreenStyles.profilePic}
-										source={{
-											uri: this.state.profilePic,
-										}}
-									/>
-								)}
-							</View>
-							<View style={homeScreenStyles.profileCardRightSide}>
-								<Text>{this.state.grade}</Text>
-								<DropDownPicker
-									items={items}
-									defaultValue={this.state.usersTrack}
-									containerStyle={{ height: 40 }}
-									style={{ backgroundColor: '#fafafa', width: '35%' }}
-									itemStyle={{
-										justifyContent: 'flex-start',
-									}}
-									dropDownStyle={{ backgroundColor: '#fafafa' }}
-									onChangeItem={(item) => {
-										this.setState({
-											usersTrack: item.value,
-										});
-									}}
-								/>
-							</View>
-						</View>
-
 						<Pressable
 							style={homeScreenStyles.classCard}
 							onPress={() => this.setState({ classRender: true })}
@@ -312,9 +250,6 @@ export default class HomeScreen extends Component {
 						</Pressable>
 					</View>
 				</ScrollView>
-				{/* <View style={homeScreenStyles.profileCard}>
-					<Text>Profile</Text>
-				</View> */}
 			</View>
 		);
 		if (!this.state.userGrabbed) {
@@ -326,17 +261,9 @@ export default class HomeScreen extends Component {
 				this.loadTrack();
 			}
 		} else if (!this.state.isAdmin) {
-			let trackInfo = [];
-			for (let i = 0; i < 8; i++) {
-				if (this.state.track[i].name === this.state.usersTrack) {
-					trackInfo = this.state.track[i][this.state.grade];
-				}
-			}
 			if (this.state.classRender) {
 				screenRender = (
 					<Classes
-						classes={trackInfo.classes}
-						apCourses={trackInfo.apCourses}
 						setState={(classRender) => {
 							this.setState({
 								classRender: classRender,
@@ -347,7 +274,6 @@ export default class HomeScreen extends Component {
 			} else if (this.state.collegeRender) {
 				screenRender = (
 					<CollegeTips
-						college={trackInfo.college}
 						setState={(collegeRender) => {
 							this.setState({
 								collegeRender: collegeRender,
@@ -358,7 +284,6 @@ export default class HomeScreen extends Component {
 			} else if (this.state.extraRender) {
 				screenRender = (
 					<Extra
-						extra={trackInfo.activities}
 						setState={(extraRender) => {
 							this.setState({
 								extraRender: extraRender,
@@ -369,7 +294,6 @@ export default class HomeScreen extends Component {
 			} else if (this.state.tipsRender) {
 				screenRender = (
 					<Tips
-						tips={trackInfo.tips}
 						setState={(tipsRender) => {
 							this.setState({
 								tipsRender: tipsRender,
@@ -379,6 +303,7 @@ export default class HomeScreen extends Component {
 				);
 			}
 		} else {
+			//Admin side
 			let studentsArray = [];
 			for (let student in this.state.studentsObject) {
 				studentsArray.push(this.state.studentsObject[student]);
@@ -719,10 +644,18 @@ const homeScreenStyles = StyleSheet.create({
 		borderRadius: 5,
 	},
 	profilePic: {
-		width: 75,
-		height: 75,
-		borderRadius: 75 / 2,
+		width: 125,
+		height: 125,
+		borderRadius: 125 / 2,
 		margin: (screenWidth * 1) / 30,
+		borderWidth: 2,
+		borderColor: 'white',
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
 	},
 	profileInfo: {
 		width: (screenWidth * 5.5) / 10,
@@ -751,6 +684,7 @@ const homeScreenStyles = StyleSheet.create({
 		marginVertical: 10,
 		flexDirection: 'row',
 		width: screenWidth * (13 / 15),
+		height: screenWidth * (6 / 15),
 		alignSelf: 'center',
 		backgroundColor: 'white',
 		borderRadius: 5,
@@ -762,14 +696,15 @@ const homeScreenStyles = StyleSheet.create({
 		shadowOpacity: 0.25,
 	},
 	profileCardImageContainer: {
-		width: '40%',
+		width: '50%',
 		alignItems: 'center',
+		justifyContent: 'center',
 		backgroundColor: '#B71914',
 		borderTopLeftRadius: 5,
 		borderBottomLeftRadius: 5,
 	},
 	profileCardRightSide: {
-		width: '60%',
+		width: '50%',
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

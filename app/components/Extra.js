@@ -7,9 +7,14 @@ import {
 	Pressable,
 	Dimensions,
 } from 'react-native';
-import { styles } from '../screens/MainScreen.js';
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import TabYear from '../components/TabYear.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {
+	TouchableHighlight,
+	TouchableOpacity,
+} from 'react-native-gesture-handler';
+import * as FileSystem from 'expo-file-system';
 const screenWidth = Dimensions.get('window').width;
 
 export default class Extra extends Component {
@@ -17,21 +22,75 @@ export default class Extra extends Component {
 		super(props);
 
 		this.state = {
-			extra: this.props.extra,
+			track: '',
+			year: 'All',
+			subject: 'Business',
 		};
 	}
+	loadData() {
+		const path = `${FileSystem.cacheDirectory}track`;
+		FileSystem.readAsStringAsync(path).then((data) => {
+			this.setState({ track: JSON.parse(data), dataLoaded: true });
+		});
+	}
 	render() {
-		let options = this.state.extra.options;
-		let optionsRender = [];
+		let year = 0;
+		let extraRender = [];
+		let optionRender = [];
+		if (!this.state.dataLoaded) {
+			this.loadData();
+		} else {
+			let extra = '';
+			year = this.state.year;
+			switch (year) {
+				case 'Freshman':
+					year = 9;
+					break;
+				case 'Sophomore':
+					year = 10;
+					break;
+				case 'Junior':
+					year = 11;
+					break;
+				case 'Senior':
+					year = 12;
+					break;
+				default:
+					year = 0;
+					break;
+			}
+			let track = this.state.track;
+			for (let subject in track) {
+				if (track[subject].name === this.state.subject) {
+					if (year === 0) {
+						extra = track[subject]; //all grade
+					} else {
+						extra = track[subject][year]['activities'];
+						let options = extra['options'];
+						let note1 = extra['notes'];
+						let note2 = extra['notes2'];
+						extraRender.push(
+							<View key={year + 'extraNote1'}>
+								<Text key={year + 'extraNote1'}>{note1}</Text>
+							</View>
+						);
+						extraRender.push(
+							<View key={year + 'extraNote2'}>
+								<Text key={year + 'extraNote2'}>{note2}</Text>
+							</View>
+						);
 
-		for (let i = 0; i < options.length; i++) {
-			optionsRender.push(
-				<View key={i + 'a'} style={extraScreenStyles.regularTextContainer}>
-					<Text key={i}>{options[i]}</Text>
-				</View>
-			);
+						for (let option in options) {
+							optionRender.push(
+								<View key={option + 'option'}>
+									<Text key={option + 'option'}>{options[option]}</Text>
+								</View>
+							);
+						}
+					}
+				}
+			}
 		}
-
 		return (
 			<View>
 				<View style={extraScreenStyles.backButtonContainer}>
@@ -48,26 +107,35 @@ export default class Extra extends Component {
 					</Pressable>
 				</View>
 				<View>
-					<View style={extraScreenStyles.extraContainer}>
-						<View style={extraScreenStyles.titleContainer}>
-							<Ionicons
-								style={extraScreenStyles.titlesIcons}
-								name="body"
-								color="#B71914"
-								size={35}
-							></Ionicons>
-							<Text style={extraScreenStyles.title}>Extracurricular</Text>
-						</View>
-						{optionsRender}
-						<View style={extraScreenStyles.noteContainers}>
-							<Text>{this.state.extra.notes}</Text>
-						</View>
-
-						<View style={extraScreenStyles.noteContainers}>
-							<Text>{this.state.extra.notes2}</Text>
-						</View>
-					</View>
+					<TabYear
+						setState={(value) => this.setState({ year: value })}
+					></TabYear>
+					<DropDownPicker
+						items={[
+							{ value: 'Business', label: 'Business' },
+							{ value: 'LawPolitics', label: 'Law and Politics' },
+							{ value: 'Theatre', label: 'Theatre and Film' },
+							{ value: 'Journalism', label: 'Journalism' },
+							{ value: 'NaturalScience', label: 'Natural Sciences' },
+							{ value: 'Humanities', label: 'Humanities' },
+							{ value: 'Technology', label: 'Technology' },
+							{ value: 'Medicine', label: 'Medicine' },
+						]}
+						defaultValue={this.state.subject}
+						containerStyle={extraScreenStyles.dropDown}
+						itemStyle={{
+							justifyContent: 'flex-start',
+						}}
+						dropDownStyle={{ backgroundColor: '#fafafa' }}
+						onChangeItem={(item) => {
+							this.setState({
+								subject: item.value,
+							});
+						}}
+					/>
 				</View>
+				<View>{optionRender}</View>
+				<View>{extraRender}</View>
 			</View>
 		);
 	}
@@ -86,6 +154,13 @@ const extraScreenStyles = StyleSheet.create({
 	},
 	backText: {
 		alignSelf: 'center',
+	},
+	dropDown: {
+		marginRight: (screenWidth * 1) / 30,
+		width: (screenWidth * 3) / 10,
+		height: 40,
+		borderRadius: 20,
+		zIndex: 100,
 	},
 	extraContainer: {
 		backgroundColor: 'white',

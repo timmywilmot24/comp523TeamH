@@ -7,140 +7,204 @@ import {
 	Pressable,
 	Dimensions,
 } from 'react-native';
-import { styles } from '../screens/MainScreen.js';
+import DropDownPicker from 'react-native-dropdown-picker';
+import TabYear from '../components/TabYear.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {
+	TouchableHighlight,
+	TouchableOpacity,
+} from 'react-native-gesture-handler';
+import * as FileSystem from 'expo-file-system';
+
 const screenWidth = Dimensions.get('window').width;
 export default class Classes extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			class: this.props.classes,
-			apCourses: this.props.apCourses,
+			track: '',
+			year: 'All',
+			subject: 'Business',
 		};
 	}
+
+	loadData() {
+		const path = `${FileSystem.cacheDirectory}track`;
+		FileSystem.readAsStringAsync(path).then((data) => {
+			this.setState({ track: JSON.parse(data), dataLoaded: true });
+		});
+	}
 	render() {
-		let electives = this.state.class.electives;
-		let electivesRender = [];
-		for (let i = 0; i < electives.length; i++) {
-			electivesRender.push(
-				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-					<Text key={i}>{electives[i]}</Text>
-				</View>
-			);
-		}
+		let year = 0;
+		let semesterClassRender = [];
+		let electiveClassRender = [];
+		let electiveNoteRender = '';
+		let englishClassRender = [];
+		let englishNoteRender = '';
+		let mathClassRender = [];
+		let mathNoteRender = '';
+		let scienceClassRender = [];
+		let scienceNoteRender = '';
+		let socialStudiesClassRender = [];
+		let socialStudiesNoteRender = '';
+		let languageClassRender = [];
+		let languageNoteRender = '';
 
-		let english = this.state.class.english;
-		let englishRender = [];
-		for (let i = 0; i < english.length; i++) {
-			englishRender.push(
-				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-					<Text key={i}>{english[i]}</Text>
-				</View>
-			);
-		}
-
-		let languageGroupRender = [];
-		let language = this.state.class.language;
-		let languageRender = [];
-		let languageNoteRender;
-		if (language === '') {
-			languageGroupRender.push(<Text key={'None'}>None</Text>);
+		let freshmanClassRender = [];
+		if (!this.state.dataLoaded) {
+			this.loadData();
 		} else {
-			for (let i = 0; i < language.length; i++) {
-				languageRender.push(
-					<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-						<Text key={i}>{language[i]}</Text>
-					</View>
-				);
-				languageNoteRender = (
-					<View key={i + 'a'} style={classScreenStyles.noteContainers}>
-						<Text key={'LanguageNote'}>{this.state.class.languageNotes}</Text>
-					</View>
-				);
+			let classes = '';
+			year = this.state.year;
+			switch (year) {
+				case 'Freshman':
+					year = 9;
+					break;
+				case 'Sophomore':
+					year = 10;
+					break;
+				case 'Junior':
+					year = 11;
+					break;
+				case 'Senior':
+					year = 12;
+					break;
+				default:
+					year = 0;
+					break;
 			}
-			languageGroupRender.push(languageRender, languageNoteRender);
-		}
-
-		let math = this.state.class.math;
-		let mathRender = [];
-		for (let i = 0; i < math.length; i++) {
-			mathRender.push(
-				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-					<Text key={i}>{math[i]}</Text>
-				</View>
-			);
-		}
-
-		let science = this.state.class.science;
-		let scienceRender = [];
-		for (let i = 0; i < science.length; i++) {
-			scienceRender.push(
-				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-					<Text key={i}>{science[i]}</Text>
-				</View>
-			);
-		}
-
-		let socialStudies = this.state.class.socialStudies;
-		let socialStudiesRender = [];
-		for (let i = 0; i < socialStudies.length; i++) {
-			socialStudiesRender.push(
-				<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-					<Text key={i}>{socialStudies[i]}</Text>
-				</View>
-			);
-		}
-
-		let apCoursesRender = [];
-		for (let i = 0; i < this.state.apCourses.length; i++) {
-			apCoursesRender.push(
-				<View key={i + 'a'}>
-					{i === this.state.apCourses.length - 1 ? (
-						<View key={i + 'b'}>
-							<Text key={i}>{this.state.apCourses[i]}</Text>
-						</View>
-					) : (
-						<View key={i + 'b'} style={classScreenStyles.regularTextContainer}>
-							<Text key={i}>{this.state.apCourses[i]}</Text>
-						</View>
-					)}
-				</View>
-			);
-		}
-
-		let firstSemesterRender = [];
-		for (let i = 0; i < this.state.class.firstSemester.length; i++) {
-			firstSemesterRender.push(
-				<View key={i + 'a'}>
-					{i === this.state.class.firstSemester.length - 1 ? (
-						<View>
-							<Text key={i}>{this.state.class.firstSemester[i]}</Text>
-						</View>
-					) : (
-						<View key={i + 'b'} style={classScreenStyles.regularTextContainer}>
-							<Text key={i}>{this.state.class.firstSemester[i]}</Text>
-						</View>
-					)}
-				</View>
-			);
-		}
-
-		let secondSemesterRender = [];
-		for (let i = 0; i < this.state.class.secondSemester.length; i++) {
-			secondSemesterRender.push(
-				<View key={i + 'c'}>
-					{i === this.state.class.secondSemester.length - 1 ? (
-						<View key={i + 'b'}>
-							<Text key={i}>{this.state.class.secondSemester[i]}</Text>
-						</View>
-					) : (
-						<View key={i + 'a'} style={classScreenStyles.regularTextContainer}>
-							<Text key={i}>{this.state.class.secondSemester[i]}</Text>
-						</View>
-					)}
-				</View>
-			);
+			for (let subject in this.state.track) {
+				if (this.state.track[subject].name === this.state.subject) {
+					if (year == 0) {
+						classes = this.state.track[subject];
+						//console.log(classes);
+						for (let grade in classes) {
+							classes = this.state.track[subject][grade].classes;
+							if (grade != 'name') {
+								if (grade == 9) {
+									console.log(classes);
+								} else if (grade == 10) {
+									//console.log(classes);
+								} else if (grade == 11) {
+									//console.log(classes);
+								} else if (grade == 12) {
+									//console.log(classes);
+								}
+							}
+						}
+					} else {
+						classes = this.state.track[subject][year].classes;
+						for (let type in classes) {
+							let typeOfClasses = classes[type];
+							if (type === 'firstSemester' || type === 'secondSemester') {
+								for (let c in typeOfClasses) {
+									semesterClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'electives') {
+								for (let c in typeOfClasses) {
+									electiveClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'electivesNotes') {
+								electiveNoteRender = typeOfClasses;
+							} else if (type === 'english') {
+								for (let c in typeOfClasses) {
+									englishClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'englishNotes') {
+								englishNoteRender = typeOfClasses;
+							} else if (type === 'math') {
+								for (let c in typeOfClasses) {
+									mathClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'mathNotes') {
+								mathNoteRender = typeOfClasses;
+							} else if (type === 'science') {
+								for (let c in typeOfClasses) {
+									scienceClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'scienceNotes') {
+								scienceNoteRender = typeOfClasses;
+							} else if (type === 'socialStudies') {
+								for (let c in typeOfClasses) {
+									socialStudiesClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'socialStudiesNotes') {
+								socialStudiesNoteRender = typeOfClasses;
+							} else if (type === 'language') {
+								for (let c in typeOfClasses) {
+									languageClassRender.push(
+										<View
+											key={type + c + 'infoContainer'}
+											style={classScreenStyles.regularTextContainer}
+										>
+											<Text key={type + c + 'infoText'}>
+												{typeOfClasses[c]}
+											</Text>
+										</View>
+									);
+								}
+							} else if (type === 'languageNotes') {
+								languageNoteRender = typeOfClasses;
+							}
+						}
+					}
+				}
+			}
+			freshmanClassRender.push(semesterClassRender);
 		}
 		return (
 			<View>
@@ -157,149 +221,198 @@ export default class Classes extends Component {
 						<Text style={classScreenStyles.backText}>Back</Text>
 					</Pressable>
 				</View>
-				<View style={{ marginBottom: screenWidth * (3 / 4) }}>
-					<ScrollView>
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>First Semester</Text>
-							</View>
-
-							{firstSemesterRender}
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Second Semester</Text>
-							</View>
-							{secondSemesterRender}
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Electives</Text>
-							</View>
-							{electivesRender}
-							<View style={classScreenStyles.noteContainers}>
-								<Text>{this.state.class.electivesNotes}</Text>
-							</View>
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Language</Text>
-							</View>
-							{languageGroupRender}
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>English</Text>
-							</View>
-							{englishRender}
-							<View style={classScreenStyles.noteContainers}>
-								<Text>{this.state.class.englishNotes}</Text>
-							</View>
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Math</Text>
-							</View>
-							{mathRender}
-							<View style={classScreenStyles.noteContainers}>
-								<Text>{this.state.class.mathNotes}</Text>
-							</View>
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Science</Text>
-							</View>
-							{scienceRender}
-							<View style={classScreenStyles.noteContainers}>
-								<Text>{this.state.class.scienceNotes}</Text>
-							</View>
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>Social Studies</Text>
-							</View>
-							{socialStudiesRender}
-							<View style={classScreenStyles.noteContainers}>
-								<Text>{this.state.class.socialStudiesNotes}</Text>
-							</View>
-						</View>
-
-						<View style={classScreenStyles.containers}>
-							<View style={classScreenStyles.titleContainers}>
-								<Ionicons
-									style={classScreenStyles.titlesIcons}
-									name="school"
-									color="#B71914"
-									size={35}
-								></Ionicons>
-								<Text style={classScreenStyles.titles}>AP Courses</Text>
-							</View>
-							{apCoursesRender}
-						</View>
-					</ScrollView>
+				<View>
+					<TabYear
+						setState={(value) => this.setState({ year: value })}
+					></TabYear>
+					<DropDownPicker
+						items={[
+							{ value: 'Business', label: 'Business' },
+							{ value: 'LawPolitics', label: 'Law and Politics' },
+							{ value: 'Theatre', label: 'Theatre and Film' },
+							{ value: 'Journalism', label: 'Journalism' },
+							{ value: 'NaturalScience', label: 'Natural Sciences' },
+							{ value: 'Humanities', label: 'Humanities' },
+							{ value: 'Technology', label: 'Technology' },
+							{ value: 'Medicine', label: 'Medicine' },
+						]}
+						defaultValue={this.state.subject}
+						containerStyle={classScreenStyles.dropDown}
+						itemStyle={{
+							justifyContent: 'flex-start',
+						}}
+						dropDownStyle={{ backgroundColor: '#fafafa' }}
+						onChangeItem={(item) => {
+							this.setState({
+								subject: item.value,
+							});
+						}}
+					/>
 				</View>
+				<ScrollView>
+					{this.state.year === 'All' ? (
+						<View>
+							<ScrollView>{freshmanClassRender}</ScrollView>
+						</View>
+					) : (
+						<View style={{ marginBottom: screenWidth * 1.3 }}>
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>
+										1st and 2nd Semester
+									</Text>
+								</View>
+								{semesterClassRender}
+							</View>
+
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>Electives</Text>
+								</View>
+								<View>{electiveClassRender}</View>
+								<View style={classScreenStyles.noteContainers}>
+									<Text>{electiveNoteRender}</Text>
+								</View>
+							</View>
+							{languageNoteRender === '' ? (
+								<View style={classScreenStyles.classTypeContainer}>
+									<View style={classScreenStyles.classTypeTitleContainer}>
+										<Ionicons
+											style={classScreenStyles.titlesIcons}
+											name="school"
+											color="#B71914"
+											size={35}
+										></Ionicons>
+										<Text style={classScreenStyles.title}>Language</Text>
+									</View>
+									<View>
+										<Text>None</Text>
+									</View>
+								</View>
+							) : (
+								<View style={classScreenStyles.classTypeContainer}>
+									<View style={classScreenStyles.classTypeTitleContainer}>
+										<Ionicons
+											style={classScreenStyles.titlesIcons}
+											name="school"
+											color="#B71914"
+											size={35}
+										></Ionicons>
+										<Text style={classScreenStyles.title}>Language</Text>
+									</View>
+									<View>{languageClassRender}</View>
+									<View style={classScreenStyles.noteContainers}>
+										<Text>{languageNoteRender}</Text>
+									</View>
+								</View>
+							)}
+
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>English</Text>
+								</View>
+								<View>{englishClassRender}</View>
+								<View style={classScreenStyles.noteContainers}>
+									<Text>{englishNoteRender}</Text>
+								</View>
+							</View>
+
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>Math</Text>
+								</View>
+								<View>{mathClassRender}</View>
+								<View style={classScreenStyles.noteContainers}>
+									<Text>{mathNoteRender}</Text>
+								</View>
+							</View>
+
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>Science</Text>
+								</View>
+								<View>{scienceClassRender}</View>
+								<View style={classScreenStyles.noteContainers}>
+									<Text>{scienceNoteRender}</Text>
+								</View>
+							</View>
+
+							<View style={classScreenStyles.classTypeContainer}>
+								<View style={classScreenStyles.classTypeTitleContainer}>
+									<Ionicons
+										style={classScreenStyles.titlesIcons}
+										name="school"
+										color="#B71914"
+										size={35}
+									></Ionicons>
+									<Text style={classScreenStyles.title}>Social Studies</Text>
+								</View>
+								<View>{socialStudiesClassRender}</View>
+								<View style={classScreenStyles.noteContainers}>
+									<Text>{socialStudiesNoteRender}</Text>
+								</View>
+							</View>
+						</View>
+					)}
+				</ScrollView>
 			</View>
 		);
 	}
 }
 
 const classScreenStyles = StyleSheet.create({
-	containers: {
+	backButtonContainer: {
+		backgroundColor: '#DDDDDD',
+		padding: screenWidth * (1 / 50),
+		marginBottom: screenWidth * (1 / 50),
+	},
+	buttonStuff: {
+		flexDirection: 'row',
+	},
+	backIcon: {
+		alignSelf: 'center',
+	},
+	backText: {
+		alignSelf: 'center',
+	},
+	dropDown: {
+		marginRight: (screenWidth * 1) / 30,
+		width: (screenWidth * 3) / 10,
+		height: 40,
+		borderRadius: 20,
+		zIndex: 100,
+	},
+	classTypeContainer: {
 		backgroundColor: 'white',
 		padding: screenWidth * (1 / 25),
 		width: screenWidth * (13 / 15),
@@ -313,7 +426,7 @@ const classScreenStyles = StyleSheet.create({
 		},
 		shadowOpacity: 0.25,
 	},
-	titleContainers: {
+	classTypeTitleContainer: {
 		flexDirection: 'row',
 		paddingVertical: screenWidth * (1 / 70),
 		borderRadius: screenWidth * (1 / 70),
@@ -325,13 +438,13 @@ const classScreenStyles = StyleSheet.create({
 		},
 		shadowOpacity: 0.25,
 	},
-	titles: {
+	title: {
 		color: '#B71914',
 		marginLeft: screenWidth * (1 / 70),
 		fontSize: 20,
 		alignSelf: 'center',
 	},
-	titlesIcons: {
+	titleIcon: {
 		alignSelf: 'center',
 	},
 	regularTextContainer: {
@@ -353,19 +466,5 @@ const classScreenStyles = StyleSheet.create({
 		},
 		shadowOpacity: 0.25,
 		backgroundColor: '#F6931D',
-	},
-	backButtonContainer: {
-		backgroundColor: '#DDDDDD',
-		padding: screenWidth * (1 / 50),
-		marginBottom: screenWidth * (1 / 50),
-	},
-	buttonStuff: {
-		flexDirection: 'row',
-	},
-	backIcon: {
-		alignSelf: 'center',
-	},
-	backText: {
-		alignSelf: 'center',
 	},
 });

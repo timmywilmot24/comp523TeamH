@@ -7,34 +7,111 @@ import {
 	Pressable,
 	Dimensions,
 } from 'react-native';
-import { styles } from '../screens/MainScreen.js';
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import TabYear from '../components/TabYear.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {
+	TouchableHighlight,
+	TouchableOpacity,
+} from 'react-native-gesture-handler';
+import * as FileSystem from 'expo-file-system';
 const screenWidth = Dimensions.get('window').width;
+
 export default class Tips extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			tips: this.props.tips,
+			track: '',
+			year: 'All',
+			subject: 'Business',
 		};
 	}
+	loadData() {
+		const path = `${FileSystem.cacheDirectory}track`;
+		FileSystem.readAsStringAsync(path).then((data) => {
+			this.setState({ track: JSON.parse(data), dataLoaded: true });
+		});
+	}
 	render() {
+		let year = 0;
 		let tipsRender = [];
-		for (let i = 0; i < this.state.tips.length; i++) {
-			tipsRender.push(
-				<View key={i + 'z'}>
-					{i === this.state.tips.length - 1 ? (
-						<View key={i + 'a'}>
-							<Text key={i + 'b'}>{this.state.tips[i]}</Text>
-						</View>
-					) : (
-						<View key={i + 'c'} style={tipsScreenStyles.regularTextContainer}>
-							<Text key={i + 'd'}>{this.state.tips[i]}</Text>
-						</View>
-					)}
-				</View>
-			);
+		let freshmanTipRender = [];
+		let sophomoreTipRender = [];
+		let juniorTipRender = [];
+		let seniorTipRender = [];
+		if (!this.state.dataLoaded) {
+			this.loadData();
+		} else {
+			let tips = '';
+			year = this.state.year;
+			switch (year) {
+				case 'Freshman':
+					year = 9;
+					break;
+				case 'Sophomore':
+					year = 10;
+					break;
+				case 'Junior':
+					year = 11;
+					break;
+				case 'Senior':
+					year = 12;
+					break;
+				default:
+					year = 0;
+					break;
+			}
+			let track = this.state.track;
+			for (let subject in track) {
+				if (track[subject].name === this.state.subject) {
+					if (year === 0) {
+						tips = track[subject]; //all grade
+						for (let grade in tips) {
+							//iterate through grades
+							if (grade !== 'name') {
+								tips = track[subject][grade]['tips'];
+								for (let tip in tips) {
+									if (grade == 9) {
+										freshmanTipRender.push(
+											<View key={tip + 'freshmantips'}>
+												<Text key={tip + 'freshmantips'}>{tips[tip]}</Text>
+											</View>
+										);
+									} else if (grade == 10) {
+										sophomoreTipRender.push(
+											<View key={tip + 'sophomoretips'}>
+												<Text key={tip + 'sophomoretips'}>{tips[tip]}</Text>
+											</View>
+										);
+									} else if (grade == 11) {
+										juniorTipRender.push(
+											<View key={tip + 'juniortips'}>
+												<Text key={tip + 'juniortips'}>{tips[tip]}</Text>
+											</View>
+										);
+									} else if (grade == 12) {
+										seniorTipRender.push(
+											<View key={tip + 'seniortips'}>
+												<Text key={tip + 'seniortips'}>{tips[tip]}</Text>
+											</View>
+										);
+									}
+								}
+							}
+						}
+					} else {
+						tips = track[subject][year]['tips'];
+						for (let tip in tips) {
+							tipsRender.push(
+								<View key={tip + 'tips'}>
+									<Text key={tip + 'tips'}>{tips[tip]}</Text>
+								</View>
+							);
+						}
+					}
+				}
+			}
 		}
 		return (
 			<View>
@@ -52,19 +129,45 @@ export default class Tips extends Component {
 					</Pressable>
 				</View>
 				<View>
-					<View style={tipsScreenStyles.tipsContainer}>
-						<View style={tipsScreenStyles.titleContainer}>
-							<Ionicons
-								style={tipsScreenStyles.titlesIcons}
-								name="bookmark"
-								color="#B71914"
-								size={35}
-							></Ionicons>
-							<Text style={tipsScreenStyles.title}>Tips</Text>
-						</View>
-						{tipsRender}
-					</View>
+					<TabYear
+						setState={(value) => this.setState({ year: value })}
+					></TabYear>
+					<DropDownPicker
+						items={[
+							{ value: 'Business', label: 'Business' },
+							{ value: 'LawPolitics', label: 'Law and Politics' },
+							{ value: 'Theatre', label: 'Theatre and Film' },
+							{ value: 'Journalism', label: 'Journalism' },
+							{ value: 'NaturalScience', label: 'Natural Sciences' },
+							{ value: 'Humanities', label: 'Humanities' },
+							{ value: 'Technology', label: 'Technology' },
+							{ value: 'Medicine', label: 'Medicine' },
+						]}
+						defaultValue={this.state.subject}
+						containerStyle={tipsScreenStyles.dropDown}
+						itemStyle={{
+							justifyContent: 'flex-start',
+						}}
+						dropDownStyle={{ backgroundColor: '#fafafa' }}
+						onChangeItem={(item) => {
+							this.setState({
+								subject: item.value,
+							});
+						}}
+					/>
 				</View>
+				{this.state.year === 'All' ? (
+					<View>
+						<ScrollView>
+							<View>{freshmanTipRender}</View>
+							<View>{sophomoreTipRender}</View>
+							<View>{juniorTipRender}</View>
+							<View>{seniorTipRender}</View>
+						</ScrollView>
+					</View>
+				) : (
+					<View>{tipsRender}</View>
+				)}
 			</View>
 		);
 	}
@@ -84,6 +187,13 @@ const tipsScreenStyles = StyleSheet.create({
 	},
 	backText: {
 		alignSelf: 'center',
+	},
+	dropDown: {
+		marginRight: (screenWidth * 1) / 30,
+		width: (screenWidth * 3) / 10,
+		height: 40,
+		borderRadius: 20,
+		zIndex: 100,
 	},
 	tipsContainer: {
 		backgroundColor: 'white',
