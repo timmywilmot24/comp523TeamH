@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Linking,
+  Alert,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -29,17 +30,28 @@ export default class Header extends Component {
       }
     });
   }
+
+  handleEmail() {
+    let to = "mscollegereadinessapp@gmail.com";
+    let url = `mailto:${to}`;
+    Linking.canOpenURL(url)
+      .then(() => {
+        Linking.openURL(url).catch(() => {
+          Alert.alert("Unable to connect to email.");
+        });
+      })
+      .catch(() => {
+        Alert.alert("Unable to connect to Internet.");
+      });
+  }
+
   render() {
     return (
       <View style={styles.header}>
         <SafeAreaView style={styles.safeContainer}>
           <TouchableOpacity
             style={styles.iconContainer}
-            onPress={() =>
-              this.goToURL(
-                "https://missionscholarship.org/ola/services/video-chat-kyndall-program-consultation#d4f66cf5-2682-4fc6-b186-3bdfa068ece3"
-              )
-            }
+            onPress={() => this.handleEmail()}
           >
             <Ionicons
               name="mail"

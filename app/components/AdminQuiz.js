@@ -38,6 +38,11 @@ export default class AdminQuiz extends Component {
           quiz: quiz,
           dataLoaded: true,
         });
+      })
+      .catch(() => {
+        Alert.alert(
+          "Unable to connect to database. Try resetting your Internet or reconnecting."
+        );
       });
   }
 

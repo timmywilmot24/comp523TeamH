@@ -10,12 +10,15 @@ import {
   Alert,
   Linking,
   Dimensions,
+  TouchableHighlightBase,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
 import { styles } from "../screens/MainScreen.js";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
+import NetInfo from "@react-native-community/netinfo";
+
 const screenWidth = Dimensions.get("window").width;
 
 export default class NewsScreen extends Component {
@@ -35,42 +38,51 @@ export default class NewsScreen extends Component {
       text: "",
       errorMessage: "",
       loadingDelete: false,
+      search: "",
+      online: false,
     };
   }
 
-  getData() {
-    this.state.db
-      .database()
-      .ref("news")
-      .get()
-      .then((news) => {
-        let messages = this.state.messages;
-        let length = 0;
-        news.forEach((post) => {
-          length += 1;
-          messages.push({
-            date: post.val().date,
-            message: post.val().message,
-            url: post.val().url,
-            text: post.val().text,
-          });
-        });
-        this.state.db
-          .database()
-          .ref("users/" + this.state.userID)
-          .get()
-          .then((data) => {
-            this.setState({
-              messages: messages,
-              length: length,
-              dataGrabbed: true,
-              isAdmin:
-                data.val().account === "admin" ||
-                data.val().account === "masterAdmin",
-              firstName: data.val().firstName,
+  async getData() {
+    let online = await NetInfo.fetch();
+    let connected = online.isConnected;
+    if (connected) {
+      this.state.db
+        .database()
+        .ref("news")
+        .get()
+        .then((news) => {
+          let messages = this.state.messages;
+          let length = 0;
+          news.forEach((post) => {
+            length += 1;
+            messages.push({
+              date: post.val().date,
+              message: post.val().message,
+              url: post.val().url,
+              text: post.val().text,
             });
           });
-      });
+          this.state.db
+            .database()
+            .ref("users/" + this.state.userID)
+            .get()
+            .then((data) => {
+              this.setState({
+                online: true,
+                messages: messages,
+                length: length,
+                dataGrabbed: true,
+                isAdmin:
+                  data.val().account === "admin" ||
+                  data.val().account === "masterAdmin",
+                firstName: data.val().firstName,
+              });
+            });
+        });
+    } else {
+      this.setState({ dataGrabbed: true });
+    }
   }
 
   addMessage() {
@@ -172,75 +184,87 @@ export default class NewsScreen extends Component {
     let feed = [];
     if (!this.state.dataGrabbed) {
       this.getData();
-    } else {
+    } else if (this.state.online) {
       let message = "";
+      let messages = "";
+      let text = "";
       for (let i = this.state.length - 1; i > -1; i--) {
         message = this.state.messages[i].message;
         messages = message.split("!URL");
-        feed.push(
-          // Style these as the individual messages
-          <View key={i} style={newsScreenStyles.newsContainer}>
-            <View style={newsScreenStyles.newsText}>
-              <Text style={newsScreenStyles.message}>
-                {messages.length == 2 ? (
-                  <Text>
-                    {messages[0]}
-                    <Text
-                      onPress={() =>
-                        Linking.openURL(this.state.messages[i].url)
-                      }
-                      style={{
-                        textDecorationLine: "underline",
-                      }}
-                    >
-                      {this.state.messages[i].text === ""
-                        ? this.state.messages[i].url
-                        : this.state.messages[i].text}
+        text = this.state.messages[i].text;
+        if (
+          text.toLowerCase().includes(this.state.search.toLowerCase()) ||
+          message.toLowerCase().includes(this.state.search.toLowerCase()) ||
+          (this.state.messages[i].url
+            .toLowerCase()
+            .includes(this.state.search.toLowerCase()) &&
+            text === "")
+        ) {
+          feed.push(
+            // Style these as the individual messages
+            <View key={i} style={newsScreenStyles.newsContainer}>
+              <View style={newsScreenStyles.newsText}>
+                <Text style={newsScreenStyles.message}>
+                  {messages.length == 2 ? (
+                    <Text>
+                      {messages[0]}
+                      <Text
+                        onPress={() =>
+                          Linking.openURL(this.state.messages[i].url)
+                        }
+                        style={{
+                          textDecorationLine: "underline",
+                        }}
+                      >
+                        {this.state.messages[i].text === ""
+                          ? this.state.messages[i].url
+                          : this.state.messages[i].text}
+                      </Text>
+                      {messages[1]}
                     </Text>
-                    {messages[1]}
-                  </Text>
-                ) : (
-                  <Text>{this.state.messages[i].message}</Text>
-                )}
-              </Text>
-              <Text style={newsScreenStyles.date}>
-                Posted on {this.state.messages[i].date}
-              </Text>
-            </View>
-            {this.state.isAdmin && (
-              <View style={newsScreenStyles.iconContainer}>
-                <Pressable
-                  onPress={() => {
-                    Alert.alert(
-                      "Warning: Delete Message",
-                      "Are you sure that you want to delete this message?",
-                      [
-                        {
-                          text: "Yes",
-                          onPress: () => this.handleDelete(i),
-                        },
-                        {
-                          text: "No",
-                          style: "cancel",
-                        },
-                      ],
-                      {
-                        cancelable: true,
-                      }
-                    );
-                  }}
-                >
-                  <Ionicons
-                    name="trash"
-                    style={styles.icon}
-                    size={screenWidth * (1 / 25)}
-                    color={"#DC3545"}
-                  ></Ionicons>
-                </Pressable>
+                  ) : (
+                    <Text>{this.state.messages[i].message}</Text>
+                  )}
+                </Text>
+                <Text style={newsScreenStyles.date}>
+                  Posted on {this.state.messages[i].date}
+                </Text>
               </View>
-            )}
-          </View>
-        );
+              {this.state.isAdmin && (
+                <View style={newsScreenStyles.iconContainer}>
+                  <Pressable
+                    onPress={() => {
+                      Alert.alert(
+                        "Warning: Delete Message",
+                        "Are you sure that you want to delete this message?",
+                        [
+                          {
+                            text: "Yes",
+                            onPress: () => this.handleDelete(i),
+                          },
+                          {
+                            text: "No",
+                            style: "cancel",
+                          },
+                        ],
+                        {
+                          cancelable: true,
+                        }
+                      );
+                    }}
+                  >
+                    <Ionicons
+                      name="trash"
+                      style={styles.icon}
+                      size={screenWidth * (1 / 25)}
+                      color={"#DC3545"}
+                    ></Ionicons>
+                  </Pressable>
+                </View>
+              )}
+            </View>
+          );
+        }
       }
     }
     return (
@@ -251,9 +275,20 @@ export default class NewsScreen extends Component {
 
         {/*
          This view below is the main		*/}
-        {this.state.dataGrabbed && !this.state.loadingDelete ? (
+        {this.state.dataGrabbed &&
+        !this.state.loadingDelete &&
+        this.state.online ? (
           // This is when the data is received
           <ScrollView style={styles.main}>
+            <View style={newsScreenStyles.searchBarContainer}>
+              <TextInput
+                style={newsScreenStyles.searchBar}
+                placeholder={"Search for a post..."}
+                value={this.state.search}
+                onChangeText={(search) => this.setState({ search })}
+                label="Search"
+              ></TextInput>
+            </View>
             {this.state.isAdmin && (
               <View style={newsScreenStyles.newPost}>
                 <TextInput
@@ -318,7 +353,10 @@ export default class NewsScreen extends Component {
           </ScrollView>
         ) : (
           // This is before we get the data
-          <LoadingAnimationScreen></LoadingAnimationScreen>
+          <LoadingAnimationScreen
+            online={this.state.online}
+            dataLoaded={this.state.dataGrabbed}
+          ></LoadingAnimationScreen>
         )}
       </View>
     );
@@ -394,5 +432,20 @@ const newsScreenStyles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 18,
+  },
+  searchBar: {
+    fontSize: 16,
+    width: (screenWidth * 9) / 10,
+    padding: (screenWidth * 1) / 50,
+    marginHorizontal: (screenWidth * 1) / 30,
+    backgroundColor: "#F4F5F7",
+    borderRadius: 20,
+  },
+  searchBarContainer: {
+    flexDirection: "row",
+    width: screenWidth,
+    backgroundColor: "#DDDDDD",
+    paddingVertical: (screenWidth * 1) / 25,
+    justifyContent: "center",
   },
 });

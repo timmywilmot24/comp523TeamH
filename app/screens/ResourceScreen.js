@@ -13,13 +13,16 @@ import { TextInput } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
 import { styles } from "../screens/MainScreen.js";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
 const screenWidth = Dimensions.get("window").width;
+import NetInfo from "@react-native-community/netinfo";
 
 export default class ResourceScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      online: false,
       dataLoaded: false,
       resources: {},
       isAdmin: false,
@@ -98,24 +101,32 @@ export default class ResourceScreen extends Component {
     );
   }
 
-  loadData() {
-    this.props.route.params.db
-      .database()
-      .ref("resources")
-      .get()
-      .then((data) => {
-        this.props.route.params.db
-          .database()
-          .ref("users/" + this.props.route.params.userID + "/account")
-          .get()
-          .then((admin) => {
-            this.setState({
-              isAdmin: admin.val() === "admin" || admin.val() === "masterAdmin",
-              resources: data,
-              dataLoaded: true,
+  async loadData() {
+    let online = await NetInfo.fetch();
+    let connected = online.isConnected;
+    if (connected) {
+      this.props.route.params.db
+        .database()
+        .ref("resources")
+        .get()
+        .then((data) => {
+          this.props.route.params.db
+            .database()
+            .ref("users/" + this.props.route.params.userID + "/account")
+            .get()
+            .then((admin) => {
+              this.setState({
+                online: true,
+                isAdmin:
+                  admin.val() === "admin" || admin.val() === "masterAdmin",
+                resources: data,
+                dataLoaded: true,
+              });
             });
-          });
-      });
+        });
+    } else {
+      this.setState({ dataLoaded: true });
+    }
   }
 
   handleAddResource() {
@@ -158,7 +169,7 @@ export default class ResourceScreen extends Component {
     let resources = [];
     if (!this.state.dataLoaded) {
       this.loadData();
-    } else {
+    } else if (this.state.online) {
       let info = "";
       for (let resource in this.state.resources.val()) {
         info = this.state.resources.val()[resource];
@@ -172,7 +183,7 @@ export default class ResourceScreen extends Component {
         <Header title={"Resources"} />
         {/*
          This view below is the main		*/}
-        {this.state.dataLoaded ? (
+        {this.state.dataLoaded && this.state.online ? (
           <ScrollView style={styles.main}>
             {/*This is the consultation button */}
             <Pressable
@@ -277,7 +288,10 @@ export default class ResourceScreen extends Component {
             )}
           </ScrollView>
         ) : (
-          <View style={styles.main}></View>
+          <LoadingAnimationScreen
+            online={this.state.online}
+            dataLoaded={this.state.dataLoaded}
+          ></LoadingAnimationScreen>
         )}
       </View>
     );

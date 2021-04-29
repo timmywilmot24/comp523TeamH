@@ -111,8 +111,23 @@ export default class AdminQuiz extends Component {
                     if (i == this.state.responses.length - 1) {
                       this.props.setState(false);
                     }
+                  })
+                  .catch(() => {
+                    Alert.alert(
+                      "Unable to connect to database. Try resetting your Internet or reconnecting."
+                    );
                   });
+              })
+              .catch(() => {
+                Alert.alert(
+                  "Unable to connect to database. Try resetting your Internet or reconnecting."
+                );
               });
+          })
+          .catch(() => {
+            Alert.alert(
+              "Unable to connect to database. Try resetting your Internet or reconnecting."
+            );
           });
       }
       this.props.db
@@ -125,6 +140,11 @@ export default class AdminQuiz extends Component {
             .database()
             .ref("quiz")
             .update({ numberOfQuestions: newNumber });
+        })
+        .catch(() => {
+          Alert.alert(
+            "Unable to connect to database. Try resetting your Internet or reconnecting."
+          );
         });
     }
   }
@@ -154,6 +174,11 @@ export default class AdminQuiz extends Component {
         pic: url,
         action: this.state.responses[i].action,
         subject: subject,
+      })
+      .catch(() => {
+        Alert.alert(
+          "Unable to connect to database. Try resetting your Internet or reconnecting."
+        );
       });
   }
 
