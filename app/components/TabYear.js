@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
 		marginHorizontal: 2.5,
 	},
 	classYearButtonActive: {
-		backgroundColor: 'gray',
+		backgroundColor: '#DDDDDD',
+		borderRadius: 10,
 	},
 });
