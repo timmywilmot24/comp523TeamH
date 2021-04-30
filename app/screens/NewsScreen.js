@@ -5,12 +5,11 @@ import {
 	ScrollView,
 	StyleSheet,
 	Image,
-	Pressable,
 	SafeAreaView,
 	Alert,
 	Linking,
 	Dimensions,
-	TouchableHighlightBase,
+	TouchableOpacity,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Header from '../components/Header.js';
@@ -232,7 +231,7 @@ export default class NewsScreen extends Component {
 							</View>
 							{this.state.isAdmin && (
 								<View style={newsScreenStyles.iconContainer}>
-									<Pressable
+									<TouchableOpacity
 										onPress={() => {
 											Alert.alert(
 												'Warning: Delete Message',
@@ -259,7 +258,7 @@ export default class NewsScreen extends Component {
 											size={screenWidth * (1 / 25)}
 											color={'#DC3545'}
 										></Ionicons>
-									</Pressable>
+									</TouchableOpacity>
 								</View>
 							)}
 						</View>
@@ -333,14 +332,14 @@ export default class NewsScreen extends Component {
 											label="newURLText"
 										/>
 									</View>
-									<Pressable
+									<TouchableOpacity
 										onPress={() => this.addMessage()}
 										style={newsScreenStyles.addButton}
 									>
 										<Text style={newsScreenStyles.buttonText}>
 											Post message
 										</Text>
-									</Pressable>
+									</TouchableOpacity>
 									<Text
 										style={{
 											textAlign: 'center',
