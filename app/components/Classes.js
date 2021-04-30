@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-	Text,
-	View,
-	StyleSheet,
-	ScrollView,
-	Pressable,
-	Dimensions,
-} from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import TabYear from '../components/TabYear.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -419,7 +412,7 @@ export default class Classes extends Component {
 		return (
 			<View>
 				<View style={classScreenStyles.backButtonContainer}>
-					<Pressable
+					<TouchableOpacity
 						style={classScreenStyles.buttonStuff}
 						onPress={() => this.props.setState(false)}
 					>
@@ -429,7 +422,7 @@ export default class Classes extends Component {
 							name="caret-back"
 						></Ionicons>
 						<Text style={classScreenStyles.backText}>Back</Text>
-					</Pressable>
+					</TouchableOpacity>
 				</View>
 				<View>
 					<TabYear
@@ -495,14 +488,14 @@ export default class Classes extends Component {
 								<View
 									style={[
 										classScreenStyles.classSectionContainer,
-										{ marginBottom: screenWidth * 1.75 },
+										{ marginBottom: screenWidth * 2 },
 									]}
 								>
 									{seniorClassRender}
 								</View>
 							</View>
 						) : (
-							<View style={{ marginBottom: screenWidth * 1.75 }}>
+							<View style={{ marginBottom: screenWidth * 2 }}>
 								{freshmanClassRender}
 							</View>
 						)}
@@ -518,6 +511,8 @@ const classScreenStyles = StyleSheet.create({
 		backgroundColor: '#DDDDDD',
 		padding: screenWidth * (1 / 50),
 		marginBottom: screenWidth * (1 / 50),
+		height: screenWidth * (1 / 7),
+		justifyContent: 'center',
 	},
 	buttonStuff: {
 		flexDirection: 'row',

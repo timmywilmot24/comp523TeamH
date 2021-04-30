@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-	Text,
-	View,
-	StyleSheet,
-	ScrollView,
-	Pressable,
-	Dimensions,
-} from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import TabYear from '../components/TabYear.js';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -111,7 +104,7 @@ export default class Extra extends Component {
 		return (
 			<View>
 				<View style={extraScreenStyles.backButtonContainer}>
-					<Pressable
+					<TouchableOpacity
 						style={extraScreenStyles.buttonStuff}
 						onPress={() => this.props.setState(false)}
 					>
@@ -121,7 +114,7 @@ export default class Extra extends Component {
 							name="caret-back"
 						></Ionicons>
 						<Text style={extraScreenStyles.backText}>Back</Text>
-					</Pressable>
+					</TouchableOpacity>
 				</View>
 				<View>
 					<TabYear
@@ -186,7 +179,7 @@ export default class Extra extends Component {
 						<View
 							style={[
 								extraScreenStyles.extraContainer,
-								{ marginBottom: screenWidth * 1.5 },
+								{ marginBottom: screenWidth * 1.6 },
 							]}
 						>
 							<View>
@@ -200,7 +193,7 @@ export default class Extra extends Component {
 						<View
 							style={[
 								extraScreenStyles.extraContainer,
-								{ marginBottom: screenWidth * 1.5 },
+								{ marginBottom: screenWidth * 1.6 },
 							]}
 						>
 							<View>
@@ -219,6 +212,9 @@ const extraScreenStyles = StyleSheet.create({
 	backButtonContainer: {
 		backgroundColor: '#DDDDDD',
 		padding: screenWidth * (1 / 50),
+		marginBottom: screenWidth * (1 / 50),
+		height: screenWidth * (1 / 7),
+		justifyContent: 'center',
 	},
 	buttonStuff: {
 		flexDirection: 'row',
@@ -264,12 +260,6 @@ const extraScreenStyles = StyleSheet.create({
 		shadowOpacity: 0.25,
 	},
 	titlesIcons: {
-		alignSelf: 'center',
-	},
-	title: {
-		color: '#B71914',
-		marginLeft: screenWidth * (1 / 70),
-		fontSize: 20,
 		alignSelf: 'center',
 	},
 	regularTextContainer: {

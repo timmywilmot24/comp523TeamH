@@ -17,13 +17,13 @@ export default class RegisterForm extends Component {
 
 		this.state = {
 			isLoading: false,
-			email: 'davidcubrilla@gmail.com',
-			password: 'cubrillD98',
-			confirmPassword: 'cubrillD98',
-			firstName: 'David',
-			lastName: 'Cubrilla',
-			highSchool: 'UNC',
-			grade: '12',
+			email: '',
+			password: '',
+			confirmPassword: '',
+			firstName: '',
+			lastName: '',
+			highSchool: '',
+			grade: '',
 			errorText: '',
 			errorCode: 0,
 		};
@@ -147,6 +147,7 @@ export default class RegisterForm extends Component {
 					<TextInput
 						style={styles.inputs}
 						placeholder="First name"
+						selectionColor={'#F6931D'}
 						placeholderTextColor="white"
 						value={this.state.firstName}
 						onChangeText={(firstName) => this.setState({ firstName })}
@@ -165,6 +166,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="Last name"
 						placeholderTextColor="white"
 						value={this.state.lastName}
@@ -184,6 +186,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="Email"
 						placeholderTextColor="white"
 						value={this.state.email}
@@ -203,6 +206,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="Password"
 						placeholderTextColor="white"
 						value={this.state.password}
@@ -223,6 +227,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="Confirm Password"
 						placeholderTextColor="white"
 						value={this.state.confirmPassword}
@@ -245,6 +250,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="High School"
 						placeholderTextColor="white"
 						value={this.state.highSchool}
@@ -264,6 +270,7 @@ export default class RegisterForm extends Component {
 				<View>
 					<TextInput
 						style={styles.inputs}
+						selectionColor={'#F6931D'}
 						placeholder="Grade"
 						placeholderTextColor="white"
 						value={this.state.grade}

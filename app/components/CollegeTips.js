@@ -188,6 +188,9 @@ export default class CollegeTips extends Component {
 								</Text>
 							</View>
 							<View style={collegeScreenStyles.tipsContainer}>
+								<View>
+									<Text style={collegeScreenStyles.title}>College Tips</Text>
+								</View>
 								{freshmanCollegeTipRender}
 							</View>
 							<View style={collegeScreenStyles.classSectionTitleContainer}>
@@ -196,6 +199,9 @@ export default class CollegeTips extends Component {
 								</Text>
 							</View>
 							<View style={collegeScreenStyles.tipsContainer}>
+								<View>
+									<Text style={collegeScreenStyles.title}>College Tips</Text>
+								</View>
 								{sophomoreCollegeTipRender}
 							</View>
 							<View style={collegeScreenStyles.classSectionTitleContainer}>
@@ -204,6 +210,9 @@ export default class CollegeTips extends Component {
 								</Text>
 							</View>
 							<View style={collegeScreenStyles.tipsContainer}>
+								<View>
+									<Text style={collegeScreenStyles.title}>College Tips</Text>
+								</View>
 								{juniorCollegeTipRender}
 							</View>
 							<View style={collegeScreenStyles.classSectionTitleContainer}>
@@ -217,12 +226,23 @@ export default class CollegeTips extends Component {
 									{ marginBottom: screenWidth * 2 },
 								]}
 							>
+								<View>
+									<Text style={collegeScreenStyles.title}>College Tips</Text>
+								</View>
 								{seniorCollegeTipRender}
 							</View>
 						</ScrollView>
 					) : (
 						<ScrollView>
-							<View style={collegeScreenStyles.tipsContainer}>
+							<View
+								style={[
+									collegeScreenStyles.tipsContainer,
+									{ marginBottom: screenWidth * 2 },
+								]}
+							>
+								<View>
+									<Text style={collegeScreenStyles.title}>College Tips</Text>
+								</View>
 								{collegeRender}
 							</View>
 						</ScrollView>
@@ -238,6 +258,8 @@ const collegeScreenStyles = StyleSheet.create({
 		backgroundColor: '#DDDDDD',
 		padding: screenWidth * (1 / 50),
 		marginBottom: screenWidth * (1 / 50),
+		height: screenWidth * (1 / 7),
+		justifyContent: 'center',
 	},
 	buttonStuff: {
 		flexDirection: 'row',
@@ -284,9 +306,16 @@ const collegeScreenStyles = StyleSheet.create({
 	},
 	title: {
 		color: '#B71914',
-		marginLeft: screenWidth * (1 / 70),
 		fontSize: 20,
-		alignSelf: 'center',
+		alignSelf: 'flex-start',
+		marginBottom: 10,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		fontWeight: 'bold',
 	},
 	regularTextContainer: {
 		borderBottomColor: 'rgba(0, 0, 0, 0.2)',

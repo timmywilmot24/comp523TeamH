@@ -178,6 +178,9 @@ export default class Tips extends Component {
 								<Text style={tipsScreenStyles.classSectionTitle}>Freshman</Text>
 							</View>
 							<View style={tipsScreenStyles.tipsContainer}>
+								<View>
+									<Text style={tipsScreenStyles.title}>Tips</Text>
+								</View>
 								{freshmanTipRender}
 							</View>
 							<View style={tipsScreenStyles.classSectionTitleContainer}>
@@ -186,25 +189,52 @@ export default class Tips extends Component {
 								</Text>
 							</View>
 							<View style={tipsScreenStyles.tipsContainer}>
+								<View>
+									<Text style={tipsScreenStyles.title}>Tips</Text>
+								</View>
 								{sophomoreTipRender}
 							</View>
 							<View style={tipsScreenStyles.classSectionTitleContainer}>
 								<Text style={tipsScreenStyles.classSectionTitle}>Junior</Text>
 							</View>
 							<View style={tipsScreenStyles.tipsContainer}>
+								<View>
+									<Text style={tipsScreenStyles.title}>Tips</Text>
+								</View>
 								{juniorTipRender}
 							</View>
 							<View style={tipsScreenStyles.classSectionTitleContainer}>
 								<Text style={tipsScreenStyles.classSectionTitle}>Senior</Text>
 							</View>
-							<View style={tipsScreenStyles.tipsContainer}>
+							<View
+								style={[
+									tipsScreenStyles.tipsContainer,
+									{ marginBottom: screenWidth * 2 },
+								]}
+							>
+								<View>
+									<Text style={tipsScreenStyles.title}>Tips</Text>
+								</View>
 								{seniorTipRender}
 							</View>
 						</ScrollView>
 					</View>
 				) : (
-					<View style={{ zIndex: -1 }} style={tipsScreenStyles.tipsContainer}>
-						{tipsRender}
+					<View>
+						<ScrollView>
+							<View
+								style={{ zIndex: -1 }}
+								style={[
+									tipsScreenStyles.tipsContainer,
+									{ marginBottom: screenWidth },
+								]}
+							>
+								<View>
+									<Text style={tipsScreenStyles.title}>Tips</Text>
+								</View>
+								{tipsRender}
+							</View>
+						</ScrollView>
 					</View>
 				)}
 			</View>
@@ -217,6 +247,8 @@ const tipsScreenStyles = StyleSheet.create({
 		backgroundColor: '#DDDDDD',
 		padding: screenWidth * (1 / 50),
 		marginBottom: screenWidth * (1 / 50),
+		height: screenWidth * (1 / 7),
+		justifyContent: 'center',
 	},
 	buttonStuff: {
 		flexDirection: 'row',
@@ -263,9 +295,16 @@ const tipsScreenStyles = StyleSheet.create({
 	},
 	title: {
 		color: '#B71914',
-		marginLeft: screenWidth * (1 / 70),
 		fontSize: 20,
-		alignSelf: 'center',
+		alignSelf: 'flex-start',
+		marginBottom: 10,
+		shadowColor: 'black',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.25,
+		fontWeight: 'bold',
 	},
 	regularTextContainer: {
 		borderBottomColor: 'rgba(0, 0, 0, 0.2)',
