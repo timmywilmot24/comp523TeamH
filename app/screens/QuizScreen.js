@@ -99,10 +99,10 @@ export default class QuizScreen extends Component {
       <View style={styles.body}>
         <Header title={"Quiz"} />
         {this.state.dataLoaded && this.state.online ? (
-          <ScrollView>
+          <View>
             {!this.state.isAdmin ? (
               // Regular view for non admins
-              <View>
+              <ScrollView>
                 {this.state.takenQuiz ? (
                   <View style={quizResultStyles.main}>
                     {/* If they've taken the quiz, show their results via a bar graph */}
@@ -227,12 +227,12 @@ export default class QuizScreen extends Component {
                     )}
                   </View>
                 )}
-              </View>
+              </ScrollView>
             ) : (
               // This is what happens if the admin wants to look at/edit quiz
               <AdminQuiz db={this.props.route.params.db}></AdminQuiz>
             )}
-          </ScrollView>
+          </View>
         ) : (
           <LoadingAnimationScreen
             online={this.state.online}
