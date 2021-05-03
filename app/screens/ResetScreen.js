@@ -10,6 +10,7 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 	KeyboardAvoidingView,
+	LogBox,
 } from 'react-native';
 
 export default class ResetScreen extends Component {
@@ -20,6 +21,12 @@ export default class ResetScreen extends Component {
 			email: '',
 			emailVerify: '',
 		};
+	}
+
+	componentDidMount() {
+		LogBox.ignoreLogs([
+			'Non-serializable values were found in the navigation state. Check',
+		]);
 	}
 
 	onReset() {

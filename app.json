@@ -17,13 +17,17 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.missionscholarshipinc.missionscholarshipapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.missionscholarshipinc.missionscholarshipapp",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./app/assets/favicon.png"

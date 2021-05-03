@@ -14,8 +14,8 @@ export default class LoginForm extends Component {
 
 		this.state = {
 			isLoading: false,
-			email: 'twilmot@live.unc.edu',
-			password: 'TimmyW11!',
+			email: '',
+			password: '',
 			errorCode: 0,
 			errorText: '',
 		};

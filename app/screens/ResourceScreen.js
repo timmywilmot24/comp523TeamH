@@ -239,7 +239,7 @@ export default class ResourceScreen extends Component {
 									color={'white'}
 								/>
 								<Text style={resourcesScreenStyles.consultationText}>
-									Contact Us
+									Ask Mission Scholarship
 								</Text>
 							</TouchableOpacity>
 
