@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default class LoadingAnimationScreen extends Component {
@@ -20,7 +22,9 @@ export default class LoadingAnimationScreen extends Component {
     return (
       <View>
         {!this.props.dataLoaded ? (
-          <View style={{ marginTop: (screenWidth * 1) / 10 }}>
+          <View
+            style={{ marginLeft: "auto", marginRight: "auto", marginTop: 40 }}
+          >
             <ActivityIndicator size="large" color="#B71914" />
           </View>
         ) : (

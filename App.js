@@ -9,6 +9,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 
 import * as firebase from "firebase";
+import SplashScreen from "./app/screens/SplashScreen.js";
+import LoadingAnimationScreen from "./app/components/LoadingAnimationScreen.js";
 
 const Stack = createStackNavigator();
 
@@ -28,7 +30,6 @@ const db = firebase.initializeApp({
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   componentDidMount() {
