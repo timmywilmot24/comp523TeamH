@@ -6,13 +6,23 @@ import {
   StyleSheet,
   Image,
   Pressable,
-  SafeAreaView,
   DevSettings,
+  Dimensions,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import Header from "../components/Header.js";
 import { styles } from "../screens/MainScreen.js";
+import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import CacheImage from "../components/CacheImage.js";
+import * as FileSystem from "expo-file-system";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default class SettingsScreen extends Component {
   constructor(props) {
@@ -22,6 +32,8 @@ export default class SettingsScreen extends Component {
       db: this.props.route.params.db,
       userID: this.props.route.params.userID,
       email: "",
+      account: "",
+      title: "",
       dataGrabbed: false,
       firstName: "",
       newFirstName: "",
@@ -36,32 +48,40 @@ export default class SettingsScreen extends Component {
       errorText: "",
       errorCode: 0,
       edit: false,
-      emailSent: false,
+      uploadLoading: false,
     };
   }
 
   getData() {
-    this.state.db
-      .database()
-      .ref("users/" + this.state.userID)
-      .get()
-      .then((data) => {
-        data = data.val();
-        this.setState({
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          grade: data.grade,
-          highSchool: data.highSchool,
-          newFirstName: data.firstName,
-          newLastName: data.lastName,
-          newGrade: data.grade,
-          newHighSchool: data.highSchool,
-          profilePic: data.profilePic,
-          newProfilePic: data.profilePic,
-          dataGrabbed: true,
-        });
+    FileSystem.readAsStringAsync(
+      `${FileSystem.cacheDirectory}${this.state.userID}`
+    ).then((data) => {
+      data = JSON.parse(data);
+      let title = "";
+      if (data.account === "student") {
+        title = "Student";
+      } else if (data.account === "admin") {
+        title = "Administrator";
+      } else {
+        title = "Master Administrator";
+      }
+      this.setState({
+        account: data.account,
+        title: title,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        grade: data.grade,
+        highSchool: data.highSchool,
+        newFirstName: data.firstName,
+        newLastName: data.lastName,
+        newGrade: data.grade,
+        newHighSchool: data.highSchool,
+        profilePic: data.profilePic,
+        newProfilePic: data.profilePic,
+        dataGrabbed: true,
       });
+    });
   }
 
   async handleSubmit() {
@@ -89,7 +109,10 @@ export default class SettingsScreen extends Component {
         errorText: "Grade must be 9, 10, 11, or 12",
         errorCode: 4,
       });
-    } else if (this.state.newProfilePic === "") {
+    } else if (
+      this.state.newProfilePic === "" ||
+      this.state.newProfilePic === this.state.profilePic
+    ) {
       this.state.db
         .database()
         .ref("users/" + this.state.userID)
@@ -100,6 +123,19 @@ export default class SettingsScreen extends Component {
           highSchool: this.state.newHighSchool,
         })
         .then(() => {
+          const path = `${FileSystem.cacheDirectory}${this.state.userID}`;
+          this.state.db
+            .database()
+            .ref("users/" + this.state.userID)
+            .get()
+            .then((data) => {
+              FileSystem.writeAsStringAsync(path, JSON.stringify(data));
+            })
+            .catch(() => {
+              Alert.alert(
+                "Unable to connect to database. Try resetting your Internet or reconnecting."
+              );
+            });
           this.setState({
             firstName: this.state.newFirstName,
             lastName: this.state.newLastName,
@@ -107,8 +143,16 @@ export default class SettingsScreen extends Component {
             highSchool: this.state.newHighSchool,
             edit: false,
           });
+        })
+        .catch(() => {
+          Alert.alert(
+            "Unable to connect to database. Try resetting your Internet or reconnecting."
+          );
         });
     } else {
+      this.setState({
+        uploadLoading: true,
+      });
       const response = await fetch(this.state.newProfilePic);
       const blob = await response.blob();
 
@@ -134,6 +178,19 @@ export default class SettingsScreen extends Component {
                   profilePic: url,
                 })
                 .then(() => {
+                  const path = `${FileSystem.cacheDirectory}${this.state.userID}`;
+                  this.state.db
+                    .database()
+                    .ref("users/" + this.state.userID)
+                    .get()
+                    .then((data) => {
+                      FileSystem.writeAsStringAsync(path, JSON.stringify(data));
+                    })
+                    .catch(() => {
+                      Alert.alert(
+                        "Unable to connect to database. Try resetting your Internet or reconnecting."
+                      );
+                    });
                   this.setState({
                     firstName: this.state.newFirstName,
                     lastName: this.state.newLastName,
@@ -141,11 +198,44 @@ export default class SettingsScreen extends Component {
                     highSchool: this.state.newHighSchool,
                     profilePic: url,
                     edit: false,
+                    dataGrabbed: true,
+                    uploadLoading: false,
                   });
+                })
+                .catch(() => {
+                  Alert.alert(
+                    "Unable to connect to database. Try resetting your Internet or reconnecting."
+                  );
                 });
+            })
+            .catch(() => {
+              Alert.alert(
+                "Unable to connect to database. Try resetting your Internet or reconnecting."
+              );
             });
+        })
+        .catch(() => {
+          Alert.alert(
+            "Unable to connect to database. Try resetting your Internet or reconnecting."
+          );
         });
     }
+  }
+
+  handleReset() {
+    // If email or password is empty, send alert to prompt user
+
+    this.state.db
+      .auth()
+      .sendPasswordResetEmail(this.state.email)
+      .then(() => {
+        Alert.alert("Email has been sent to " + this.state.email);
+      })
+      .catch(() => {
+        Alert.alert(
+          "Unable to send reset email. Try resetting your Internet or reconnecting."
+        );
+      });
   }
 
   async addPicture() {
@@ -174,197 +264,490 @@ export default class SettingsScreen extends Component {
         <Header title={"Settings"} />
         {/*
          This view below is the main		*/}
-        {this.state.dataGrabbed ? (
-          // This is when the data is received
-          <View>
-            {this.state.edit ? (
-              <View style={settingsScreenStyles.main}>
-                <Text>Edit Profile Picture:</Text>
-                {this.state.newProfilePic === "" ? (
-                  <Pressable onPress={() => this.addPicture()}>
-                    <View
-                      style={{
-                        width: 200,
-                        height: 200,
-                        backgroundColor: "gray",
-                      }}
-                    ></View>
-                  </Pressable>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView>
+            {this.state.dataGrabbed ? (
+              // This is when the data is received
+              <View>
+                {this.state.uploadLoading ? (
+                  <LoadingAnimationScreen></LoadingAnimationScreen>
                 ) : (
-                  <Pressable onPress={() => this.addPicture()}>
-                    <Image
-                      style={{ width: 200, height: 200 }}
-                      source={{ uri: this.state.newProfilePic }}
-                    ></Image>
-                  </Pressable>
+                  <View>
+                    {this.state.edit ? (
+                      <View style={settingsScreenStyles.main}>
+                        {this.state.newProfilePic === "" ? (
+                          <View style={settingsScreenStyles.editable}>
+                            <View style={settingsScreenStyles.topContainer}>
+                              <View style={settingsScreenStyles.iconContainer}>
+                                <Pressable
+                                  onPress={() =>
+                                    this.setState({
+                                      newFirstName: this.state.firstName,
+                                      newLastName: this.state.lastName,
+                                      newHighSchool: this.state.highSchool,
+                                      newGrade: this.state.grade,
+                                      newProfilePic: this.state.profilePic,
+                                      edit: false,
+                                    })
+                                  }
+                                >
+                                  <Ionicons
+                                    style={{ marginLeft: 5, marginTop: 5 }}
+                                    name="close"
+                                    size={screenWidth * (1 / 12)}
+                                    color={"white"}
+                                  ></Ionicons>
+                                </Pressable>
+                                <Pressable
+                                  style={{
+                                    alignSelf: "flex-end",
+                                    marginLeft: "auto",
+                                  }}
+                                  onPress={() => this.handleSubmit()}
+                                >
+                                  <Ionicons
+                                    style={{
+                                      marginRight: 5,
+                                      marginTop: 5,
+                                    }}
+                                    name="checkmark-sharp"
+                                    size={screenWidth * (1 / 12)}
+                                    color={"white"}
+                                  ></Ionicons>
+                                </Pressable>
+                              </View>
+                            </View>
+                            <View
+                              style={settingsScreenStyles.bottomContainer}
+                            ></View>
+                            <Pressable
+                              style={
+                                settingsScreenStyles.profilePicEditContainer
+                              }
+                              onPress={() => this.addPicture()}
+                            >
+                              <Image
+                                style={settingsScreenStyles.profilePicEdit}
+                                source={require("../assets/defaultProfile.png")}
+                              ></Image>
+                              <Ionicons
+                                name="pencil-outline"
+                                size={(screenWidth * 1) / 12}
+                                style={settingsScreenStyles.editPicText}
+                              ></Ionicons>
+                            </Pressable>
+                          </View>
+                        ) : (
+                          <View style={settingsScreenStyles.editable}>
+                            <View style={settingsScreenStyles.topContainer}>
+                              <View style={settingsScreenStyles.iconContainer}>
+                                <Pressable
+                                  onPress={() =>
+                                    this.setState({
+                                      newFirstName: this.state.firstName,
+                                      newLastName: this.state.lastName,
+                                      newHighSchool: this.state.highSchool,
+                                      newGrade: this.state.grade,
+                                      newProfilePic: this.state.profilePic,
+                                      edit: false,
+                                    })
+                                  }
+                                >
+                                  <Ionicons
+                                    style={{ marginLeft: 5, marginTop: 5 }}
+                                    name="close"
+                                    size={screenWidth * (1 / 12)}
+                                    color={"white"}
+                                  ></Ionicons>
+                                </Pressable>
+                                <Pressable
+                                  style={{
+                                    alignSelf: "flex-end",
+                                    marginLeft: "auto",
+                                  }}
+                                  onPress={() => this.handleSubmit()}
+                                >
+                                  <Ionicons
+                                    style={{
+                                      marginRight: 5,
+                                      marginTop: 5,
+                                    }}
+                                    name="checkmark-sharp"
+                                    size={screenWidth * (1 / 12)}
+                                    color={"white"}
+                                  ></Ionicons>
+                                </Pressable>
+                              </View>
+                            </View>
+                            <View
+                              style={settingsScreenStyles.bottomContainer}
+                            ></View>
+                            <Pressable
+                              style={
+                                settingsScreenStyles.profilePicEditContainer
+                              }
+                              onPress={() => this.addPicture()}
+                            >
+                              <Image
+                                style={settingsScreenStyles.profilePicEdit}
+                                source={{ uri: this.state.newProfilePic }}
+                              ></Image>
+                              <Ionicons
+                                name="pencil-outline"
+                                size={(screenWidth * 1) / 12}
+                                style={settingsScreenStyles.editPicText}
+                              ></Ionicons>
+                            </Pressable>
+                          </View>
+                        )}
+                        <TextInput
+                          style={settingsScreenStyles.inputs}
+                          placeholder={"First name"}
+                          selectionColor={"#B71914"}
+                          placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
+                          value={this.state.newFirstName}
+                          onChangeText={(newFirstName) =>
+                            this.setState({ newFirstName })
+                          }
+                          label="First Name"
+                        />
+                        {this.state.errorCode === 1 ? (
+                          <Text style={settingsScreenStyles.error}>
+                            {this.state.errorText}
+                          </Text>
+                        ) : (
+                          <Text style={settingsScreenStyles.error}></Text>
+                        )}
+                        <TextInput
+                          style={settingsScreenStyles.inputs}
+                          placeholder={"Last name"}
+                          selectionColor={"#B71914"}
+                          placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
+                          value={this.state.newLastName}
+                          onChangeText={(newLastName) =>
+                            this.setState({ newLastName })
+                          }
+                          label="Last Name"
+                        />
+                        {this.state.errorCode === 2 ? (
+                          <Text style={settingsScreenStyles.error}>
+                            {this.state.errorText}
+                          </Text>
+                        ) : (
+                          <Text style={settingsScreenStyles.error}></Text>
+                        )}
+                        <TextInput
+                          style={settingsScreenStyles.inputs}
+                          placeholder={"High School"}
+                          selectionColor={"#B71914"}
+                          placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
+                          value={this.state.newHighSchool}
+                          onChangeText={(newHighSchool) =>
+                            this.setState({ newHighSchool })
+                          }
+                          label="High School"
+                        />
+                        {this.state.errorCode === 3 ? (
+                          <Text style={settingsScreenStyles.error}>
+                            {this.state.errorText}
+                          </Text>
+                        ) : (
+                          <Text style={settingsScreenStyles.error}></Text>
+                        )}
+                        <TextInput
+                          style={settingsScreenStyles.inputs}
+                          placeholder={"Grade"}
+                          selectionColor={"#B71914"}
+                          placeholderTextColor={"rgba(183, 25, 20, 0.3)"}
+                          value={this.state.newGrade}
+                          onChangeText={(newGrade) =>
+                            this.setState({ newGrade })
+                          }
+                          label="Grade"
+                        />
+                        {this.state.errorCode === 4 ? (
+                          <Text style={settingsScreenStyles.error}>
+                            {this.state.errorText}
+                          </Text>
+                        ) : (
+                          <Text style={settingsScreenStyles.error}></Text>
+                        )}
+                        <View style={settingsScreenStyles.buttonContainer}>
+                          <View
+                            style={{ width: (screenWidth * 1) / 10 }}
+                          ></View>
+                        </View>
+                      </View>
+                    ) : (
+                      <View>
+                        <View style={settingsScreenStyles.main}>
+                          <View style={settingsScreenStyles.editable}>
+                            <View style={settingsScreenStyles.topContainer}>
+                              <TouchableOpacity
+                                onPress={() => this.setState({ edit: true })}
+                              >
+                                <Ionicons
+                                  style={settingsScreenStyles.icon}
+                                  name="create-outline"
+                                  size={screenWidth * (1 / 14)}
+                                  color={"white"}
+                                ></Ionicons>
+                              </TouchableOpacity>
+                            </View>
+                            <View
+                              style={settingsScreenStyles.bottomContainer}
+                            ></View>
+                            {this.state.profilePic === "" ? (
+                              <Image
+                                source={require("../assets/defaultProfile.png")}
+                                style={settingsScreenStyles.profilePic}
+                              />
+                            ) : (
+                              <CacheImage
+                                style={settingsScreenStyles.profilePic}
+                                uri={this.state.profilePic}
+                              ></CacheImage>
+                            )}
+                            <Text
+                              style={settingsScreenStyles.preEditInputsName}
+                            >
+                              {this.state.firstName} {this.state.lastName}
+                            </Text>
+                            {this.state.account === "student" ? (
+                              <View>
+                                <Text
+                                  style={[
+                                    settingsScreenStyles.preEditInputs,
+                                    { textAlign: "center" },
+                                  ]}
+                                >
+                                  Student | {this.state.grade}th grade
+                                </Text>
+                                <Text
+                                  style={[
+                                    settingsScreenStyles.preEditInputs,
+                                    { textAlign: "center" },
+                                  ]}
+                                >
+                                  {this.state.highSchool}
+                                </Text>
+                              </View>
+                            ) : (
+                              <Text style={settingsScreenStyles.preEditInputs}>
+                                {this.state.title}
+                              </Text>
+                            )}
+                            <Text style={settingsScreenStyles.preEditInputs}>
+                              {this.state.email}
+                            </Text>
+                            <View style={{ height: 40 }}></View>
+                          </View>
+                          <View></View>
+                        </View>
+                        <Pressable
+                          style={settingsScreenStyles.buttonMain}
+                          onPress={() => this.handleReset()}
+                        >
+                          <Text style={settingsScreenStyles.buttonText}>
+                            Reset Password
+                          </Text>
+                        </Pressable>
+                        <Pressable
+                          onPress={() =>
+                            this.props.route.params.db
+                              .auth()
+                              .signOut()
+                              .then(() => {
+                                DevSettings.reload();
+                              })
+                              .catch(() => {
+                                Alert.alert(
+                                  "Unable to sign out. Try resetting your Internet or reconnecting."
+                                );
+                              })
+                          }
+                          style={settingsScreenStyles.buttonMain}
+                        >
+                          <Text style={settingsScreenStyles.buttonText}>
+                            Sign out
+                          </Text>
+                        </Pressable>
+                      </View>
+                    )}
+                  </View>
                 )}
-
-                <Text>First Name: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.firstName}
-                  value={this.state.newFirstName}
-                  onChangeText={(newFirstName) =>
-                    this.setState({ newFirstName })
-                  }
-                  label="First Name"
-                />
-                {this.state.errorCode === 1 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>Last Name: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.lastName}
-                  value={this.state.newLastName}
-                  onChangeText={(newLastName) => this.setState({ newLastName })}
-                  label="Last Name"
-                />
-                {this.state.errorCode === 2 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>High School: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.highSchool}
-                  value={this.state.newHighSchool}
-                  onChangeText={(newHighSchool) =>
-                    this.setState({ newHighSchool })
-                  }
-                  label="High School"
-                />
-                {this.state.errorCode === 3 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Text>Grade: </Text>
-                <TextInput
-                  style={settingsScreenStyles.inputs}
-                  placeholder={this.state.grade}
-                  value={this.state.newGrade}
-                  onChangeText={(newGrade) => this.setState({ newGrade })}
-                  label="Grade"
-                />
-                {this.state.errorCode === 4 ? (
-                  <Text>{this.state.errorText}</Text>
-                ) : (
-                  <Text></Text>
-                )}
-                <Pressable
-                  onPress={() =>
-                    this.setState({
-                      newFirstName: this.state.firstName,
-                      newLastName: this.state.lastName,
-                      newHighSchool: this.state.highSchool,
-                      newGrade: this.state.grade,
-                      newProfilePic: this.state.profilePic,
-                      edit: false,
-                    })
-                  }
-                >
-                  <Text>Cancel</Text>
-                </Pressable>
-                <Pressable onPress={() => this.handleSubmit()}>
-                  <Text>Submit</Text>
-                </Pressable>
               </View>
             ) : (
-              <View style={settingsScreenStyles.main}>
-                <View style={settingsScreenStyles.editible}>
-                  {this.state.profilePic === "" ? (
-                    <View
-                      style={{
-                        width: 200,
-                        height: 200,
-                        backgroundColor: "gray",
-                      }}
-                    ></View>
-                  ) : (
-                    <Image
-                      style={{ width: 200, height: 200 }}
-                      source={{ uri: this.state.profilePic }}
-                    ></Image>
-                  )}
-
-                  <Text>First Name: {this.state.firstName}</Text>
-                  <Text>Last Name: {this.state.lastName}</Text>
-                  <Text>Grade: {this.state.grade}</Text>
-                  <Text>High School: {this.state.highSchool}</Text>
-                  <Pressable onPress={() => this.setState({ edit: true })}>
-                    <Text>Edit</Text>
-                  </Pressable>
-                </View>
-                <View>
-                  {/* <Pressable
-                    onPress={() =>
-                      this.props.route.params.db
-                        .auth()
-                        .sendPasswordResetEmail(this.state.email)
-                        .then(() => {
-                          this.setState({
-                            emailSent: true,
-                          });
-                        })
-                    }
-                  >
-                    <Text>Reset Password</Text>
-                  </Pressable> */}
-                  {this.state.emailSent ? (
-                    <View>
-                      <Text style={{ color: "#F6931D" }}>
-                        Email has been sent to {this.state.email}
-                      </Text>
-                    </View>
-                  ) : (
-                    <View>
-                      <Text style={{ color: "white" }}>
-                        Email has been sent to {this.state.email}
-                      </Text>
-                    </View>
-                  )}
-                  <Pressable
-                    onPress={() =>
-                      this.props.route.params.db
-                        .auth()
-                        .signOut()
-                        .then(() => {
-                          DevSettings.reload();
-                        })
-                    }
-                  >
-                    <Text>Sign out</Text>
-                  </Pressable>
-                </View>
-              </View>
+              // This is before we get the data
+              <View style={styles.main}></View>
             )}
-          </View>
-        ) : (
-          // This is before we get the data
-          <View style={styles.main}></View>
-        )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     );
   }
 }
 
 const settingsScreenStyles = StyleSheet.create({
-  main: {
-    backgroundColor: "white",
-  },
-  editible: {},
-  inputs: {
-    backgroundColor: "white",
-    //marginBottom: 20,
-    fontSize: 18,
+  button: {
+    backgroundColor: "#B71914",
+    marginTop: 20,
+    borderRadius: 8,
     shadowColor: "black",
     shadowOffset: {
       width: 0,
       height: 4,
     },
+    shadowOpacity: 0.25,
+  },
+
+  buttonMain: {
+    backgroundColor: "#DDDDDD",
+    marginBottom: 20,
+    paddingVertical: 5,
+    width: screenWidth,
+  },
+  buttonText: {
+    color: "black",
+    textAlign: "center",
+    padding: "3%",
+    paddingLeft: "5%",
+    paddingRight: "5%",
+    fontSize: 16,
+  },
+  main: {
+    backgroundColor: "white",
+    width: "95%",
+    alignSelf: "center",
+    marginTop: screenWidth * (15 / 100),
+    borderRadius: 20,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    marginBottom: 20,
+  },
+  editable: {
+    alignItems: "center",
+  },
+  error: {
+    marginHorizontal: (screenWidth * 2) / 15,
+    fontSize: 12,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    borderRadius: 5,
+    padding: 5,
+    color: "#B71914",
+  },
+  preEditInputs: {
+    marginTop: 5,
+    fontSize: 16,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    borderRadius: 5,
+    color: "#B71914",
+  },
+  preEditInputsName: {
+    marginTop: 5,
+    fontSize: 24,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    borderRadius: 5,
+    color: "#B71914",
+  },
+  inputs: {
+    marginTop: 12,
+    marginHorizontal: (screenWidth * 2) / 15,
+    fontSize: 20,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    borderRadius: 5,
+    padding: 5,
+    // Added these three
+    borderBottomWidth: 1,
+    borderBottomColor: "#B71914",
+    color: "#B71914",
+  },
+  profilePic: {
+    marginTop: (screenWidth * 1) / 15,
+    width: (screenWidth * 2) / 5,
+    height: (screenWidth * 2) / 5,
+    backgroundColor: "gray",
+    borderRadius: (screenWidth * 1) / 5,
+    zIndex: 1,
+    position: "absolute",
+    borderColor: "white",
+    borderWidth: screenWidth * (1 / 100),
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  picEdit: {
+    alignSelf: "center",
+    fontSize: 12,
+  },
+  topContainer: {
+    width: "100%",
+    backgroundColor: "#B71914",
+    height: screenWidth * (4 / 15),
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  bottomContainer: {
+    width: "100%",
+    backgroundColor: "white",
+    height: screenWidth * (4 / 15),
+  },
+  icon: {
+    alignSelf: "flex-end",
+    marginTop: screenWidth * (1 / 50),
+    marginRight: screenWidth * (1 / 50),
+  },
+  iconContainer: {
+    flexDirection: "row",
+  },
+  profilePicEditContainer: {
+    zIndex: 1,
+    position: "absolute",
+    alignItems: "center",
+  },
+  profilePicEdit: {
+    marginTop: (screenWidth * 1) / 15,
+    width: (screenWidth * 2) / 5,
+    height: (screenWidth * 2) / 5,
+    borderRadius: (screenWidth * 1) / 5,
+    borderColor: "white",
+    borderWidth: screenWidth * (1 / 100),
+  },
+  editPicText: {
+    position: "absolute",
+    zIndex: 2,
+    marginTop: (screenWidth * 5) / 15,
+    // backgroundColor: "rgba(0,0,0,0.1)",
+    width: "70%",
+    color: "white",
+    textAlign: "center",
   },
 });

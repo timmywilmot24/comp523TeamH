@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Pressable, View, Text } from "react-native";
+import { Pressable, View, Text, TouchableOpacity } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default class CheckBox extends Component {
   constructor(props) {
@@ -18,18 +19,27 @@ export default class CheckBox extends Component {
   render() {
     return (
       <View>
-        <Pressable onPress={() => this.handleClick(!this.state.checked)}>
+        <TouchableOpacity
+          onPress={() => this.handleClick(!this.state.checked)}
+          style={{ flexDirection: "row" }}
+        >
           {this.state.checked ? (
-            <View
-              style={{ width: 10, height: 10, backgroundColor: "blue" }}
-            ></View>
+            <Ionicons
+              name="checkbox-outline"
+              color={"#B71914"}
+              size={20}
+            ></Ionicons>
           ) : (
-            <View
-              style={{ width: 10, height: 10, backgroundColor: "white" }}
-            ></View>
+            <Ionicons
+              name="square-outline"
+              color={"#B71914"}
+              size={20}
+            ></Ionicons>
           )}
-          <Text>{this.props.subject}</Text>
-        </Pressable>
+          <Text style={{ fontSize: 14, margin: 5, color: "#B71914" }}>
+            {this.props.subject}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }

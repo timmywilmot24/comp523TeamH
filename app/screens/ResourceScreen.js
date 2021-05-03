@@ -1,26 +1,53 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useEffect } from 'react';
 import {
 	Text,
 	ScrollView,
 	View,
 	StyleSheet,
-	Image,
-	Pressable,
-	SafeAreaView,
-	ImageBackground,
 	Dimensions,
 	Linking,
+	Alert,
+	KeyboardAvoidingView,
+	Animated,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Header from '../components/Header.js';
 import { styles } from '../screens/MainScreen.js';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import LoadingAnimationScreen from '../components/LoadingAnimationScreen.js';
 const screenWidth = Dimensions.get('window').width;
+import NetInfo from '@react-native-community/netinfo';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+const FadeInView = (props) => {
+	const fadeAnim = useRef(new Animated.Value(0)).current;
+
+	useEffect(() => {
+		Animated.timing(fadeAnim, {
+			toValue: 1,
+			duration: 3000,
+			useNativeDriver: true,
+		}).start();
+	}, [fadeAnim]);
+
+	return (
+		<Animated.View
+			style={{
+				// ...props.style,
+				opacity: fadeAnim,
+			}}
+		>
+			{props.children}
+		</Animated.View>
+	);
+};
 
 export default class ResourceScreen extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			online: false,
 			dataLoaded: false,
 			resources: {},
 			isAdmin: false,
@@ -31,7 +58,6 @@ export default class ResourceScreen extends Component {
 		};
 	}
 
-	//Test this out
 	goToURL(url) {
 		Linking.canOpenURL(url).then((supported) => {
 			if (supported) {
@@ -43,58 +69,89 @@ export default class ResourceScreen extends Component {
 	}
 
 	handleDelete(id) {
-		this.props.route.params.db
-			.database()
-			.ref('resources/' + id)
-			.remove()
-			.then(() => {
-				this.setState({ dataLoaded: false });
-			});
+		Alert.alert(
+			'Warning: Delete Resource',
+			'Are you sure that you want to delete this resource?',
+			[
+				{
+					text: 'Yes',
+					onPress: () => {
+						this.props.route.params.db
+							.database()
+							.ref('resources/' + id)
+							.remove()
+							.then(() => {
+								this.setState({ dataLoaded: false });
+							});
+					},
+				},
+				{
+					text: 'No',
+					style: 'cancel',
+				},
+			],
+			{
+				cancelable: true,
+			}
+		);
 	}
 
 	newResource(text, url, id) {
 		return (
 			<View key={id}>
 				{this.state.isAdmin ? (
-					<View>
-						<Pressable onPress={() => this.goToURL(url)}>
-							<Text>{text}</Text>
-						</Pressable>
-						<Pressable onPress={() => this.handleDelete(id)}>
-							<Text>Delete Resource</Text>
-						</Pressable>
-					</View>
-				) : (
 					<View style={resourcesScreenStyles.resourceButton}>
-						<Pressable onPress={() => this.goToURL(url)}>
+						<TouchableOpacity onPress={() => this.goToURL(url)}>
 							<Text style={resourcesScreenStyles.resourceButtonText}>
 								{text}
 							</Text>
-						</Pressable>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => this.handleDelete(id)}
+							style={{ marginVertical: 5, marginLeft: 'auto', marginRight: 15 }}
+						>
+							<Ionicons name="trash" size={25} color={'white'} />
+						</TouchableOpacity>
 					</View>
+				) : (
+					<TouchableOpacity onPress={() => this.goToURL(url)}>
+						<View style={resourcesScreenStyles.resourceButton}>
+							<Text style={resourcesScreenStyles.resourceButtonText}>
+								{text}
+							</Text>
+						</View>
+					</TouchableOpacity>
 				)}
 			</View>
 		);
 	}
 
-	loadData() {
-		this.props.route.params.db
-			.database()
-			.ref('resources')
-			.get()
-			.then((data) => {
-				this.props.route.params.db
-					.database()
-					.ref('users/' + this.props.route.params.userID + '/account')
-					.get()
-					.then((admin) => {
-						this.setState({
-							isAdmin: admin.val() === 'admin',
-							resources: data,
-							dataLoaded: true,
+	async loadData() {
+		let online = await NetInfo.fetch();
+		let connected = online.isConnected;
+		if (connected) {
+			this.props.route.params.db
+				.database()
+				.ref('resources')
+				.get()
+				.then((data) => {
+					this.props.route.params.db
+						.database()
+						.ref('users/' + this.props.route.params.userID + '/account')
+						.get()
+						.then((admin) => {
+							this.setState({
+								online: true,
+								isAdmin:
+									admin.val() === 'admin' || admin.val() === 'masterAdmin',
+								resources: data,
+								dataLoaded: true,
+							});
 						});
-					});
-			});
+				});
+		} else {
+			this.setState({ dataLoaded: true });
+		}
 	}
 
 	handleAddResource() {
@@ -133,11 +190,24 @@ export default class ResourceScreen extends Component {
 		}
 	}
 
+	handleEmail() {
+		let to = 'mscollegereadinessapp@gmail.com';
+		let url = `mailto:${to}`;
+		Linking.canOpenURL(url)
+			.then(() => {
+				Linking.openURL(url).catch(() => {
+					Alert.alert('Unable to connect to email.');
+				});
+			})
+			.catch(() => {
+				Alert.alert('Unable to connect to Internet.');
+			});
+	}
 	render() {
 		let resources = [];
 		if (!this.state.dataLoaded) {
-			this.loadData();
-		} else {
+			setTimeout(() => this.loadData(), 2000);
+		} else if (this.state.online) {
 			let info = '';
 			for (let resource in this.state.resources.val()) {
 				info = this.state.resources.val()[resource];
@@ -151,77 +221,136 @@ export default class ResourceScreen extends Component {
 				<Header title={'Resources'} />
 				{/*
          This view below is the main		*/}
-				{this.state.dataLoaded ? (
-					<ScrollView style={styles.main}>
-						{/*This is the consultation button */}
-						<View style={resourcesScreenStyles.imageContainer}>
-							<Pressable
+				{this.state.dataLoaded && this.state.online ? (
+					<KeyboardAvoidingView
+						style={{ flex: 1 }}
+						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+					>
+						<ScrollView style={styles.main}>
+							{/*This is the consultation button */}
+
+							<TouchableOpacity
+								style={resourcesScreenStyles.consultationContainer}
 								onPress={() =>
 									this.goToURL(
 										'https://missionscholarship.org/ola/services/video-chat-kyndall-program-consultation#d4f66cf5-2682-4fc6-b186-3bdfa068ece3'
 									)
 								}
 							>
-								<ImageBackground
-									source={require('../assets/ms-consult.png')}
-									style={resourcesScreenStyles.image}
-									imageStyle={{ borderRadius: 10 }}
-								>
-									<Text style={resourcesScreenStyles.imageText}>
-										Schedule A Consultation
-									</Text>
-								</ImageBackground>
-							</Pressable>
-						</View>
-						{/*Other resources*/}
-						<View style={resourcesScreenStyles.resourcesContainer}>
-							{resources}
-						</View>
-						{this.state.isAdmin && (
-							<View>
-								{this.state.addResource ? (
-									<View>
-										<TextInput
-											placeholder="Resource name here"
-											value={this.state.addText}
-											onChangeText={(addText) => this.setState({ addText })}
-											label="newResourceText"
-										/>
-										<TextInput
-											placeholder="Resource URL here"
-											value={this.state.addURL}
-											onChangeText={(addURL) => this.setState({ addURL })}
-											label="newResourceURL"
-										/>
-										<Text>{this.state.addResourceError}</Text>
-										<Text
-											onPress={() =>
-												this.setState({
-													addResource: false,
-													addText: '',
-													addURL: '',
-													addResourceError: '',
-												})
-											}
-										>
-											Cancel
-										</Text>
-										<Text onPress={() => this.handleAddResource()}>
-											Add new resource
-										</Text>
-									</View>
-								) : (
-									<View>
-										<Text onPress={() => this.setState({ addResource: true })}>
-											Add Resource
-										</Text>
-									</View>
-								)}
+								<Ionicons
+									style={resourcesScreenStyles.icon}
+									name="calendar"
+									size={25}
+									color={'white'}
+								/>
+								<Text style={resourcesScreenStyles.consultationText}>
+									Consultation
+								</Text>
+							</TouchableOpacity>
+							{/*Other resources*/}
+							<View style={resourcesScreenStyles.resourcesContainer}>
+								{resources}
 							</View>
-						)}
-					</ScrollView>
+							<TouchableOpacity
+								style={resourcesScreenStyles.consultationContainer}
+								onPress={() => this.handleEmail()}
+							>
+								<Ionicons
+									style={resourcesScreenStyles.icon}
+									name="mail"
+									size={25}
+									color={'white'}
+								/>
+								<Text style={resourcesScreenStyles.consultationText}>
+									Ask Mission Scholarship
+								</Text>
+							</TouchableOpacity>
+
+							{this.state.isAdmin && (
+								<View>
+									{this.state.addResource ? (
+										<View style={resourcesScreenStyles.addContainer}>
+											<View style={{ flexDirection: 'row' }}>
+												<TouchableOpacity
+													onPress={() =>
+														this.setState({
+															addResource: false,
+															addText: '',
+															addURL: '',
+															addResourceError: '',
+														})
+													}
+												>
+													<Ionicons
+														style={{ marginLeft: 5, marginTop: 5 }}
+														name="close"
+														size={screenWidth * (1 / 12)}
+														color={'#B71914'}
+													></Ionicons>
+												</TouchableOpacity>
+												<TouchableOpacity
+													style={{
+														alignSelf: 'flex-end',
+														marginLeft: 'auto',
+													}}
+													onPress={() => this.handleAddResource()}
+												>
+													<Ionicons
+														style={{
+															marginRight: 5,
+															marginTop: 5,
+														}}
+														name="checkmark-sharp"
+														size={screenWidth * (1 / 12)}
+														color={'#B71914'}
+													></Ionicons>
+												</TouchableOpacity>
+											</View>
+											<TextInput
+												style={resourcesScreenStyles.addResource}
+												placeholder="Type resource name here..."
+												placeholderTextColor={'rgba(183, 25, 20, 0.3)'}
+												selectionColor={'#B71914'}
+												value={this.state.addText}
+												onChangeText={(addText) => this.setState({ addText })}
+												label="newResourceText"
+											/>
+											<TextInput
+												style={resourcesScreenStyles.addResource}
+												placeholder="Type resource URL here..."
+												placeholderTextColor={'rgba(183, 25, 20, 0.3)'}
+												selectionColor={'#B71914'}
+												value={this.state.addURL}
+												onChangeText={(addURL) => this.setState({ addURL })}
+												label="newResourceURL"
+											/>
+											<Text
+												style={{
+													color: '#B71914',
+													textAlign: 'center',
+													marginTop: 10,
+												}}
+											>
+												{this.state.addResourceError}
+											</Text>
+										</View>
+									) : (
+										<TouchableOpacity
+											style={{ marginLeft: 'auto', marginRight: 'auto' }}
+											onPress={() => this.setState({ addResource: true })}
+										>
+											<Ionicons name="add-sharp" color={'#B71914'} size={35} />
+										</TouchableOpacity>
+									)}
+								</View>
+							)}
+						</ScrollView>
+					</KeyboardAvoidingView>
 				) : (
-					<View style={styles.main}></View>
+					<LoadingAnimationScreen
+						online={this.state.online}
+						dataLoaded={this.state.dataLoaded}
+					></LoadingAnimationScreen>
 				)}
 			</View>
 		);
@@ -230,44 +359,40 @@ export default class ResourceScreen extends Component {
 
 const resourcesScreenStyles = StyleSheet.create({
 	//put style here
-	imageContainer: {
-		width: screenWidth * (13 / 15),
-		height: screenWidth * (13 / 15),
-		alignItems: 'center',
-		justifyContent: 'center',
+	consultationContainer: {
+		backgroundColor: '#B71914',
+		paddingTop: 10,
+		paddingBottom: 10,
+		marginTop: 20,
+		marginBottom: 20,
 		alignSelf: 'center',
-	},
-	image: {
-		width: screenWidth * (12 / 15),
-		height: screenWidth * (12 / 15),
-		alignItems: 'center',
-		justifyContent: 'center',
+		borderRadius: 8,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
 			height: 4,
 		},
 		shadowOpacity: 0.25,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: screenWidth * (12 / 15),
 	},
-	imageText: {
-		textAlign: 'center',
-		padding: '2%',
+	consultationText: {
 		color: 'white',
-		backgroundColor: 'rgba(180,24,19,0.9)',
-		width: '100%',
-		fontWeight: 'bold',
-		fontSize: 22,
-		textShadowColor: 'rgba(0, 0, 0, 0.25)',
-		textShadowOffset: { width: 0, height: 4 },
-		textShadowRadius: 4,
+		textAlign: 'center',
+		fontSize: 16,
+	},
+	icon: {
+		alignSelf: 'center',
+		marginRight: 7,
 	},
 	resourcesContainer: {
 		alignSelf: 'center',
-		marginTop: 10,
 		width: screenWidth * (12 / 15),
 	},
 	resourceButton: {
-		backgroundColor: 'rgba(180,24,19,0.9)',
+		backgroundColor: '#B71914',
 		marginBottom: 20,
 		borderRadius: 8,
 		shadowColor: 'black',
@@ -276,11 +401,43 @@ const resourcesScreenStyles = StyleSheet.create({
 			height: 4,
 		},
 		shadowOpacity: 0.25,
+		flexDirection: 'row',
 	},
 	resourceButtonText: {
 		color: 'white',
 		textAlign: 'center',
 		padding: '3%',
+		fontSize: 16,
+	},
+	addContainer: {
+		backgroundColor: 'white',
+		width: screenWidth * (12 / 15),
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		borderRadius: 5,
+		paddingBottom: 10,
+		marginBottom: 20,
+	},
+	addResource: {
+		color: '#B71914',
+		marginLeft: 15,
+		marginRight: 15,
+		marginTop: 15,
+		paddingBottom: 4,
+		borderColor: 'white',
+		borderBottomColor: '#B71914',
+		borderWidth: 1,
+	},
+	addButton: {
+		backgroundColor: '#B71914',
+		marginHorizontal: 20,
+		justifyContent: 'center',
+		paddingVertical: 10,
+		borderRadius: 8,
+	},
+	buttonText: {
+		color: 'white',
+		textAlign: 'center',
 		fontSize: 16,
 	},
 });

@@ -5,12 +5,12 @@ import {
 	StyleSheet,
 	Pressable,
 	Dimensions,
-	ImageBackground,
-	SafeAreaView,
 	ScrollView,
 	LogBox,
+	Alert,
 } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
+import CacheImage from '../components/CacheImage.js';
 const screenWidth = Dimensions.get('window').width;
 export default class QuizForm extends Component {
 	constructor(props) {
@@ -78,6 +78,11 @@ export default class QuizForm extends Component {
 			})
 			.then(() => {
 				this.props.setState(true, false, false);
+			})
+			.catch(() => {
+				Alert.alert(
+					'Unable to connect to database. Try resetting your Internet or reconnecting.'
+				);
 			});
 	}
 
@@ -107,7 +112,17 @@ export default class QuizForm extends Component {
 							length: l,
 							numQuestion: num,
 						});
+					})
+					.catch(() => {
+						Alert.alert(
+							'Unable to connect to database. Try resetting your Internet or reconnecting.'
+						);
 					});
+			})
+			.catch(() => {
+				Alert.alert(
+					'Unable to connect to database. Try resetting your Internet or reconnecting.'
+				);
 			});
 	}
 
@@ -140,31 +155,35 @@ export default class QuizForm extends Component {
 			<View>
 				{quizHead}
 				<ScrollView>
-					<View
-						style={{
-							marginBottom:
-								this.state.responses.length > 4 &&
-								(Math.ceil(this.state.responses.length / 2) - 3) *
-									(screenWidth * 0.8),
-						}}
-					>
+					<View style={{ marginBottom: screenWidth * 0.25 }}>
 						{this.state.dataGrabbed && (
 							<FlatGrid
 								onEndReachedThreshold={0.5}
 								itemDimension={screenWidth * (1 / 3)}
 								data={responsesRender}
 								style={styles.gridView}
+								itemContainerStyle={{
+									marginBottom: 10,
+								}}
 								renderItem={({ item }) => (
 									<View>
-										<Pressable onPress={() => this.nextQuestion(item.subject)}>
-											<ImageBackground
-												style={styles.responseImage}
-												source={{
-													uri: item.pic,
-												}}
-											>
-												<Text style={styles.action}>{item.action}</Text>
-											</ImageBackground>
+										<Pressable
+											style={{
+												shadowColor: 'black',
+												shadowOffset: {
+													width: 0,
+													height: 4,
+												},
+												shadowOpacity: 0.25,
+											}}
+											onPress={() => this.nextQuestion(item.subject)}
+										>
+											<CacheImage style={styles.responseImage} uri={item.pic} />
+											<View style={styles.action}>
+												<Text style={{ color: 'white', width: '100%' }}>
+													{item.action}
+												</Text>
+											</View>
 										</Pressable>
 									</View>
 								)}
@@ -197,16 +216,15 @@ const styles = StyleSheet.create({
 		height: screenWidth * (1 / 2),
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		shadowColor: 'black',
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.25,
+		borderRadius: 5,
 	},
 	action: {
-		color: 'white',
 		backgroundColor: 'rgba(0,0,0,0.5)',
 		width: '100%',
+		position: 'absolute',
+		zIndex: 2,
+		borderTopLeftRadius: 5,
+		borderTopRightRadius: 5,
+		padding: 3,
 	},
 });

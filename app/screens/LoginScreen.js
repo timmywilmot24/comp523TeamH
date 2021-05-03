@@ -8,7 +8,9 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ScrollView,
+  Image,
 } from "react-native";
+import LoadingAnimationScreen from "../components/LoadingAnimationScreen.js";
 
 import LoginForm from "../components/LoginForm.js";
 
@@ -33,7 +35,12 @@ export default class LoginScreen extends Component {
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <SafeAreaView>
               <View style={styles.logo}>
-                <Text style={styles.logoText}>Mission: Scholarship</Text>
+                <Image
+                  imageStyle={{ borderRadius: 75 / 2 }}
+                  style={{ width: "100%", height: "80%" }}
+                  // style={homeScreenStyles.cardImageButton}
+                  source={require("../assets/logo.png")}
+                />
               </View>
 
               <View style={styles.form}>
@@ -70,8 +77,12 @@ const styles = StyleSheet.create({
   },
   logo: {
     marginTop: "15%",
+    paddingTop: 17,
     alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
     width: "80%",
+    height: 125,
     borderRadius: 20,
     borderWidth: 5,
     borderColor: "white",
@@ -82,14 +93,6 @@ const styles = StyleSheet.create({
       height: 2,
     },
     shadowOpacity: 0.25,
-  },
-  logoText: {
-    fontSize: 34,
-    textAlign: "center",
-    fontWeight: "bold",
-    textShadowColor: "rgba(0, 0, 0, 0.25)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
   },
   form: {
     marginTop: "15%",

@@ -14,8 +14,8 @@ export default class LoginForm extends Component {
 
 		this.state = {
 			isLoading: false,
-			email: 'davidcubrilla@gmail.com',
-			password: 'cubrillD98',
+			email: '',
+			password: '',
 			errorCode: 0,
 			errorText: '',
 		};
@@ -101,6 +101,7 @@ export default class LoginForm extends Component {
 						style={styles.inputs}
 						placeholder="Email"
 						placeholderTextColor="white"
+						selectionColor={'#F6931D'}
 						autoCompleteType="email"
 						value={this.state.email}
 						onChangeText={(email) => this.setState({ email })}
@@ -121,6 +122,7 @@ export default class LoginForm extends Component {
 						style={styles.inputs}
 						placeholder="Password"
 						placeholderTextColor="white"
+						selectionColor={'#F6931D'}
 						value={this.state.password}
 						onChangeText={(password) => this.setState({ password })}
 						label="Password"

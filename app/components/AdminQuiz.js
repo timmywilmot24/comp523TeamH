@@ -6,15 +6,17 @@ import {
 	ScrollView,
 	StyleSheet,
 	TextInput,
-	TouchableOpacity,
 	ImageBackground,
 	Dimensions,
 	LogBox,
+	Pressable,
+	TouchableOpacity,
 } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 const screenWidth = Dimensions.get('window').width;
 import DropDownPicker from 'react-native-dropdown-picker';
 import AddQuestionQuiz from './AddQuestionQuiz';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default class AdminQuiz extends Component {
 	constructor(props) {
@@ -38,6 +40,11 @@ export default class AdminQuiz extends Component {
 					quiz: quiz,
 					dataLoaded: true,
 				});
+			})
+			.catch(() => {
+				Alert.alert(
+					'Unable to connect to database. Try resetting your Internet or reconnecting.'
+				);
 			});
 	}
 
@@ -88,27 +95,42 @@ export default class AdminQuiz extends Component {
 							/>
 						) : (
 							<View style={{ alignItems: 'center' }}>
-								<DropDownPicker
-									items={items}
-									defaultValue={this.state.question}
-									containerStyle={{ height: 40 }}
-									style={{ backgroundColor: '#fafafa', width: '35%' }}
-									itemStyle={{
-										justifyContent: 'flex-start',
+								<View
+									style={{
+										width: screenWidth,
+										justifyContent: 'center',
+										flexDirection: 'row',
+										padding: 10,
+										backgroundColor: '#DDDDDD',
 									}}
-									dropDownStyle={{ backgroundColor: '#fafafa' }}
-									onChangeItem={(item) =>
-										this.setState({
-											question: item.value,
-										})
-									}
-								/>
-								{/*Add functionality to add a question*/}
-								<Text onPress={() => this.setState({ addQuestion: true })}>
-									Add question
-								</Text>
-								<ScrollView>
-									<View style={{ height: (screenWidth * 8) / 3 }}>
+								>
+									<DropDownPicker
+										items={items}
+										defaultValue={this.state.question}
+										containerStyle={{
+											height: 40,
+											width: 150,
+										}}
+										style={{
+											backgroundColor: '#fafafa',
+											padding: 15,
+										}}
+										dropDownStyle={{ backgroundColor: '#fafafa' }}
+										onChangeItem={(item) =>
+											this.setState({
+												question: item.value,
+											})
+										}
+									/>
+									<TouchableOpacity
+										onPress={() => this.setState({ addQuestion: true })}
+										style={{ paddingLeft: 10 }}
+									>
+										<Ionicons name="add" color={'#B71914'} size={35} />
+									</TouchableOpacity>
+								</View>
+								<ScrollView style={{ zIndex: -1 }}>
+									<View style={{ marginBottom: screenWidth * 0.9 }}>
 										<FlatGrid
 											onEndReachedThreshold={0.5}
 											itemDimension={screenWidth * (1 / 3)}
