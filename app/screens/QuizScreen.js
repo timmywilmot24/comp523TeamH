@@ -80,6 +80,7 @@ export default class QuizScreen extends Component {
 					} else {
 						this.setState({
 							dataLoaded: true,
+							online: true,
 						});
 					}
 				});

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef, useEffect } from 'react';
 import {
 	Text,
 	ScrollView,
@@ -7,9 +7,8 @@ import {
 	Dimensions,
 	Linking,
 	Alert,
-	Keyboard,
 	KeyboardAvoidingView,
-	TouchableWithoutFeedback,
+	Animated,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Header from '../components/Header.js';
@@ -19,6 +18,29 @@ import LoadingAnimationScreen from '../components/LoadingAnimationScreen.js';
 const screenWidth = Dimensions.get('window').width;
 import NetInfo from '@react-native-community/netinfo';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+const FadeInView = (props) => {
+	const fadeAnim = useRef(new Animated.Value(0)).current;
+
+	useEffect(() => {
+		Animated.timing(fadeAnim, {
+			toValue: 1,
+			duration: 3000,
+			useNativeDriver: true,
+		}).start();
+	}, [fadeAnim]);
+
+	return (
+		<Animated.View
+			style={{
+				// ...props.style,
+				opacity: fadeAnim,
+			}}
+		>
+			{props.children}
+		</Animated.View>
+	);
+};
 
 export default class ResourceScreen extends Component {
 	constructor(props) {
@@ -184,7 +206,7 @@ export default class ResourceScreen extends Component {
 	render() {
 		let resources = [];
 		if (!this.state.dataLoaded) {
-			this.loadData();
+			setTimeout(() => this.loadData(), 2000);
 		} else if (this.state.online) {
 			let info = '';
 			for (let resource in this.state.resources.val()) {
@@ -206,6 +228,7 @@ export default class ResourceScreen extends Component {
 					>
 						<ScrollView style={styles.main}>
 							{/*This is the consultation button */}
+
 							<TouchableOpacity
 								style={resourcesScreenStyles.consultationContainer}
 								onPress={() =>
