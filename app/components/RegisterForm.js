@@ -62,12 +62,12 @@ export default class RegisterForm extends Component {
 				errorCode: 5,
 			});
 			// If first and last name are not valid
-		} else if (!firstName.match(/^[A-Z][a-z]+$/)) {
+		} else if (firstName === '') {
 			this.setState({
 				errorText: 'First name is not valid',
 				errorCode: 1,
 			});
-		} else if (!lastName.match(/^[A-Z][a-z]+$/)) {
+		} else if (lastName === '') {
 			this.setState({
 				errorText: 'Last name is not valid',
 				errorCode: 2,

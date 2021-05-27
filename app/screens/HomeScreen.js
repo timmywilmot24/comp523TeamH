@@ -23,6 +23,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 const screenWidth = Dimensions.get('window').width;
 import * as FileSystem from 'expo-file-system';
+import CacheImage from '../components/CacheImage.js';
 const FadeInView = (props) => {
 	const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -369,12 +370,9 @@ export default class HomeScreen extends Component {
 								source={require('../assets/defaultProfile.png')}
 							/>
 						) : (
-							<ImageBackground
-								imageStyle={{ borderRadius: 75 / 2 }}
+							<CacheImage
 								style={homeScreenStyles.profilePic}
-								source={{
-									uri: result[i].profilePic,
-								}}
+								uri={result[i].profilePic}
 							/>
 						)}
 						{result[i].account === 'student' ? (
